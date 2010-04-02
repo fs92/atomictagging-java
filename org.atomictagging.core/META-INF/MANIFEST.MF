@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Accessors
+Bundle-SymbolicName: org.atomictagging.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: org.atomictagging.utils;bundle-version="1.0.0"
+Export-Package: org.atomictagging.core.accessors,
+ org.atomictagging.core.configuration,
+ org.atomictagging.core.types

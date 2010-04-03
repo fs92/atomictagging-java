@@ -1,0 +1,11 @@
+Atomic Tagging
+==============
+
+If you read this, you've already got the sources from GitHub (http://github.com/AtomicTagging).
+Get the SQL project as well and set up a MySQL database with the provided SQL script. Then, 
+import this directory into an Eclipse Java Project and start the Shell via the Shell.java class.
+
+Please let me know of any problems during set up.
+
+Stephan Mann, 2010-04-03
+<stephan@atomictagging.org>

@@ -225,7 +225,7 @@ public class Shell {
 
 
 	private static void printWelcomeMessage() {
-		System.out.println("Welcome to AtomicTagging Shell version 0.1-pre-alpha-not-quite-useable-yet");
+		System.out.println("Welcome to AtomicTagging Shell version 0.0.2-pre-alpha-not-quite-useable-yet");
 		System.out.println("Type 'help' to get startet.");
 	}
 
@@ -238,7 +238,8 @@ public class Shell {
 	private static void printHelpMessage() {
 		System.out.println("Implemented commands so far:");
 		System.out.println("  ls - list molecules and atoms");
-		System.out.println("  import - import a file from your file system");
+		System.out.println("  import <File> - import a file from your file system");
+		System.out.println("  show <MoleculeID> - display a fileref atom with the systems default application");
 		System.out.println("  help - show this help message");
 		System.out.println("  quit/exit - exit this shell");
 	}

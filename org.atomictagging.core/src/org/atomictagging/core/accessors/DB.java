@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import org.atomictagging.core.configuration.Configuration;
 
 /**
- * A temporary class holding the connection to the MySQL server and the data required to connect to the right database.
+ * A temporary class holding the connection to the MySQL server
  * 
  * @author Stephan Mann
  */
@@ -28,7 +28,8 @@ public class DB {
 			e.printStackTrace();
 		}
 		try {
-			CONN = DriverManager.getConnection(Configuration.JDBC_CONNECT_STRING);
+			CONN = DriverManager
+					.getConnection(Configuration.JDBC_URL, Configuration.DB_USER, Configuration.DB_PASSWORD);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -12,12 +12,22 @@ package org.atomictagging.core.configuration;
  */
 public class Configuration {
 	/**
-	 * JDBC connection string to connect to the database.
+	 * JDBC connection string to connect to the database. (jdbc:[dbtype]://[host]/[database])
 	 */
-	public static final String	JDBC_CONNECT_STRING	= "jdbc:mysql://localhost/atomictagging?user=atomictagging";
+	public static final String	JDBC_URL	= "jdbc:mysql://localhost/atomictagging";
+
+	/**
+	 * Database user
+	 */
+	public static final String	DB_USER		= "atomictagging";
+
+	/**
+	 * Database password
+	 */
+	public static final String	DB_PASSWORD	= "";
 
 	/**
 	 * Directory in with all imported files will be stored.
 	 */
-	public static final String	BASE_DIR			= System.getProperty("user.home") + "/.atomictagging/";
+	public static final String	BASE_DIR	= System.getProperty("user.home") + "/.atomictagging/";
 }

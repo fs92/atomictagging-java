@@ -1,15 +1,15 @@
 
 Atomic Tagging
 ==============
-This is the Java implementation of the Atomic Tagging API and a CLI. To learn about about 
+This is the Java implementation of the Atomic Tagging API and a CLI. To learn more about 
 Atomic Tagging, please refer to http://atomictagging.org or the atomictagging-docs repository.
 
 To setup an Atomic Tagging environment, check out the atomictagging-sql repository and set up 
-a MySQL database with the provided script. Then, import this Java repository  into an Eclipse 
-Java Project, configure the CLI via the Configuration class  and start the Shell via the 
+a MySQL database with the provided script. Then, import this Java repository into an Eclipse 
+Java Project, configure the CLI via the Configuration class and start the Shell via the 
 Shell class.
 
-Please let me know of any problems during set up.
+Please let me know of any problems during setup.
 
 Stephan Mann, 2010-04-04
 <stephan@atomictagging.org>

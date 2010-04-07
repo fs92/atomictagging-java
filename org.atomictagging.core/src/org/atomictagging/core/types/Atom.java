@@ -15,7 +15,7 @@ public class Atom implements IAtom {
 	private final List<String>	tags;
 
 
-	private Atom(AtomBuilder builder) {
+	private Atom( AtomBuilder builder ) {
 		this.id = builder.atomId;
 		this.data = builder.atomData;
 		this.tags = builder.atomTags;
@@ -72,9 +72,9 @@ public class Atom implements IAtom {
 		 * @param id
 		 * @return The builder
 		 */
-		public AtomBuilder withId(long id) {
+		public AtomBuilder withId( long id ) {
 			if (id < 0) {
-				throw new IllegalArgumentException("ID of an atom must be a number greater 0.");
+				throw new IllegalArgumentException( "ID of an atom must be a number greater 0." );
 			}
 
 			atomId = id;
@@ -88,9 +88,9 @@ public class Atom implements IAtom {
 		 * @param data
 		 * @return The builder
 		 */
-		public AtomBuilder withData(String data) {
+		public AtomBuilder withData( String data ) {
 			if (data == null || data.isEmpty()) {
-				throw new IllegalArgumentException("Data in an atom must not be NULL or empty.");
+				throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
 			}
 
 			atomData = data;
@@ -104,16 +104,16 @@ public class Atom implements IAtom {
 		 * @param tag
 		 * @return The builder
 		 */
-		public AtomBuilder withTag(String tag) {
+		public AtomBuilder withTag( String tag ) {
 			if (tag == null || tag.isEmpty()) {
-				throw new IllegalArgumentException("A tag must not be NULL or empty.");
+				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
 
-			if (atomTags.contains(tag)) {
-				throw new IllegalArgumentException("Duplicate tag <" + tag + "> for atom.");
+			if (atomTags.contains( tag )) {
+				throw new IllegalArgumentException( "Duplicate tag <" + tag + "> for atom." );
 			}
 
-			atomTags.add(tag);
+			atomTags.add( tag );
 			return this;
 		}
 
@@ -124,11 +124,11 @@ public class Atom implements IAtom {
 		 * @param tags
 		 * @return The builder
 		 */
-		public AtomBuilder withTags(List<String> tags) {
+		public AtomBuilder withTags( List<String> tags ) {
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withTag(String).
-			for (String tag : tags) {
-				withTag(tag);
+			for ( String tag : tags ) {
+				withTag( tag );
 			}
 			return this;
 		}
@@ -141,14 +141,14 @@ public class Atom implements IAtom {
 		 */
 		public Atom buildWithDataAndTag() {
 			if (atomData == null || atomData.isEmpty()) {
-				throw new IllegalArgumentException("Data in an atom must not be NULL or empty.");
+				throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
 			}
 
 			if (atomTags.size() == 0) {
-				throw new IllegalArgumentException("An atom must have at least one tag.");
+				throw new IllegalArgumentException( "An atom must have at least one tag." );
 			}
 
-			return new Atom(this);
+			return new Atom( this );
 		}
 	}
 

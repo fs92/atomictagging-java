@@ -31,11 +31,11 @@ public class DbReader {
 	 * @param content
 	 * @return List of molecules as read from the DB.
 	 */
-	public static List<IMolecule> read(List<String> tags, List<String> content) {
+	public static List<IMolecule> read( List<String> tags, List<String> content ) {
 		List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			String tagFilter = StringUtils.join(tags, " AND tag ='");
+			String tagFilter = StringUtils.join( tags, " AND tag ='" );
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
@@ -60,11 +60,11 @@ public class DbReader {
 						+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid";
 			}
 
-			PreparedStatement readMolecules = DB.CONN.prepareStatement(moleculeSQL);
+			PreparedStatement readMolecules = DB.CONN.prepareStatement( moleculeSQL );
 
 			String atomContentFilter = "";
 			if (content.size() > 0) {
-				for (String data : content) {
+				for ( String data : content ) {
 					atomContentFilter += " AND data = '" + data + "'";
 				}
 			}
@@ -77,43 +77,43 @@ public class DbReader {
 
 			// System.err.println("atoms: " + sql);
 
-			PreparedStatement readAtoms = DB.CONN.prepareStatement(sql);
+			PreparedStatement readAtoms = DB.CONN.prepareStatement( sql );
 
 			ResultSet moleculeResult = readMolecules.executeQuery();
 			MoleculeBuilder builder = Molecule.build();
 			long moleculeId = 0;
 
 			// Build molecules with all their atoms
-			while (moleculeResult.next()) {
-				if (moleculeId != moleculeResult.getLong("moleculeid")) {
+			while ( moleculeResult.next() ) {
+				if (moleculeId != moleculeResult.getLong( "moleculeid" )) {
 
 					// Whenever the molecule ID changes, but not in first iteration
 					if (moleculeId != 0) {
-						result.add(builder.buildWithAtomsAndTags());
+						result.add( builder.buildWithAtomsAndTags() );
 						builder = Molecule.build();
 					}
 
-					moleculeId = moleculeResult.getLong("moleculeid");
-					builder.withId(moleculeId);
+					moleculeId = moleculeResult.getLong( "moleculeid" );
+					builder.withId( moleculeId );
 
-					readAtoms.setLong(1, moleculeId);
+					readAtoms.setLong( 1, moleculeId );
 					ResultSet atomResult = readAtoms.executeQuery();
 
-					while (atomResult.next()) {
-						long atomId = atomResult.getLong("atomid");
-						builder.withAtom(readAtom(atomId));
+					while ( atomResult.next() ) {
+						long atomId = atomResult.getLong( "atomid" );
+						builder.withAtom( readAtom( atomId ) );
 					}
 				}
 
-				builder.withTag(moleculeResult.getString("tag"));
+				builder.withTag( moleculeResult.getString( "tag" ) );
 			}
 
 			// Only if there was at least one molecule
 			if (moleculeId != 0) {
-				result.add(builder.buildWithAtomsAndTags());
+				result.add( builder.buildWithAtomsAndTags() );
 			}
 
-		} catch (SQLException e) {
+		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -125,8 +125,8 @@ public class DbReader {
 	static {
 		try {
 			readMolecule = DB.CONN
-					.prepareStatement("SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?");
-		} catch (SQLException e) {
+					.prepareStatement( "SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?" );
+		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -137,31 +137,31 @@ public class DbReader {
 	 * @param moleculeId
 	 * @return The molecule with the given ID
 	 */
-	public static IMolecule read(long moleculeId) {
+	public static IMolecule read( long moleculeId ) {
 		if (moleculeId <= 0) {
-			throw new IllegalArgumentException("Invalid molecule ID.");
+			throw new IllegalArgumentException( "Invalid molecule ID." );
 		}
 
 		try {
-			readMolecule.setLong(1, moleculeId);
+			readMolecule.setLong( 1, moleculeId );
 			ResultSet moleculeResult = readMolecule.executeQuery();
 			boolean first = true;
 			MoleculeBuilder builder = Molecule.build();
 
-			while (moleculeResult.next()) {
+			while ( moleculeResult.next() ) {
 
 				if (first) {
-					builder.withId(moleculeResult.getLong("molecules_moleculeid"));
+					builder.withId( moleculeResult.getLong( "molecules_moleculeid" ) );
 					// TODO Read the tags from the database.
-					builder.withTag("x-notag");
+					builder.withTag( "x-notag" );
 					first = false;
 				}
 
-				builder.withAtom(readAtom(moleculeResult.getLong("atoms_atomid")));
+				builder.withAtom( readAtom( moleculeResult.getLong( "atoms_atomid" ) ) );
 			}
 
 			return builder.buildWithAtomsAndTags();
-		} catch (SQLException e) {
+		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -172,26 +172,26 @@ public class DbReader {
 	private static PreparedStatement	readAtom;
 	static {
 		try {
-			readAtom = DB.CONN.prepareStatement("SELECT atomid, data, tag "
+			readAtom = DB.CONN.prepareStatement( "SELECT atomid, data, tag "
 					+ "FROM atoms JOIN atom_has_tags JOIN tags "
-					+ "WHERE atomid = atoms_atomid AND tags_tagid = tagid AND atomid = ?");
-		} catch (SQLException e) {
+					+ "WHERE atomid = atoms_atomid AND tags_tagid = tagid AND atomid = ?" );
+		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 
-	private static IAtom readAtom(long atomId) throws SQLException {
-		readAtom.setLong(1, atomId);
+	private static IAtom readAtom( long atomId ) throws SQLException {
+		readAtom.setLong( 1, atomId );
 		ResultSet atomResult = readAtom.executeQuery();
 
 		if (atomResult.next()) {
-			AtomBuilder builder = Atom.build().withId(atomResult.getLong("atomid")).withData(
-					atomResult.getString("data")).withTag(atomResult.getString("tag"));
+			AtomBuilder builder = Atom.build().withId( atomResult.getLong( "atomid" ) ).withData(
+					atomResult.getString( "data" ) ).withTag( atomResult.getString( "tag" ) );
 
-			while (atomResult.next() && atomResult.getLong("atomid") == atomId) {
-				builder.withTag(atomResult.getString("tag"));
+			while ( atomResult.next() && atomResult.getLong( "atomid" ) == atomId ) {
+				builder.withTag( atomResult.getString( "tag" ) );
 			}
 
 			return builder.buildWithDataAndTag();

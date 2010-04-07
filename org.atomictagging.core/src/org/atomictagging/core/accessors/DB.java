@@ -22,15 +22,15 @@ public class DB {
 
 	static {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
+			Class.forName( "com.mysql.jdbc.Driver" );
+		} catch ( ClassNotFoundException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-			CONN = DriverManager
-					.getConnection(Configuration.JDBC_URL, Configuration.DB_USER, Configuration.DB_PASSWORD);
-		} catch (SQLException e) {
+			CONN = DriverManager.getConnection( Configuration.JDBC_URL, Configuration.DB_USER,
+					Configuration.DB_PASSWORD );
+		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

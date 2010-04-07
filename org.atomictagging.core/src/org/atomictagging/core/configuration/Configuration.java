@@ -29,5 +29,5 @@ public class Configuration {
 	/**
 	 * Directory in with all imported files will be stored.
 	 */
-	public static final String	BASE_DIR	= System.getProperty("user.home") + "/.atomictagging/";
+	public static final String	BASE_DIR	= System.getProperty( "user.home" ) + "/.atomictagging/";
 }

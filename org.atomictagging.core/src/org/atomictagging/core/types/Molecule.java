@@ -19,10 +19,10 @@ public class Molecule implements IMolecule {
 	private final List<String>	tags;
 
 
-	private Molecule(MoleculeBuilder builder) {
+	private Molecule( MoleculeBuilder builder ) {
 		this.id = builder.molId;
-		this.atoms = Collections.unmodifiableList(builder.molAtoms);
-		this.tags = Collections.unmodifiableList(builder.molTags);
+		this.atoms = Collections.unmodifiableList( builder.molAtoms );
+		this.tags = Collections.unmodifiableList( builder.molTags );
 	}
 
 
@@ -76,9 +76,9 @@ public class Molecule implements IMolecule {
 		 * @param id
 		 * @return The builder
 		 */
-		public MoleculeBuilder withId(long id) {
+		public MoleculeBuilder withId( long id ) {
 			if (id < 0) {
-				throw new IllegalArgumentException("ID of a molecule must be a number greater 0.");
+				throw new IllegalArgumentException( "ID of a molecule must be a number greater 0." );
 			}
 
 			molId = id;
@@ -92,15 +92,15 @@ public class Molecule implements IMolecule {
 		 * @param atom
 		 * @return The builder
 		 */
-		public MoleculeBuilder withAtom(IAtom atom) {
+		public MoleculeBuilder withAtom( IAtom atom ) {
 			if (atom == null) {
-				throw new IllegalArgumentException("Atom must not be NULL.");
+				throw new IllegalArgumentException( "Atom must not be NULL." );
 			}
-			if (molAtoms.contains(atom)) {
-				throw new IllegalArgumentException("Duplicate atom <" + atom + "> in molecule.");
+			if (molAtoms.contains( atom )) {
+				throw new IllegalArgumentException( "Duplicate atom <" + atom + "> in molecule." );
 			}
 
-			molAtoms.add(atom);
+			molAtoms.add( atom );
 			return this;
 		}
 
@@ -111,15 +111,15 @@ public class Molecule implements IMolecule {
 		 * @param atoms
 		 * @return The builder
 		 */
-		public MoleculeBuilder withAtoms(List<IAtom> atoms) {
-			if (atoms == null || atoms.contains(null)) {
-				throw new IllegalArgumentException("List of atoms must not be NULL or contain NULL elements.");
+		public MoleculeBuilder withAtoms( List<IAtom> atoms ) {
+			if (atoms == null || atoms.contains( null )) {
+				throw new IllegalArgumentException( "List of atoms must not be NULL or contain NULL elements." );
 			}
 
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withAtom(IAtom).
-			for (IAtom atom : atoms) {
-				withAtom(atom);
+			for ( IAtom atom : atoms ) {
+				withAtom( atom );
 			}
 			return this;
 		}
@@ -131,16 +131,16 @@ public class Molecule implements IMolecule {
 		 * @param tag
 		 * @return The builder
 		 */
-		public MoleculeBuilder withTag(String tag) {
+		public MoleculeBuilder withTag( String tag ) {
 			if (tag == null || tag.isEmpty()) {
-				throw new IllegalArgumentException("A tag must not be NULL or empty.");
+				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
 
-			if (molTags.contains(tag)) {
-				throw new IllegalArgumentException("Duplicate tag <" + tag + "> for molecule.");
+			if (molTags.contains( tag )) {
+				throw new IllegalArgumentException( "Duplicate tag <" + tag + "> for molecule." );
 			}
 
-			molTags.add(tag);
+			molTags.add( tag );
 			return this;
 		}
 
@@ -151,11 +151,11 @@ public class Molecule implements IMolecule {
 		 * @param tags
 		 * @return The builder
 		 */
-		public MoleculeBuilder withTags(List<String> tags) {
+		public MoleculeBuilder withTags( List<String> tags ) {
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withTag(String).
-			for (String tag : tags) {
-				withTag(tag);
+			for ( String tag : tags ) {
+				withTag( tag );
 			}
 			return this;
 		}
@@ -168,13 +168,13 @@ public class Molecule implements IMolecule {
 		 */
 		public Molecule buildWithAtomsAndTags() {
 			if (molAtoms.size() == 0) {
-				throw new IllegalArgumentException("Molecules must have at least one atom.");
+				throw new IllegalArgumentException( "Molecules must have at least one atom." );
 			}
 			if (molTags.size() == 0) {
-				throw new IllegalArgumentException("A molecule must have at least one tag.");
+				throw new IllegalArgumentException( "A molecule must have at least one tag." );
 			}
 
-			return new Molecule(this);
+			return new Molecule( this );
 		}
 
 	}

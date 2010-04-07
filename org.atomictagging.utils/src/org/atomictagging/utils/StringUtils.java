@@ -21,7 +21,7 @@ public class StringUtils {
 	 * @param delimiter
 	 * @return Joined string
 	 */
-	public static String join(final List<String> strings, final String delimiter) {
+	public static String join( final List<String> strings, final String delimiter ) {
 		assert strings != null;
 
 		if (strings.isEmpty()) {
@@ -31,12 +31,12 @@ public class StringUtils {
 		boolean first = true;
 		StringBuilder builder = new StringBuilder();
 
-		for (String string : strings) {
+		for ( String string : strings ) {
 			if (!first) {
-				builder.append(delimiter);
+				builder.append( delimiter );
 			}
 			first = false;
-			builder.append(string);
+			builder.append( string );
 		}
 
 		return builder.toString();

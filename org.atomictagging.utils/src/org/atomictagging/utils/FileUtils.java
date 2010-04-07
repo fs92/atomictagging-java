@@ -24,47 +24,47 @@ public class FileUtils {
 	 * @param source
 	 * @param target
 	 */
-	public static void copyFile(File source, File target) {
+	public static void copyFile( File source, File target ) {
 		if (!source.exists() || !source.canRead()) {
-			throw new IllegalArgumentException("Can't read from given source file: " + source.getAbsolutePath());
+			throw new IllegalArgumentException( "Can't read from given source file: " + source.getAbsolutePath() );
 		}
 		if (!target.exists()) {
 			try {
 				if (!target.createNewFile()) {
-					throw new IllegalArgumentException("Can't write to given target file: " + target.getAbsolutePath());
+					throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath() );
 				}
-			} catch (IOException e) {
-				throw new IllegalArgumentException("Can't write to given target file: " + target.getAbsolutePath(), e);
+			} catch ( IOException e ) {
+				throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath(), e );
 			}
 		}
 
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
 		try {
-			fis = new FileInputStream(source);
-			fos = new FileOutputStream(target);
-		} catch (FileNotFoundException ignore) {
+			fis = new FileInputStream( source );
+			fos = new FileOutputStream( target );
+		} catch ( FileNotFoundException ignore ) {
 			// Was checked previously.
 		}
 
 		if (fis == null || fos == null) {
-			throw new RuntimeException("Failed to create file streams.");
+			throw new RuntimeException( "Failed to create file streams." );
 		}
 
 		try {
 			byte[] buf = new byte[1024];
 			int i = 0;
-			while ((i = fis.read(buf)) != -1) {
-				fos.write(buf, 0, i);
+			while ( ( i = fis.read( buf ) ) != -1 ) {
+				fos.write( buf, 0, i );
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			// FIXME
-			throw new RuntimeException("Failed to copy file.", e);
+			throw new RuntimeException( "Failed to copy file.", e );
 		} finally {
 			try {
 				fis.close();
 				fos.close();
-			} catch (IOException e) {
+			} catch ( IOException e ) {
 				// Nothing we can do, or is there?
 				e.printStackTrace();
 			}

@@ -32,62 +32,62 @@ public class Importer {
 	 * @param file
 	 *            File to import
 	 */
-	public static void importFile(final File file) {
-		String hash = getHashedPath(file);
-		List<String> pathArray = new ArrayList<String>(3);
-		pathArray.add(hash.substring(0, 2));
-		pathArray.add(hash.substring(2, 4));
+	public static void importFile( final File file ) {
+		String hash = getHashedPath( file );
+		List<String> pathArray = new ArrayList<String>( 3 );
+		pathArray.add( hash.substring( 0, 2 ) );
+		pathArray.add( hash.substring( 2, 4 ) );
 
-		File targetDir = new File(Configuration.BASE_DIR + StringUtils.join(pathArray, "/"));
+		File targetDir = new File( Configuration.BASE_DIR + StringUtils.join( pathArray, "/" ) );
 
-		pathArray.add(hash.substring(4));
+		pathArray.add( hash.substring( 4 ) );
 
-		File target = new File(Configuration.BASE_DIR + StringUtils.join(pathArray, "/"));
+		File target = new File( Configuration.BASE_DIR + StringUtils.join( pathArray, "/" ) );
 		try {
 			targetDir.mkdirs();
 			target.createNewFile();
-		} catch (IOException e1) {
+		} catch ( IOException e1 ) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
-			FileUtils.copyFile(file, target);
-		} catch (Exception e) {
+			FileUtils.copyFile( file, target );
+		} catch ( Exception e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		System.out.println("Created file: " + target.getAbsolutePath());
+		System.out.println( "Created file: " + target.getAbsolutePath() );
 
-		IAtom filename = Atom.build().withData(file.getName()).withTag("filename").buildWithDataAndTag();
-		IAtom binRef = Atom.build().withData("/" + StringUtils.join(pathArray, "/")).withTag("x-fileref").withTag(
-				"x-filetype-unknown").buildWithDataAndTag();
-		IMolecule molecule = Molecule.build().withAtom(filename).withAtom(binRef).withTag("generic-file")
+		IAtom filename = Atom.build().withData( file.getName() ).withTag( "filename" ).buildWithDataAndTag();
+		IAtom binRef = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag( "x-fileref" )
+				.withTag( "x-filetype-unknown" ).buildWithDataAndTag();
+		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();
-		DbWriter.write(molecule);
+		DbWriter.write( molecule );
 	}
 
 
 	// TODO We need to hash the files content of course, not the path.
-	private static String getHashedPath(final File file) {
+	private static String getHashedPath( final File file ) {
 
 		String hash = null;
 		MessageDigest md;
 		try {
-			md = MessageDigest.getInstance("MD5");
-			byte[] thedigest = md.digest(file.getAbsolutePath().getBytes("UTF-8"));
+			md = MessageDigest.getInstance( "MD5" );
+			byte[] thedigest = md.digest( file.getAbsolutePath().getBytes( "UTF-8" ) );
 
-			BigInteger bigInt = new BigInteger(1, thedigest);
-			hash = bigInt.toString(16);
+			BigInteger bigInt = new BigInteger( 1, thedigest );
+			hash = bigInt.toString( 16 );
 			// Now we need to zero pad it if you actually want the full 32 chars.
-			while (hash.length() < 32) {
+			while ( hash.length() < 32 ) {
 				hash = "0" + hash;
 			}
 
-		} catch (NoSuchAlgorithmException e) {
+		} catch ( NoSuchAlgorithmException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+		} catch ( UnsupportedEncodingException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

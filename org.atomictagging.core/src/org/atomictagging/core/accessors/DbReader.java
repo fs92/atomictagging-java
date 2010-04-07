@@ -27,16 +27,15 @@ public class DbReader {
 	/**
 	 * Read all molecules from the DB that apply to the given filters.
 	 * 
-	 * @param moleculeTags
-	 * @param atomTags
-	 * @param atomContent
+	 * @param tags
+	 * @param content
 	 * @return List of molecules as read from the DB.
 	 */
-	public static List<IMolecule> read(List<String> moleculeTags, List<String> atomContent) {
+	public static List<IMolecule> read(List<String> tags, List<String> content) {
 		List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			String tagFilter = StringUtils.join(moleculeTags, " AND tag ='");
+			String tagFilter = StringUtils.join(tags, " AND tag ='");
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
@@ -64,9 +63,9 @@ public class DbReader {
 			PreparedStatement readMolecules = DB.CONN.prepareStatement(moleculeSQL);
 
 			String atomContentFilter = "";
-			if (atomContent.size() > 0) {
-				for (String content : atomContent) {
-					atomContentFilter += " AND data = '" + content + "'";
+			if (content.size() > 0) {
+				for (String data : content) {
+					atomContentFilter += " AND data = '" + data + "'";
 				}
 			}
 
@@ -84,15 +83,13 @@ public class DbReader {
 			MoleculeBuilder builder = Molecule.build();
 			long moleculeId = 0;
 
+			// Build molecules with all their atoms
 			while (moleculeResult.next()) {
 				if (moleculeId != moleculeResult.getLong("moleculeid")) {
 
 					// Whenever the molecule ID changes, but not in first iteration
 					if (moleculeId != 0) {
-						try {
-							result.add(builder.buildWithAtomsAndTags());
-						} catch (Exception e) {
-						}
+						result.add(builder.buildWithAtomsAndTags());
 						builder = Molecule.build();
 					}
 

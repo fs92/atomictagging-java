@@ -90,7 +90,9 @@ public class Shell {
 			if (filter.startsWith( "a=" )) {
 				atomContents.add( filter.substring( 2 ) );
 			} else {
-				tags.add( filter );
+				for ( String tag : filter.split( "/" ) ) {
+					tags.add( tag );
+				}
 			}
 		}
 

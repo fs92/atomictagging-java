@@ -35,26 +35,30 @@ public class DbReader {
 		List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			String tagFilter = StringUtils.join( tags, " AND tag ='" );
+			String tagFilter = StringUtils.join( tags, "' OR tag ='" );
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
 			if (!tagFilter.isEmpty()) {
+				// TODO stephan@2010-04-07 My SQL got rusty. There must be a better solution than this!
 				moleculeSQL =
 				// Select molecules with all their tags
 				"SELECT molecules_moleculeid AS moleculeid, tag "
 						+ "FROM molecule_has_tags JOIN tags ON (tags_tagid = tagid) "
 						+ "WHERE molecules_moleculeid IN ("
-						// Molecules that contain atoms that are tagged with this tag
+						// Molecules that contain atoms that are tagged with this/these tag(s)
 						+ "SELECT ma.molecules_moleculeid AS moleculeid "
 						+ "FROM tags JOIN atom_has_tags AS at ON (tagid = at.tags_tagid) "
 						+ "JOIN molecule_has_atoms AS ma ON (at.atoms_atomid = ma.atoms_atomid) " + "WHERE tag = '"
 						+ tagFilter
-						+ "' UNION "
-						// Molecules that are tagged with this tag
+						+ "' GROUP BY molecules_moleculeid HAVING COUNT(molecules_moleculeid) = "
+						+ tags.size()
+						+ " UNION "
+						// Molecules that are tagged with this/these tag(s)
 						+ "SELECT mt.molecules_moleculeid AS moleculeid "
 						+ "FROM tags JOIN molecule_has_tags AS mt ON (tagid = mt.tags_tagid) " + "WHERE tag = '"
-						+ tagFilter + "') ORDER BY moleculeid;";
+						+ tagFilter + "' GROUP BY molecules_moleculeid HAVING COUNT(molecules_moleculeid) = "
+						+ tags.size() + ") ORDER BY moleculeid;";
 			} else {
 				moleculeSQL = "SELECT moleculeid, tag " + "FROM molecules JOIN molecule_has_tags JOIN tags "
 						+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid";

@@ -83,21 +83,18 @@ public class Shell {
 			filter = input.substring(3);
 		}
 
-		List<String> moleculeTags = new ArrayList<String>();
-		List<String> atomTags = new ArrayList<String>();
+		List<String> tags = new ArrayList<String>();
 		List<String> atomContents = new ArrayList<String>();
 
 		if (!filter.isEmpty()) {
-			if (filter.startsWith("a:")) {
-				atomTags.add(filter.substring(2));
-			} else if (filter.startsWith("a=")) {
+			if (filter.startsWith("a=")) {
 				atomContents.add(filter.substring(2));
 			} else {
-				moleculeTags.add(filter);
+				tags.add(filter);
 			}
 		}
 
-		List<IMolecule> molecules = DbReader.read(moleculeTags, atomTags, atomContents);
+		List<IMolecule> molecules = DbReader.read(tags, atomContents);
 
 		for (IMolecule molecule : molecules) {
 			System.out.println(molecule.getId() + "\t" + molecule.getTags());

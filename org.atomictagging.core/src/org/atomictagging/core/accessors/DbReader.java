@@ -15,6 +15,7 @@ import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
 import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
+import org.atomictagging.utils.StringUtils;
 
 /**
  * API class to read from the DB.
@@ -31,39 +32,36 @@ public class DbReader {
 	 * @param atomContent
 	 * @return List of molecules as read from the DB.
 	 */
-	public static List<IMolecule> read(List<String> moleculeTags, List<String> atomTags, List<String> atomContent) {
+	public static List<IMolecule> read(List<String> moleculeTags, List<String> atomContent) {
 		List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			// String atomTagFilter = "";
-			// if (atomTags.size() > 0) {
-			// List<String> filter = new ArrayList<String>();
-			//
-			// for (String tag : atomTags) {
-			// filter.add("tag = '" + tag + "'");
-			// }
-			//
-			// atomTagFilter = " AND (" + join(filter, " OR ") + ")";
-			// }
-			//
-			// String foo =
-			// "SELECT atomid FROM atoms JOIN atom_has_tags JOIN tags WHERE atomid = atoms_atomid AND tags_tagid = tagid"
-			// + atomTagFilter;
-
-			String moleculeTagFilter = "";
-			if (moleculeTags.size() > 0) {
-				for (String tag : moleculeTags) {
-					moleculeTagFilter += " AND tag = '" + tag + "'";
-				}
-			}
-
-			String mSQL = "SELECT moleculeid, tag " + "FROM molecules JOIN molecule_has_tags JOIN tags "
-					+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid" + moleculeTagFilter;
-
-			// System.err.println("molecules: " + mSQL);
+			String tagFilter = StringUtils.join(moleculeTags, " AND tag ='");
+			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
-			PreparedStatement readMolecules = DB.CONN.prepareStatement(mSQL);
+			if (!tagFilter.isEmpty()) {
+				moleculeSQL =
+				// Select molecules with all their tags
+				"SELECT molecules_moleculeid AS moleculeid, tag "
+						+ "FROM molecule_has_tags JOIN tags ON (tags_tagid = tagid) "
+						+ "WHERE molecules_moleculeid IN ("
+						// Molecules that contain atoms that are tagged with this tag
+						+ "SELECT ma.molecules_moleculeid AS moleculeid "
+						+ "FROM tags JOIN atom_has_tags AS at ON (tagid = at.tags_tagid) "
+						+ "JOIN molecule_has_atoms AS ma ON (at.atoms_atomid = ma.atoms_atomid) " + "WHERE tag = '"
+						+ tagFilter
+						+ "' UNION "
+						// Molecules that are tagged with this tag
+						+ "SELECT mt.molecules_moleculeid AS moleculeid "
+						+ "FROM tags JOIN molecule_has_tags AS mt ON (tagid = mt.tags_tagid) " + "WHERE tag = '"
+						+ tagFilter + "') ORDER BY moleculeid;";
+			} else {
+				moleculeSQL = "SELECT moleculeid, tag " + "FROM molecules JOIN molecule_has_tags JOIN tags "
+						+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid";
+			}
+
+			PreparedStatement readMolecules = DB.CONN.prepareStatement(moleculeSQL);
 
 			String atomContentFilter = "";
 			if (atomContent.size() > 0) {
@@ -115,11 +113,7 @@ public class DbReader {
 
 			// Only if there was at least one molecule
 			if (moleculeId != 0) {
-				// result.add(builder.buildWithAtomsAndTags());
-				try {
-					result.add(builder.buildWithAtomsAndTags());
-				} catch (Exception e) {
-				}
+				result.add(builder.buildWithAtomsAndTags());
 			}
 
 		} catch (SQLException e) {

@@ -84,19 +84,14 @@ public class Shell {
 		}
 
 		List<String> tags = new ArrayList<String>();
-		List<String> atomContents = new ArrayList<String>();
 
 		if (!filter.isEmpty()) {
-			if (filter.startsWith( "a=" )) {
-				atomContents.add( filter.substring( 2 ) );
-			} else {
-				for ( String tag : filter.split( "/" ) ) {
-					tags.add( tag );
-				}
+			for ( String tag : filter.split( "/" ) ) {
+				tags.add( tag );
 			}
 		}
 
-		List<IMolecule> molecules = DbReader.read( tags, atomContents );
+		List<IMolecule> molecules = DbReader.read( tags );
 
 		for ( IMolecule molecule : molecules ) {
 			System.out.println( molecule.getId() + "\t" + molecule.getTags() );

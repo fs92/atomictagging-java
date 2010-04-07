@@ -25,17 +25,17 @@ import org.atomictagging.utils.StringUtils;
 public class DbReader {
 
 	/**
-	 * Read all molecules from the DB that apply to the given filters.
+	 * Read all molecules from the DB that are either tagged with the given tags or contain an atom that is tagged with
+	 * those tags.
 	 * 
 	 * @param tags
-	 * @param content
 	 * @return List of molecules as read from the DB.
 	 */
-	public static List<IMolecule> read( List<String> tags, List<String> content ) {
+	public static List<IMolecule> read( List<String> tags ) {
 		List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			String tagFilter = StringUtils.join( tags, "' OR tag ='" );
+			String tagFilter = StringUtils.join( tags, "' OR tag = '" );
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
@@ -60,28 +60,17 @@ public class DbReader {
 						+ tagFilter + "' GROUP BY molecules_moleculeid HAVING COUNT(molecules_moleculeid) = "
 						+ tags.size() + ") ORDER BY moleculeid;";
 			} else {
-				moleculeSQL = "SELECT moleculeid, tag " + "FROM molecules JOIN molecule_has_tags JOIN tags "
+				moleculeSQL = "SELECT moleculeid, tag FROM molecules JOIN molecule_has_tags JOIN tags "
 						+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid";
 			}
 
 			PreparedStatement readMolecules = DB.CONN.prepareStatement( moleculeSQL );
 
-			String atomContentFilter = "";
-			if (content.size() > 0) {
-				for ( String data : content ) {
-					atomContentFilter += " AND data = '" + data + "'";
-				}
-			}
-
-			// FIXME SQL injection! Fix this!!
-			String sql = "SELECT ma.atoms_atomid AS atomid "
+			String atomSQL = "SELECT ma.atoms_atomid AS atomid "
 					+ "FROM molecule_has_atoms AS ma JOIN atom_has_tags AS at JOIN tags "
 					+ "WHERE at.atoms_atomid = at.tags_tagid AND tags_tagid = tagid AND molecules_moleculeid = ? "
-					+ /* atomTagFilter + atomContentFilter + */" GROUP BY ma.atoms_atomid";
-
-			// System.err.println("atoms: " + sql);
-
-			PreparedStatement readAtoms = DB.CONN.prepareStatement( sql );
+					+ "GROUP BY ma.atoms_atomid";
+			PreparedStatement readAtoms = DB.CONN.prepareStatement( atomSQL );
 
 			ResultSet moleculeResult = readMolecules.executeQuery();
 			MoleculeBuilder builder = Molecule.build();

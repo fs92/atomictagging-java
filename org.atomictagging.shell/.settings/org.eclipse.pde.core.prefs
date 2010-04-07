@@ -1,1 +1,4 @@
-../../settings/org.eclipse.pde.core.prefs
+#Sat Mar 13 20:56:05 CET 2010
+eclipse.preferences.version=1
+pluginProject.extensions=false
+resolve.requirebundle=false

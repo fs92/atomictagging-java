@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.types.Atom;
+import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
@@ -60,7 +61,7 @@ public class Importer {
 		System.out.println( "Created file: " + target.getAbsolutePath() );
 
 		IAtom filename = Atom.build().withData( file.getName() ).withTag( "filename" ).buildWithDataAndTag();
-		IAtom binRef = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag( "x-fileref" )
+		IAtom binRef = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag( CoreTags.FILEREF_TAG )
 				.withTag( "x-filetype-unknown" ).buildWithDataAndTag();
 		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();

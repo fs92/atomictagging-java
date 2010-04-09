@@ -49,9 +49,16 @@ public class ListCommand extends AbstractCommand {
 	public int handleInput( String input, PrintStream stdout ) {
 		List<String> tags = new ArrayList<String>();
 
-		if (!input.isEmpty()) {
-			for ( String tag : input.split( "/" ) ) {
-				if (!tag.isEmpty()) {
+		String scope = shell.getEnvironment( "scope" );
+		scope = ( scope == null ) ? "" : scope;
+
+		if ( input != null && !input.isEmpty() ) {
+			scope += "/" + input;
+		}
+
+		if ( !scope.isEmpty() ) {
+			for ( String tag : scope.split( "/" ) ) {
+				if ( !tag.isEmpty() ) {
 					tags.add( tag );
 				}
 			}

@@ -31,6 +31,15 @@ public interface IShell {
 
 
 	/**
+	 * Write a value to the shells environment. Existing keys will be overwritten.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	void setEnvironment( String key, String value );
+
+
+	/**
 	 * Gets the command that was registered using the given key.
 	 * 
 	 * @param commandString

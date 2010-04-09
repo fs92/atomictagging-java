@@ -15,6 +15,7 @@ import org.atomictagging.shell.commands.HelpCommand;
 import org.atomictagging.shell.commands.ICommand;
 import org.atomictagging.shell.commands.ImportCommand;
 import org.atomictagging.shell.commands.ListCommand;
+import org.atomictagging.shell.commands.SetScopeCommand;
 import org.atomictagging.shell.commands.ShowCommand;
 import org.atomictagging.shell.commands.TestDataCommand;
 
@@ -34,6 +35,7 @@ public class Shell implements IShell {
 		shell.register( new TestDataCommand( shell ) );
 		shell.register( new ShowCommand( shell ) );
 		shell.register( new ImportCommand( shell ) );
+		shell.register( new SetScopeCommand( shell ) );
 		shell.run();
 	}
 
@@ -48,6 +50,16 @@ public class Shell implements IShell {
 
 
 	@Override
+	public void setEnvironment( final String key, final String value ) {
+		if ( key == null || value == null ) {
+			return;
+		}
+
+		environment.put( key, value );
+	}
+
+
+	@Override
 	public void register( final ICommand command ) {
 		commands.put( command.getCommandString(), command );
 	}
@@ -55,7 +67,7 @@ public class Shell implements IShell {
 
 	@Override
 	public ICommand getCommand( final String commandString ) {
-		if (commands.containsKey( commandString )) {
+		if ( commands.containsKey( commandString ) ) {
 			return commands.get( commandString );
 		}
 		return null;
@@ -76,10 +88,10 @@ public class Shell implements IShell {
 			printPrompt();
 			String input = readInput();
 
-			if (input == null || input.isEmpty()) {
+			if ( input == null || input.isEmpty() ) {
 				continue;
 
-			} else if (input.trim().equals( "quit" ) || input.trim().equals( "exit" )) {
+			} else if ( input.trim().equals( "quit" ) || input.trim().equals( "exit" ) ) {
 				run = false;
 
 			} else {
@@ -96,15 +108,15 @@ public class Shell implements IShell {
 		String command = parts[0];
 
 		String params = "";
-		if (parts.length == 2) {
+		if ( parts.length == 2 ) {
 			params = parts[1];
 		}
 
-		if (command.isEmpty()) {
+		if ( command.isEmpty() ) {
 			return;
 		}
 
-		if (commands.containsKey( command )) {
+		if ( commands.containsKey( command ) ) {
 			commands.get( command ).handleInput( params, System.out );
 		} else {
 			System.out.println( "Command \"" + command + "\" not found." );
@@ -127,8 +139,10 @@ public class Shell implements IShell {
 	}
 
 
-	private static void printPrompt() {
-		System.out.print( "> " );
+	private void printPrompt() {
+		String scope = getEnvironment( "scope" );
+		scope = ( scope == null ) ? "" : scope;
+		System.out.print( scope + "> " );
 	}
 
 

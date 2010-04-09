@@ -153,6 +153,11 @@ public class DbReader {
 				builder.withAtom( readAtom( moleculeResult.getLong( "atoms_atomid" ) ) );
 			}
 
+			// No molecule found
+			if (first) {
+				return null;
+			}
+
 			return builder.buildWithAtomsAndTags();
 		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block

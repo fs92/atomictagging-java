@@ -180,7 +180,14 @@ public class DbReader {
 	}
 
 
-	private static IAtom readAtom( long atomId ) throws SQLException {
+	/**
+	 * Get the atom with the specified ID from the database.
+	 * 
+	 * @param atomId
+	 * @return A consistent atom or null if no atom was found with the given ID
+	 * @throws SQLException
+	 */
+	public static IAtom readAtom( long atomId ) throws SQLException {
 		readAtom.setLong( 1, atomId );
 		ResultSet atomResult = readAtom.executeQuery();
 

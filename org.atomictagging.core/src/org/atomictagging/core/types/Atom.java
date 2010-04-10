@@ -32,6 +32,15 @@ public class Atom implements IAtom {
 	}
 
 
+	public AtomBuilder modify() {
+		AtomBuilder builder = new AtomBuilder();
+		builder.atomId = getId();
+		builder.atomData = getData();
+		builder.atomTags = getTags();
+		return builder;
+	}
+
+
 	@Override
 	public long getId() {
 		return id;
@@ -61,9 +70,9 @@ public class Atom implements IAtom {
 	 * @author Stephan Mann
 	 */
 	public static class AtomBuilder {
-		private long				atomId;
-		private String				atomData;
-		private final List<String>	atomTags	= new ArrayList<String>();
+		private long			atomId;
+		private String			atomData;
+		private List<String>	atomTags	= new ArrayList<String>();
 
 
 		/**

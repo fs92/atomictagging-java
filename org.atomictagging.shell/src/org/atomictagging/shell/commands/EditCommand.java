@@ -12,12 +12,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.shell.IShell;
+import org.atomictagging.utils.StringUtils;
 
 /**
  * A command to edit atoms and molecules.
@@ -66,7 +69,8 @@ public class EditCommand extends AbstractModifyCommand {
 		try {
 			temp = File.createTempFile( "atomictagging", ".tmp" );
 			writer = new BufferedWriter( new FileWriter( temp ) );
-			writer.write( atom.getData() );
+			writer.write( "Tags: " + StringUtils.join( atom.getTags(), ", " ) );
+			writer.write( "\nData:\n" + atom.getData() );
 		} catch ( IOException x ) {
 			System.err.println( x );
 		} finally {
@@ -99,12 +103,30 @@ public class EditCommand extends AbstractModifyCommand {
 		}
 
 		StringBuilder builder = new StringBuilder();
+		List<String> tags = new ArrayList<String>();
 
 		try {
 			BufferedReader reader = new BufferedReader( new FileReader( temp ) );
 			String line = null;
+			boolean startData = false;
+
 			while ( ( line = reader.readLine() ) != null ) {
-				builder.append( line );
+				if (line.startsWith( "Tags:" )) {
+					String[] newTags = line.substring( 5 ).split( "," );
+					for ( String tag : newTags ) {
+						tags.add( tag.trim() );
+					}
+					continue;
+				}
+
+				if (line.startsWith( "Data:" )) {
+					startData = true;
+					continue;
+				}
+
+				if (startData) {
+					builder.append( line );
+				}
 			}
 		} catch ( FileNotFoundException e ) {
 			// TODO Auto-generated catch block
@@ -116,9 +138,11 @@ public class EditCommand extends AbstractModifyCommand {
 
 		AtomBuilder aBuilder = atom.modify();
 		aBuilder.withData( builder.toString() );
+		aBuilder.replaceTags( tags );
 		DbModifier.modify( aBuilder.buildWithDataAndTag() );
 
 		temp.delete();
+
 		return 0;
 	}
 

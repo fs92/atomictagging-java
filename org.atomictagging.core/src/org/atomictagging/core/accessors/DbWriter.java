@@ -97,7 +97,10 @@ public class DbWriter {
 	private static PreparedStatement	checkAtom;
 	private static PreparedStatement	insertAtom;
 	private static PreparedStatement	checkAtomTags;
-	private static PreparedStatement	insertAtomTags;
+	/**
+	 * FIXME That needs to me moved somewhere else.
+	 */
+	public static PreparedStatement		insertAtomTags;
 	private static PreparedStatement	checkTag;
 	private static PreparedStatement	insertTag;
 
@@ -164,7 +167,14 @@ public class DbWriter {
 	}
 
 
-	private static long writeTag( String tag ) throws SQLException {
+	/**
+	 * FIXME That needs to be moved somewhere else.
+	 * 
+	 * @param tag
+	 * @return The tag ID
+	 * @throws SQLException
+	 */
+	public static long writeTag( String tag ) throws SQLException {
 		assert tag != null && !tag.isEmpty();
 
 		checkTag.setString( 1, tag );

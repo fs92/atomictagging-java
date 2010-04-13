@@ -1,6 +1,7 @@
 package org.atomictagging.core.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +34,8 @@ public class Atom implements IAtom {
 
 
 	public AtomBuilder modify() {
+		// We don't need to do the checks. The atom must have been
+		// consistent since there is only one way to create it.
 		AtomBuilder builder = new AtomBuilder();
 		builder.atomId = getId();
 		builder.atomData = getData();
@@ -55,13 +58,63 @@ public class Atom implements IAtom {
 
 	@Override
 	public List<String> getTags() {
-		return tags;
+		return Collections.unmodifiableList( tags );
 	}
 
 
 	@Override
 	public String toString() {
 		return "Atom: id=" + id + "; data=" + data + "; tags=" + tags;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ( ( data == null ) ? 0 : data.hashCode() );
+		result = prime * result + (int) ( id ^ ( id >>> 32 ) );
+		result = prime * result + ( ( tags == null ) ? 0 : tags.hashCode() );
+		return result;
+	}
+
+
+	@Override
+	public boolean equals( Object obj ) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Atom other = (Atom) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals( other.data )) {
+			return false;
+		}
+		if (id != other.id) {
+			return false;
+		}
+		if (tags == null && other.tags != null) {
+			return false;
+		}
+
+		// The order of the tags is not important. See List.equals()
+		List<String> me = new ArrayList<String>( getTags() );
+		List<String> you = new ArrayList<String>( other.getTags() );
+		Collections.sort( me );
+		Collections.sort( you );
+
+		if (!me.equals( you )) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -139,6 +192,19 @@ public class Atom implements IAtom {
 			for ( String tag : tags ) {
 				withTag( tag );
 			}
+			return this;
+		}
+
+
+		/**
+		 * Replace whatever tags have been set so far with the tags provided.
+		 * 
+		 * @param tags
+		 * @return The builder
+		 */
+		public AtomBuilder replaceTags( List<String> tags ) {
+			this.atomTags = new ArrayList<String>();
+			withTags( tags );
 			return this;
 		}
 

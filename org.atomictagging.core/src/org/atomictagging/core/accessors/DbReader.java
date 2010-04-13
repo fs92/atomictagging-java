@@ -115,10 +115,13 @@ public class DbReader {
 	}
 
 	private static PreparedStatement	readMolecule;
+	private static PreparedStatement	readMoleculeTags;
 	static {
 		try {
 			readMolecule = DB.CONN
 					.prepareStatement( "SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?" );
+			readMoleculeTags = DB.CONN
+					.prepareStatement( "SELECT tagid, tag FROM tags JOIN molecule_has_tags WHERE tagid = tags_tagid AND molecules_moleculeid = ?" );
 		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -145,12 +148,16 @@ public class DbReader {
 
 				if (first) {
 					builder.withId( moleculeResult.getLong( "molecules_moleculeid" ) );
-					// TODO Read the tags from the database.
-					builder.withTag( "x-notag" );
 					first = false;
 				}
 
 				builder.withAtom( readAtom( moleculeResult.getLong( "atoms_atomid" ) ) );
+			}
+
+			readMoleculeTags.setLong( 1, moleculeId );
+			ResultSet moleculeTagResult = readMoleculeTags.executeQuery();
+			while ( moleculeTagResult.next() ) {
+				builder.withTag( moleculeTagResult.getString( "tag" ) );
 			}
 
 			// No molecule found

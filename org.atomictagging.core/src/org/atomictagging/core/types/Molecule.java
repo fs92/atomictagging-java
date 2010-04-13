@@ -36,6 +36,17 @@ public class Molecule implements IMolecule {
 	}
 
 
+	public MoleculeBuilder modify() {
+		// We don't need to do the checks. The molecule must have been
+		// consistent since there is only one way to create it.
+		MoleculeBuilder builder = new MoleculeBuilder();
+		builder.molId = getId();
+		builder.molTags = getTags();
+		builder.molAtoms = getAtoms();
+		return builder;
+	}
+
+
 	@Override
 	public long getId() {
 		return id;
@@ -65,9 +76,9 @@ public class Molecule implements IMolecule {
 	 * @author Stephan Mann
 	 */
 	public static class MoleculeBuilder {
-		private long				molId;
-		private final List<IAtom>	molAtoms	= new ArrayList<IAtom>();
-		private final List<String>	molTags		= new ArrayList<String>();
+		private long			molId;
+		private List<IAtom>		molAtoms	= new ArrayList<IAtom>();
+		private List<String>	molTags		= new ArrayList<String>();
 
 
 		/**
@@ -157,6 +168,19 @@ public class Molecule implements IMolecule {
 			for ( String tag : tags ) {
 				withTag( tag );
 			}
+			return this;
+		}
+
+
+		/**
+		 * Replace whatever tags have been set so far with the tags provided.
+		 * 
+		 * @param tags
+		 * @return The builder
+		 */
+		public MoleculeBuilder replaceTags( List<String> tags ) {
+			this.molTags = new ArrayList<String>();
+			withTags( tags );
 			return this;
 		}
 

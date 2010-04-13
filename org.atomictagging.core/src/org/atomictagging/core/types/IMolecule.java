@@ -2,6 +2,8 @@ package org.atomictagging.core.types;
 
 import java.util.List;
 
+import org.atomictagging.core.types.Molecule.MoleculeBuilder;
+
 /**
  * Representation of a molecule.
  * 
@@ -32,4 +34,11 @@ public interface IMolecule {
 	 */
 	List<String> getTags();
 
+
+	/**
+	 * Modify a molecule.
+	 * 
+	 * @return A MoleculeBuilder object containing the data of the molecule.
+	 */
+	MoleculeBuilder modify();
 }

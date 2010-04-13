@@ -18,7 +18,9 @@ import java.util.List;
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Atom.AtomBuilder;
+import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.shell.IShell;
 import org.atomictagging.utils.StringUtils;
 
@@ -142,15 +144,103 @@ public class EditCommand extends AbstractModifyCommand {
 		DbModifier.modify( aBuilder.buildWithDataAndTag() );
 
 		temp.delete();
-
 		return 0;
 	}
 
 
 	@Override
 	protected int handleMolecule( long id, PrintStream stdout ) {
-		stdout.println( "Not yet implemented" );
-		return 1;
+		IMolecule molecule = null;
+		molecule = DbReader.read( id );
+
+		if (molecule == null) {
+			stdout.println( "No molecule found with the given ID " + id );
+			return 1;
+		}
+
+		File temp = null;
+		BufferedWriter writer = null;
+		try {
+			temp = File.createTempFile( "atomictagging", ".tmp" );
+			writer = new BufferedWriter( new FileWriter( temp ) );
+			writer.write( "Tags: " + StringUtils.join( molecule.getTags(), ", " ) );
+			writer.write( "\nAtoms: " );
+
+			List<String> atomIds = new ArrayList<String>();
+			for ( IAtom atom : molecule.getAtoms() ) {
+				atomIds.add( String.valueOf( atom.getId() ) );
+			}
+
+			writer.write( StringUtils.join( atomIds, ", " ) );
+		} catch ( IOException x ) {
+			System.err.println( x );
+		} finally {
+			if (writer != null) {
+				try {
+					writer.flush();
+					writer.close();
+				} catch ( IOException ignore ) {
+				}
+			}
+
+		}
+
+		// This can't happen, can it?
+		if (temp == null) {
+			stdout.println( "Failed to create temporarry file." );
+			return 1;
+		}
+
+		ProcessBuilder pb = new ProcessBuilder( "gedit", temp.getAbsolutePath() );
+		try {
+			Process p = pb.start();
+			p.waitFor();
+		} catch ( IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch ( InterruptedException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<String> tags = new ArrayList<String>();
+		List<String> atoms = new ArrayList<String>();
+
+		try {
+			BufferedReader reader = new BufferedReader( new FileReader( temp ) );
+			String line = null;
+
+			while ( ( line = reader.readLine() ) != null ) {
+				if (line.startsWith( "Tags:" )) {
+					String[] newTags = line.substring( 5 ).split( "," );
+					for ( String tag : newTags ) {
+						tags.add( tag.trim() );
+					}
+					continue;
+				}
+
+				if (line.startsWith( "Atoms:" )) {
+					String[] newAtoms = line.substring( 6 ).split( "," );
+					for ( String atom : newAtoms ) {
+						atoms.add( atom.trim() );
+					}
+					continue;
+				}
+			}
+		} catch ( FileNotFoundException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch ( IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		MoleculeBuilder mBuilder = molecule.modify();
+		mBuilder.replaceTags( tags );
+		DbModifier.modify( mBuilder.buildWithAtomsAndTags() );
+
+		temp.delete();
+		return 0;
 	}
 
 }

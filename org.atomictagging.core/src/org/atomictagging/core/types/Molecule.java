@@ -55,13 +55,13 @@ public class Molecule implements IMolecule {
 
 	@Override
 	public List<IAtom> getAtoms() {
-		return atoms;
+		return new ArrayList<IAtom>( atoms );
 	}
 
 
 	@Override
 	public List<String> getTags() {
-		return tags;
+		return new ArrayList<String>( tags );
 	}
 
 
@@ -132,6 +132,17 @@ public class Molecule implements IMolecule {
 			for ( IAtom atom : atoms ) {
 				withAtom( atom );
 			}
+			return this;
+		}
+
+
+		/**
+		 * Remove whatever atoms have been set so far.
+		 * 
+		 * @return The builder
+		 */
+		public MoleculeBuilder deleteAtoms() {
+			molAtoms = new ArrayList<IAtom>();
 			return this;
 		}
 

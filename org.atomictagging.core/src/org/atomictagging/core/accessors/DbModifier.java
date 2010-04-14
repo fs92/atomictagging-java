@@ -97,8 +97,8 @@ public class DbModifier {
 			curTags.removeAll( reference.getTags() );
 			refTags.removeAll( molecule.getTags() );
 
-			// curTags now contains tags that need to be added to the atom.
-			// refTags now contains tags that need to be removed from the atom.
+			// curTags now contains tags that need to be added to the molecule.
+			// refTags now contains tags that need to be removed from the molecule.
 
 			// For all tags in curTags, check whether tag exists and create link to atom.
 			PreparedStatement insertTags = DB.CONN
@@ -122,8 +122,37 @@ public class DbModifier {
 				removeTag.execute();
 			}
 
+			// Update the atoms
+			List<IAtom> curAtoms = new ArrayList<IAtom>( molecule.getAtoms() );
+			List<IAtom> refAtoms = new ArrayList<IAtom>( reference.getAtoms() );
+
+			curAtoms.removeAll( reference.getAtoms() );
+			refAtoms.removeAll( molecule.getAtoms() );
+
+			// curAtoms now contains atoms that need to be added to the molecule.
+			// refAtoms now contains atoms that need to be removed from the molecule.
+
+			PreparedStatement addAtom = DB.CONN
+					.prepareStatement( "INSERT INTO molecule_has_atoms (molecules_moleculeid, atoms_atomid) VALUES (?, ?)" );
+			addAtom.setLong( 1, molecule.getId() );
+
+			for ( IAtom atom : curAtoms ) {
+				addAtom.setLong( 2, atom.getId() );
+				addAtom.execute();
+			}
+
+			PreparedStatement removeAtom = DB.CONN
+					.prepareStatement( "DELETE FROM molecule_has_atoms WHERE molecules_moleculeid = ? AND atoms_atomid = ?" );
+			removeAtom.setLong( 1, molecule.getId() );
+
+			for ( IAtom atom : refAtoms ) {
+				removeAtom.setLong( 2, atom.getId() );
+				removeAtom.execute();
+			}
+
 			// TODO check for obsolete tags that need to be removed.
-			// TODO update the atoms
+			// TODO check for orphan atoms that need to be removed
+			// TODO all this needs to be a transaction and of course we remove orphan atoms only at the users request
 		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

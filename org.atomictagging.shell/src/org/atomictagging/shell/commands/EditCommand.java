@@ -237,9 +237,31 @@ public class EditCommand extends AbstractModifyCommand {
 
 		MoleculeBuilder mBuilder = molecule.modify();
 		mBuilder.replaceTags( tags );
+		mBuilder.deleteAtoms();
+
+		for ( String atomId : atoms ) {
+			try {
+				IAtom atom = DbReader.readAtom( Long.parseLong( atomId ) );
+
+				if (atom == null) {
+					stdout.println( "Unknown atom with ID: " + atomId );
+					return 1;
+				}
+
+				mBuilder.withAtom( atom );
+			} catch ( NumberFormatException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch ( SQLException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				temp.delete();
+			}
+		}
+
 		DbModifier.modify( mBuilder.buildWithAtomsAndTags() );
 
-		temp.delete();
 		return 0;
 	}
 

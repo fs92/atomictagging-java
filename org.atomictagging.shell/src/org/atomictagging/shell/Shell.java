@@ -151,7 +151,7 @@ public class Shell implements IShell {
 
 
 	private static void printWelcomeMessage() {
-		System.out.println( "Welcome to AtomicTagging Shell version 0.0.2" );
+		System.out.println( "Welcome to AtomicTagging Shell version 0.0.3" );
 		System.out.println( "Type 'help' to get startet." );
 	}
 

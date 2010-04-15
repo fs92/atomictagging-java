@@ -66,25 +66,7 @@ public class EditCommand extends AbstractModifyCommand {
 			return 1;
 		}
 
-		File temp = null;
-		BufferedWriter writer = null;
-		try {
-			temp = File.createTempFile( "atomictagging", ".tmp" );
-			writer = new BufferedWriter( new FileWriter( temp ) );
-			writer.write( "Tags: " + StringUtils.join( atom.getTags(), ", " ) );
-			writer.write( "\nData:\n" + atom.getData() );
-		} catch ( IOException x ) {
-			System.err.println( x );
-		} finally {
-			if (writer != null) {
-				try {
-					writer.flush();
-					writer.close();
-				} catch ( IOException ignore ) {
-				}
-			}
-
-		}
+		File temp = writeAtomTempFile( atom );
 
 		// This can't happen, can it?
 		if (temp == null) {
@@ -92,18 +74,22 @@ public class EditCommand extends AbstractModifyCommand {
 			return 1;
 		}
 
-		ProcessBuilder pb = new ProcessBuilder( "gedit", temp.getAbsolutePath() );
-		try {
-			Process p = pb.start();
-			p.waitFor();
-		} catch ( IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch ( InterruptedException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		openEditorAndWait( temp );
 
+		AtomBuilder aBuilder = getAtomFromFile( atom.modify(), temp );
+		DbModifier.modify( aBuilder.buildWithDataAndTag() );
+
+		temp.delete();
+		return 0;
+	}
+
+
+	/**
+	 * @param aBuilder
+	 * @param temp
+	 * @return
+	 */
+	static AtomBuilder getAtomFromFile( AtomBuilder aBuilder, File temp ) {
 		StringBuilder builder = new StringBuilder();
 		List<String> tags = new ArrayList<String>();
 
@@ -138,13 +124,61 @@ public class EditCommand extends AbstractModifyCommand {
 			e.printStackTrace();
 		}
 
-		AtomBuilder aBuilder = atom.modify();
 		aBuilder.withData( builder.toString() );
 		aBuilder.replaceTags( tags );
-		DbModifier.modify( aBuilder.buildWithDataAndTag() );
+		return aBuilder;
+	}
 
-		temp.delete();
-		return 0;
+
+	/**
+	 * @param temp
+	 */
+	static void openEditorAndWait( File temp ) {
+		ProcessBuilder pb = new ProcessBuilder( "gedit", temp.getAbsolutePath() );
+		try {
+			Process p = pb.start();
+			p.waitFor();
+		} catch ( IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch ( InterruptedException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	private File writeAtomTempFile( IAtom atom ) {
+		return writeAtomTempFile( atom.getTags(), atom.getData() );
+	}
+
+
+	/**
+	 * @param atom
+	 * @param temp
+	 * @return
+	 */
+	static File writeAtomTempFile( List<String> tags, String data ) {
+		File temp = null;
+		BufferedWriter writer = null;
+		try {
+			temp = File.createTempFile( "atomictagging", ".tmp" );
+			writer = new BufferedWriter( new FileWriter( temp ) );
+			writer.write( "Tags: " + StringUtils.join( tags, ", " ) );
+			writer.write( "\nData:\n" + data );
+		} catch ( IOException x ) {
+			System.err.println( x );
+		} finally {
+			if (writer != null) {
+				try {
+					writer.flush();
+					writer.close();
+				} catch ( IOException ignore ) {
+				}
+			}
+
+		}
+		return temp;
 	}
 
 
@@ -191,17 +225,7 @@ public class EditCommand extends AbstractModifyCommand {
 			return 1;
 		}
 
-		ProcessBuilder pb = new ProcessBuilder( "gedit", temp.getAbsolutePath() );
-		try {
-			Process p = pb.start();
-			p.waitFor();
-		} catch ( IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch ( InterruptedException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		openEditorAndWait( temp );
 
 		List<String> tags = new ArrayList<String>();
 		List<String> atoms = new ArrayList<String>();

@@ -5,6 +5,8 @@ package org.atomictagging.core.types;
 
 import java.util.List;
 
+import org.atomictagging.core.types.Atom.AtomBuilder;
+
 /**
  * Representation of an atom
  * 
@@ -34,4 +36,12 @@ public interface IAtom {
 	 * @return The atoms tags
 	 */
 	public List<String> getTags();
+
+
+	/**
+	 * Modify an atom.
+	 * 
+	 * @return An AtomBuilder object containing the data of the atom.
+	 */
+	public AtomBuilder modify();
 }

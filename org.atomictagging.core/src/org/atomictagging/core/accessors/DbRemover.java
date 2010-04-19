@@ -3,6 +3,13 @@
  */
 package org.atomictagging.core.accessors;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.types.IMolecule;
+
 /**
  * A class that handles removing atoms or molecules.
  * 
@@ -16,11 +23,81 @@ public class DbRemover {
 	 * @param id
 	 */
 	public static void removeMolecule( long id ) {
-		// Find all atoms in this molecule
-		// Delete atoms that are referenced only by this molecule
-		// Delete tags that are only attached to these atoms
-		// Delete tags that are only attached to this molecule
-		// Delete molecule
+		try {
+			DB.CONN.setAutoCommit( false );
+
+			IMolecule molecule = DbReader.read( id );
+
+			// Delete all atoms that are only linked by this one molecule.
+			PreparedStatement checkAtom = DB.CONN
+					.prepareStatement( "SELECT COUNT(*) AS amount FROM molecule_has_atoms WHERE atoms_atomid = ?" );
+			PreparedStatement deleteAtom = DB.CONN.prepareStatement( "DELETE FROM atoms WHERE atomid = ?" );
+			PreparedStatement deleteAtomTags = DB.CONN
+					.prepareStatement( "DELETE FROM atom_has_tags WHERE atoms_atomid = ?" );
+
+			for ( IAtom atom : molecule.getAtoms() ) {
+				checkAtom.setLong( 1, atom.getId() );
+				ResultSet result = checkAtom.executeQuery();
+				result.next();
+				int amount = result.getInt( "amount" );
+
+				if (amount == 0) {
+					DB.CONN.rollback();
+					throw new RuntimeException( "This can't be. There is no link to this atom." );
+				}
+
+				// Delete all atom links.
+				// TODO This could be done more efficient by removing all links to this molecule with one query.
+				// But this must be done prior to the atom deletion (foreign key) and after the checkAtom statement
+				// (changes the result).
+				PreparedStatement deleteAtomLink = DB.CONN
+						.prepareStatement( "DELETE FROM molecule_has_atoms WHERE molecules_moleculeid = ? AND atoms_atomid = ?" );
+				deleteAtomLink.setLong( 1, molecule.getId() );
+				deleteAtomLink.setLong( 2, atom.getId() );
+				deleteAtomLink.execute();
+
+				if (amount == 1) {
+					deleteAtomTags.setLong( 1, atom.getId() );
+					deleteAtomTags.execute();
+
+					deleteAtom.setLong( 1, atom.getId() );
+					deleteAtom.execute();
+				}
+			}
+
+			// Delete molecule.
+			PreparedStatement deleteMoleculeTags = DB.CONN
+					.prepareStatement( "DELETE FROM molecule_has_tags WHERE molecules_moleculeid = ?" );
+			deleteMoleculeTags.setLong( 1, molecule.getId() );
+			deleteMoleculeTags.execute();
+
+			PreparedStatement deleteMolecule = DB.CONN.prepareStatement( "DELETE FROM molecules WHERE moleculeid = ?" );
+			deleteMolecule.setLong( 1, molecule.getId() );
+			deleteMolecule.execute();
+
+			DB.CONN.commit();
+		} catch ( SQLException e ) {
+			// TODO Auto-generated catch block
+			try {
+				DB.CONN.rollback();
+			} catch ( SQLException e1 ) {
+				// TODO Auto-generated catch block
+				System.out.println( "rollback failed" );
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				DB.CONN.setAutoCommit( true );
+			} catch ( SQLException e ) {
+				// TODO Auto-generated catch block
+				System.out.println( "enabling auto commit failed" );
+				e.printStackTrace();
+			}
+		}
+		// TODO Delete tags that are only attached to these atoms
+		// TODO Delete tags that are only attached to this molecule
+		// TODO Delete binary files that are referenced by a x-fileref atom
 	}
 
 

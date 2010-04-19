@@ -2,6 +2,7 @@ package org.atomictagging.shell.commands;
 
 import java.io.PrintStream;
 
+import org.atomictagging.core.accessors.DbRemover;
 import org.atomictagging.shell.IShell;
 
 /**
@@ -13,7 +14,7 @@ import org.atomictagging.shell.IShell;
  * 
  * @author Stephan Mann
  */
-public class RemoveCommand extends AbstractCommand {
+public class RemoveCommand extends AbstractModifyCommand {
 
 	/**
 	 * @param shell
@@ -31,13 +32,20 @@ public class RemoveCommand extends AbstractCommand {
 
 	@Override
 	public String getHelpMessage() {
-		return "rm <ID>\t- Remove an atom or a molecule";
+		return "rm <a/m> <ID>\t- Remove an atom or a molecule";
 	}
 
 
 	@Override
-	public int handleInput( String input, PrintStream stdout ) {
+	protected int handleAtom( long id, PrintStream stdout ) {
+		DbRemover.removeAtom( id );
+		return 0;
+	}
 
+
+	@Override
+	protected int handleMolecule( long id, PrintStream stdout ) {
+		DbRemover.removeMolecule( id );
 		return 0;
 	}
 

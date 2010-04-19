@@ -17,6 +17,7 @@ import org.atomictagging.shell.commands.ICommand;
 import org.atomictagging.shell.commands.ImportCommand;
 import org.atomictagging.shell.commands.ListCommand;
 import org.atomictagging.shell.commands.NewCommand;
+import org.atomictagging.shell.commands.RemoveCommand;
 import org.atomictagging.shell.commands.SetScopeCommand;
 import org.atomictagging.shell.commands.ShowCommand;
 import org.atomictagging.shell.commands.TestDataCommand;
@@ -40,6 +41,7 @@ public class Shell implements IShell {
 		shell.register( new SetScopeCommand( shell ) );
 		shell.register( new EditCommand( shell ) );
 		shell.register( new NewCommand( shell ) );
+		shell.register( new RemoveCommand( shell ) );
 		shell.run();
 	}
 

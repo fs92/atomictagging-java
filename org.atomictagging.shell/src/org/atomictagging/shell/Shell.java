@@ -16,6 +16,8 @@ import org.atomictagging.shell.commands.HelpCommand;
 import org.atomictagging.shell.commands.ICommand;
 import org.atomictagging.shell.commands.ImportCommand;
 import org.atomictagging.shell.commands.ListCommand;
+import org.atomictagging.shell.commands.NewCommand;
+import org.atomictagging.shell.commands.RemoveCommand;
 import org.atomictagging.shell.commands.SetScopeCommand;
 import org.atomictagging.shell.commands.ShowCommand;
 import org.atomictagging.shell.commands.TestDataCommand;
@@ -38,6 +40,8 @@ public class Shell implements IShell {
 		shell.register( new ImportCommand( shell ) );
 		shell.register( new SetScopeCommand( shell ) );
 		shell.register( new EditCommand( shell ) );
+		shell.register( new NewCommand( shell ) );
+		shell.register( new RemoveCommand( shell ) );
 		shell.run();
 	}
 
@@ -149,7 +153,7 @@ public class Shell implements IShell {
 
 
 	private static void printWelcomeMessage() {
-		System.out.println( "Welcome to AtomicTagging Shell version 0.0.2" );
+		System.out.println( "Welcome to AtomicTagging Shell version 0.0.3" );
 		System.out.println( "Type 'help' to get startet." );
 	}
 

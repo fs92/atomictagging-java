@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.atomictagging.core.accessors;
+package org.atomictagging.core.moleculehandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,18 +22,41 @@ import org.atomictagging.utils.FileUtils;
 import org.atomictagging.utils.StringUtils;
 
 /**
- * Imports a generic file into a molecule
+ * Imports any file into a molecule
  * 
- * Creates a molecule with an atom for the file name and an atom for the files content.
+ * This is the generic "catch all" importer for Atomic Tagging. It therefore will always say yes if asked whether it can
+ * import a file (see {@link #canHandle(File)} and it will put itself at the end of the importer chain of the
+ * {@link MoleculeHandlerFactory} importer chain (see {@link #getOrdinal()}). It is expected that there will be a number
+ * of better importers for any given file but if all else fails, this importer will just create a basic molecule with
+ * whatever information it can get from the file system.
  * 
  * @author Stephan Mann
  */
-public class Importer {
+public class GenericImporter implements IMoleculeImporter {
+
+	@Override
+	public boolean canHandle( File file ) {
+		return true;
+	}
+
+
+	@Override
+	public int getOrdinal() {
+		return Integer.MAX_VALUE;
+	}
+
+
+	@Override
+	public String getUniqueId() {
+		return "atomictagging-genericimporter";
+	}
+
+
 	/**
 	 * @param file
 	 *            File to import
 	 */
-	public static void importFile( final File file ) {
+	public IMolecule importFile( final File file ) {
 		String hash = getHashedPath( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
 		pathArray.add( hash.substring( 0, 2 ) );
@@ -65,7 +88,7 @@ public class Importer {
 				.withTag( "x-filetype-unknown" ).buildWithDataAndTag();
 		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();
-		DbWriter.write( molecule );
+		return molecule;
 	}
 
 

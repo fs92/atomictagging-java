@@ -10,8 +10,10 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.CoreTags;
@@ -22,13 +24,13 @@ import org.atomictagging.utils.FileUtils;
 import org.atomictagging.utils.StringUtils;
 
 /**
- * Imports any file into a molecule
- * 
+ * Imports any file into a molecule.<br>
+ * <br>
  * This is the generic "catch all" importer for Atomic Tagging. It therefore will always say yes if asked whether it can
- * import a file (see {@link #canHandle(File)} and it will put itself at the end of the importer chain of the
- * {@link MoleculeHandlerFactory} importer chain (see {@link #getOrdinal()}). It is expected that there will be a number
- * of better importers for any given file but if all else fails, this importer will just create a basic molecule with
- * whatever information it can get from the file system.
+ * import a file (see {@link #canHandle(File)} and it will put itself at the end of the {@link MoleculeHandlerFactory}
+ * importer chain (see {@link #getOrdinal()}). It is expected that there will be a number of better importers for any
+ * given file but if all else fails, this importer will just create a basic molecule with whatever information it can
+ * get from the file system.
  * 
  * @author Stephan Mann
  */
@@ -52,11 +54,8 @@ public class GenericImporter implements IMoleculeImporter {
 	}
 
 
-	/**
-	 * @param file
-	 *            File to import
-	 */
-	public IMolecule importFile( final File file ) {
+	@Override
+	public void importFile( final Collection<IMolecule> molecules, final File file ) {
 		String hash = getHashedPath( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
 		pathArray.add( hash.substring( 0, 2 ) );
@@ -88,7 +87,8 @@ public class GenericImporter implements IMoleculeImporter {
 				.withTag( "x-filetype-unknown" ).buildWithDataAndTag();
 		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();
-		return molecule;
+		DbWriter.write( molecule );
+		molecules.add( molecule );
 	}
 
 

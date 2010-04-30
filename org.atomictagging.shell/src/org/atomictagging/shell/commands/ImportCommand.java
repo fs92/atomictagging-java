@@ -5,8 +5,8 @@ package org.atomictagging.shell.commands;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
-import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.moleculehandler.IMoleculeImporter;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.IMolecule;
@@ -53,8 +53,7 @@ public class ImportCommand extends AbstractCommand {
 		}
 
 		IMoleculeImporter importer = MoleculeHandlerFactory.getInstance().getImporter( file );
-		IMolecule molecule = importer.importFile( file );
-		DbWriter.write( molecule );
+		importer.importFile( new ArrayList<IMolecule>(), file );
 
 		return 0;
 	}

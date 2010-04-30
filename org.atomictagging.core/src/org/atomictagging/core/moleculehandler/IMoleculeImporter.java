@@ -4,12 +4,17 @@
 package org.atomictagging.core.moleculehandler;
 
 import java.io.File;
+import java.util.Collection;
 
 import org.atomictagging.core.types.IMolecule;
 
 /**
- * @author Stephan Mann
+ * Interface for classes that can import a file or directory into the Atomic Tagging environment.<br>
+ * <br>
+ * Note: Any implementation that is to be used in an environment must be registered with the
+ * {@link MoleculeHandlerFactory}.
  * 
+ * @author Stephan Mann
  */
 public interface IMoleculeImporter extends IMoleculeHandler {
 
@@ -25,5 +30,15 @@ public interface IMoleculeImporter extends IMoleculeHandler {
 	public boolean canHandle( File file );
 
 
-	public IMolecule importFile( File file );
+	/**
+	 * Read the given file or directory from the file system and create molecules representing the file(s). After return
+	 * of this method, the file(s) has been copied into the Atomic Tagging environment and the molecule has been written
+	 * to the database.
+	 * 
+	 * @param molecules
+	 *            The given collection will be filed with whatever molecules where created
+	 * @param file
+	 *            Source to read from
+	 */
+	public void importFile( Collection<IMolecule> molecules, File file );
 }

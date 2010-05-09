@@ -10,8 +10,15 @@ import java.util.TreeMap;
 import org.atomictagging.core.types.IMolecule;
 
 /**
- * @author Stephan Mann
+ * Factory to register and retrieve molecule handlers.<br>
+ * <br>
+ * This is the molecule handler store where molecule handlers are managed. Molecule handlers can be registered with the
+ * factory using their own build in ordinal or a custom ordinal depending on the method used. Upon request, the factory
+ * will ask all registered handlers in order of their ordinal whether or not it can handle a molecule. It will return a
+ * handler that says it can. Since there are generic catch all handlers provided by the library, there will always be a
+ * handler returned.
  * 
+ * @author Stephan Mann
  */
 public class MoleculeHandlerFactory {
 
@@ -64,8 +71,25 @@ public class MoleculeHandlerFactory {
 	}
 
 
+	/**
+	 * Get an exporter that is capable of handling the given molecule.<br>
+	 * <br>
+	 * The factory will not decide this on its own but ask all registered exporters in order of the ordinal they were
+	 * registered under whether they can handle the given molecule.
+	 * 
+	 * @param molecule
+	 * @return An exporter which can handle the given molecule
+	 */
 	public IMoleculeExporter getExporter( IMolecule molecule ) {
-		return null;
+		IMoleculeExporter result = null;
+
+		for ( IMoleculeExporter exporter : exporters.values() ) {
+			if (exporter.canHandle( molecule )) {
+				result = exporter;
+			}
+		}
+
+		return result;
 	}
 
 

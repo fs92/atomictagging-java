@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomictagging.core.accessors.DbReader;
-import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.moleculehandler.IMoleculeViewer;
+import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.shell.IShell;
 
@@ -52,13 +53,13 @@ public class ListCommand extends AbstractCommand {
 		String scope = shell.getEnvironment( "scope" );
 		scope = ( scope == null ) ? "" : scope;
 
-		if ( input != null && !input.isEmpty() ) {
+		if (input != null && !input.isEmpty()) {
 			scope += "/" + input;
 		}
 
-		if ( !scope.isEmpty() ) {
+		if (!scope.isEmpty()) {
 			for ( String tag : scope.split( "/" ) ) {
-				if ( !tag.isEmpty() ) {
+				if (!tag.isEmpty()) {
 					tags.add( tag );
 				}
 			}
@@ -67,15 +68,8 @@ public class ListCommand extends AbstractCommand {
 		List<IMolecule> molecules = DbReader.read( tags );
 
 		for ( IMolecule molecule : molecules ) {
-			stdout.println( molecule.getId() + "\t" + molecule.getTags() );
-
-			for ( IAtom atom : molecule.getAtoms() ) {
-				String data = ( atom.getData().length() > 20 ) ? atom.getData().substring( 0, 20 ) + "..." : atom
-						.getData();
-				stdout.printf( "\t%d\t%-25s\t%s\n", atom.getId(), data, atom.getTags() );
-			}
-
-			stdout.println();
+			IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getViewer( molecule );
+			stdout.println( viewer.getTextRepresentation( molecule ) );
 		}
 		return 0;
 	}

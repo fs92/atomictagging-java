@@ -13,6 +13,7 @@ import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
+import org.atomictagging.utils.StringUtils;
 
 /**
  * Views any given molecule.<br>
@@ -54,8 +55,30 @@ public class GenericViewer implements IMoleculeViewer {
 
 	@Override
 	public String getTextRepresentation( IMolecule molecule ) {
-		// TODO Auto-generated method stub
-		return null;
+		// Check whether the molecule contains a atom with a tag that we know to be important.
+		for ( String defaultTag : DISPLAY_TAGS ) {
+			for ( IAtom atom : molecule.getAtoms() ) {
+				for ( String tag : atom.getTags() ) {
+					if (defaultTag.equals( tag )) {
+						return molecule.getId() + "\t" + molecule.getTags() + "\t" + atom.getData();
+					}
+				}
+			}
+		}
+
+		// Fallback
+		String result = molecule.getId() + "\t" + molecule.getTags() + "\t";
+		List<String> data = new ArrayList<String>();
+
+		for ( IAtom atom : molecule.getAtoms() ) {
+			data.add( atom.getData() );
+		}
+
+		return result + StringUtils.join( data, "; " );
+		// String data = ( atom.getData().length() > 20 ) ? atom.getData().substring( 0, 20 ) + "..." : atom
+		// .getData();
+		// stdout.printf( "\t%d\t%-25s\t%s\n", atom.getId(), data, atom.getTags() );
+
 	}
 
 

@@ -7,8 +7,8 @@ package org.atomictagging.core.moleculehandler;
  * The base interface for all molecule handlers.<br>
  * <br>
  * The idea is, that there are specialized viewers, importers and exporters for any given molecule type. These special
- * handlers shall be implemented using this interface. This way, it should be easy to change the handling of a given
- * molecule type and allow applications to be customized by loading or unloading specific handlers.
+ * handlers shall be implemented using one of the children of this interface. This way, it should be easy to change the
+ * handling of a given molecule type and allow applications to be customized by loading or unloading specific handlers.
  * 
  * @author Stephan Mann
  */

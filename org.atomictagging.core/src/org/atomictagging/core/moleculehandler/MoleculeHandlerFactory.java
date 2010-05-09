@@ -25,9 +25,15 @@ public class MoleculeHandlerFactory {
 	private MoleculeHandlerFactory() {
 		// Register default molecule handler so the factories getters will always have something to return.
 		importers.put( Integer.MAX_VALUE, new GenericImporter() );
+		viewers.put( Integer.MAX_VALUE, new GenericViewer() );
 	}
 
 
+	/**
+	 * Singleton
+	 * 
+	 * @return The instance of the handler factory
+	 */
 	public static MoleculeHandlerFactory getInstance() {
 		if (instance == null) {
 			instance = new MoleculeHandlerFactory();
@@ -36,14 +42,25 @@ public class MoleculeHandlerFactory {
 	}
 
 
+	/**
+	 * Get a viewer that is capable of handling the given molecule.<br>
+	 * <br>
+	 * The factory will not decide this on its own but ask all registered viewers in order of the ordinal they were
+	 * registered under whether they can handle the given molecule.
+	 * 
+	 * @param molecule
+	 * @return A viewer which can handle the given molecule
+	 */
 	public IMoleculeViewer getViewer( IMolecule molecule ) {
+		IMoleculeViewer result = null;
+
 		for ( IMoleculeViewer viewer : viewers.values() ) {
 			if (viewer.canHandle( molecule )) {
-				return viewer;
+				result = viewer;
 			}
 		}
 
-		return null;
+		return result;
 	}
 
 

@@ -3,15 +3,12 @@
  */
 package org.atomictagging.shell.commands;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 
 import org.atomictagging.core.accessors.DbReader;
-import org.atomictagging.core.configuration.Configuration;
+import org.atomictagging.core.moleculehandler.IMoleculeViewer;
+import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.CoreTags;
-import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.shell.IShell;
 
@@ -38,62 +35,42 @@ public class ShowCommand extends AbstractCommand {
 
 	@Override
 	public String getHelpMessage() {
-		return "show <MID>\t- Shows a x-fileref atom from the molecule in the desktops default application";
+		return "show <MID>\t- Shows a " + CoreTags.FILEREF_TAG
+				+ " atom from the molecule in the desktops default application";
 	}
 
 
 	@Override
 	public String getVerboseHelpMessage() {
-		return getHelpMessage() + "\n"
-				+ "\t\tThis command looks for a atom with the tag \"x-fileref\" in the specified molecule\n"
+		return getHelpMessage() + "\n" + "\t\tThis command looks for a atom with the tag \"" + CoreTags.FILEREF_TAG
+				+ "\" in the specified molecule\n"
 				+ "\t\tand opens the file this atom points to in the desktops default application.";
 	}
 
 
 	@Override
 	public int handleInput( String input, PrintStream stdout ) {
-		if ( input.trim().isEmpty() ) {
+		if (input.trim().isEmpty()) {
 			stdout.println( "Please specifiy a molecule ID." );
 			return 1;
 		}
 
 		long moleculeId = Long.parseLong( input );
 
-		if ( moleculeId == 0 ) {
+		if (moleculeId == 0) {
 			stdout.println( "No valid molecule ID given." );
 			return 1;
 		}
 
 		IMolecule molecule = DbReader.read( moleculeId );
 
-		if ( molecule == null ) {
+		if (molecule == null) {
 			stdout.println( "No molecule found with given ID " + moleculeId );
 			return 1;
 		}
 
-		boolean atomFound = false;
-
-		for ( IAtom atom : molecule.getAtoms() ) {
-			if ( atom.getTags().contains( CoreTags.FILEREF_TAG ) ) {
-				try {
-					Desktop dt = Desktop.getDesktop();
-					dt.open( new File( Configuration.BASE_DIR + atom.getData() ) );
-				} catch ( IOException e ) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				atomFound = true;
-			}
-		}
-
-		if ( !atomFound ) {
-			stdout
-					.println( "The given molecule contains no atom with a file reference (" + CoreTags.FILEREF_TAG
-							+ ")." );
-			return 1;
-		}
-
+		IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getViewer( molecule );
+		viewer.showMolecule( molecule );
 		return 0;
 	}
 

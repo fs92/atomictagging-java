@@ -24,9 +24,20 @@ public interface IMoleculeViewer extends IMoleculeHandler {
 	public boolean canHandle( IMolecule molecule );
 
 
+	/**
+	 * Get a text representation of the given molecule.
+	 * 
+	 * @param molecule
+	 * @return A text representation
+	 */
 	public String getTextRepresentation( IMolecule molecule );
 
 
+	/**
+	 * Show the molecule in whatever way the handler deems appropriate.
+	 * 
+	 * @param molecule
+	 */
 	public void showMolecule( IMolecule molecule );
 
 }

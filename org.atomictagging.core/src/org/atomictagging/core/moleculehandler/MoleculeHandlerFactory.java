@@ -80,9 +80,9 @@ public class MoleculeHandlerFactory {
 	 * @return An importer which can handle the given file
 	 */
 	public IMoleculeImporter getImporter( File file ) {
-		if (!file.exists() || !file.canRead() || file.isDirectory()) {
+		if (!file.exists() || !file.canRead()) {
 			throw new IllegalArgumentException( "Given file <" + file.getAbsolutePath()
-					+ "> doesn't exist, is not readable or points to a directory." );
+					+ "> doesn't exist or is not readable." );
 		}
 
 		IMoleculeImporter result = null;

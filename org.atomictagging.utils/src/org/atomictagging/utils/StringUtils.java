@@ -41,4 +41,16 @@ public class StringUtils {
 
 		return builder.toString();
 	}
+
+
+	/**
+	 * Cut a string that is longer than the given length an append three dots "..."
+	 * 
+	 * @param string
+	 * @param length
+	 * @return The given string or a cut version, if the string was longer than the given length
+	 */
+	public static String cut( final String string, final int length ) {
+		return ( string.length() > length ) ? string.substring( 0, length - 3 ) + "..." : string;
+	}
 }

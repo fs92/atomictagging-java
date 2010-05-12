@@ -21,6 +21,14 @@ import org.atomictagging.shell.IShell;
 public class ListCommand extends AbstractCommand {
 
 	/**
+	 * The max length the output will take.
+	 * 
+	 * TODO This should of course be dynamic depending on the terminals width
+	 */
+	private final int	MAX_LENGTH	= 120;
+
+
+	/**
 	 * @param shell
 	 */
 	public ListCommand( IShell shell ) {
@@ -69,7 +77,7 @@ public class ListCommand extends AbstractCommand {
 
 		for ( IMolecule molecule : molecules ) {
 			IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getViewer( molecule );
-			stdout.println( viewer.getTextRepresentation( molecule ) );
+			stdout.println( viewer.getTextRepresentation( molecule, MAX_LENGTH ) );
 		}
 		return 0;
 	}

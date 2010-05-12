@@ -52,33 +52,38 @@ public class GenericViewer implements IMoleculeViewer {
 		DISPLAY_TAGS.add( "name" );
 	}
 
+	private final int					ID_LENGTH		= 6;
+	private final int					TAG_LENGTH		= 32;
+
 
 	@Override
-	public String getTextRepresentation( IMolecule molecule ) {
+	public String getTextRepresentation( IMolecule molecule, int length ) {
+		final int remainingLength = length - ID_LENGTH - TAG_LENGTH - 3; // white spaces
+		final String format = " %" + ID_LENGTH + "d %-" + TAG_LENGTH + "s %-" + remainingLength + "s";
+		String data = null;
+
 		// Check whether the molecule contains a atom with a tag that we know to be important.
 		for ( String defaultTag : DISPLAY_TAGS ) {
 			for ( IAtom atom : molecule.getAtoms() ) {
 				for ( String tag : atom.getTags() ) {
 					if (defaultTag.equals( tag )) {
-						return molecule.getId() + "\t" + molecule.getTags() + "\t" + atom.getData();
+						data = atom.getData();
 					}
 				}
 			}
 		}
 
 		// Fallback
-		String result = molecule.getId() + "\t" + molecule.getTags() + "\t";
-		List<String> data = new ArrayList<String>();
-
-		for ( IAtom atom : molecule.getAtoms() ) {
-			data.add( atom.getData() );
+		if (data == null) {
+			List<String> dataList = new ArrayList<String>();
+			for ( IAtom atom : molecule.getAtoms() ) {
+				dataList.add( atom.getData() );
+			}
+			data = StringUtils.join( dataList, "; " );
 		}
 
-		return result + StringUtils.join( data, "; " );
-		// String data = ( atom.getData().length() > 20 ) ? atom.getData().substring( 0, 20 ) + "..." : atom
-		// .getData();
-		// stdout.printf( "\t%d\t%-25s\t%s\n", atom.getId(), data, atom.getTags() );
-
+		return String.format( format, molecule.getId(), StringUtils.cut( molecule.getTags().toString(), TAG_LENGTH ),
+				StringUtils.cut( data, remainingLength ) );
 	}
 
 

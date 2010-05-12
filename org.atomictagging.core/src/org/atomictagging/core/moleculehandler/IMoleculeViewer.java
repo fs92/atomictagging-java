@@ -28,9 +28,11 @@ public interface IMoleculeViewer extends IMoleculeHandler {
 	 * Get a text representation of the given molecule.
 	 * 
 	 * @param molecule
+	 * @param length
+	 *            The max length of the returned string
 	 * @return A text representation
 	 */
-	public String getTextRepresentation( IMolecule molecule );
+	public String getTextRepresentation( IMolecule molecule, int length );
 
 
 	/**

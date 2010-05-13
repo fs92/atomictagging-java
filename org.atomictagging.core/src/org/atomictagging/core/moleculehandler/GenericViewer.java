@@ -45,25 +45,36 @@ public class GenericViewer implements IMoleculeViewer {
 		return "atomictagging-genericviewer";
 	}
 
-	private static final List<String>	DISPLAY_TAGS	= new ArrayList<String>();
+	/**
+	 * To handle molecules in a generic way, we need to specify some sort of order for what atom we want to display
+	 * first.
+	 */
+	private static final List<String>	DEFAULT_TAGS	= new ArrayList<String>();
 	static {
-		DISPLAY_TAGS.add( "title" );
-		DISPLAY_TAGS.add( "filename" );
-		DISPLAY_TAGS.add( "name" );
+		DEFAULT_TAGS.add( "title" );
+		DEFAULT_TAGS.add( "filename" );
+		DEFAULT_TAGS.add( "name" );
 	}
 
+	// Default length for the data columns.
 	private final int					ID_LENGTH		= 6;
 	private final int					TAG_LENGTH		= 32;
+	private final int					DATA_MIN_LENGTH	= 10;
 
 
 	@Override
 	public String getTextRepresentation( IMolecule molecule, int length ) {
-		final int remainingLength = length - ID_LENGTH - TAG_LENGTH - 3; // white spaces
+		int remainingLength = length - ID_LENGTH - TAG_LENGTH - 3; // white spaces
+
+		if (remainingLength < DATA_MIN_LENGTH) {
+			remainingLength = DATA_MIN_LENGTH;
+		}
+
 		final String format = " %" + ID_LENGTH + "d %-" + TAG_LENGTH + "s %-" + remainingLength + "s";
 		String data = null;
 
 		// Check whether the molecule contains a atom with a tag that we know to be important.
-		for ( String defaultTag : DISPLAY_TAGS ) {
+		for ( String defaultTag : DEFAULT_TAGS ) {
 			for ( IAtom atom : molecule.getAtoms() ) {
 				for ( String tag : atom.getTags() ) {
 					if (defaultTag.equals( tag )) {

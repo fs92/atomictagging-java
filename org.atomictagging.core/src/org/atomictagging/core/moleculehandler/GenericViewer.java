@@ -63,7 +63,7 @@ public class GenericViewer implements IMoleculeViewer {
 
 
 	@Override
-	public String getTextRepresentation( IMolecule molecule, int length ) {
+	public String getTextRepresentation( IMolecule molecule, int length, VERBOSITY verbosity ) {
 		int remainingLength = length - ID_LENGTH - TAG_LENGTH - 3; // white spaces
 
 		if (remainingLength < DATA_MIN_LENGTH) {
@@ -71,6 +71,37 @@ public class GenericViewer implements IMoleculeViewer {
 		}
 
 		final String format = " %" + ID_LENGTH + "d %-" + TAG_LENGTH + "s %-" + remainingLength + "s";
+
+		switch ( verbosity ) {
+		case DEFAULT:
+			final String tags = StringUtils.cut( molecule.getTags().toString(), TAG_LENGTH );
+			final String data = StringUtils.cut( defaultVerbosity( molecule ), remainingLength );
+			return String.format( format, molecule.getId(), tags, data );
+
+		case VERBOSE:
+			StringBuilder builder = new StringBuilder();
+
+			String mTags = StringUtils.cut( molecule.getTags().toString(), length - ID_LENGTH - 2 );
+			builder.append( String.format( " %" + ID_LENGTH + "d %s\n", molecule.getId(), mTags ) );
+			builder.append( " " + StringUtils.repeat( "-", length - 1 ) + "\n" );
+
+			for ( IAtom atom : molecule.getAtoms() ) {
+				String aTags = StringUtils.cut( atom.getTags().toString(), TAG_LENGTH );
+				String aData = StringUtils.cut( atom.getData(), remainingLength );
+
+				builder.append( String.format( format, atom.getId(), aTags, aData ) );
+				builder.append( "\n" );
+			}
+
+			builder.deleteCharAt( builder.length() - 1 );
+			return builder.toString();
+		default:
+			return "Unhandled verbosity level.";
+		}
+	}
+
+
+	private String defaultVerbosity( IMolecule molecule ) {
 		String data = null;
 
 		// Check whether the molecule contains a atom with a tag that we know to be important.
@@ -93,8 +124,7 @@ public class GenericViewer implements IMoleculeViewer {
 			data = StringUtils.join( dataList, "; " );
 		}
 
-		return String.format( format, molecule.getId(), StringUtils.cut( molecule.getTags().toString(), TAG_LENGTH ),
-				StringUtils.cut( data, remainingLength ) );
+		return data;
 	}
 
 
@@ -112,5 +142,4 @@ public class GenericViewer implements IMoleculeViewer {
 			}
 		}
 	}
-
 }

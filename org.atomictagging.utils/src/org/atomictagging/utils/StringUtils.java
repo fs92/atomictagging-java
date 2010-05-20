@@ -53,4 +53,22 @@ public class StringUtils {
 	public static String cut( final String string, final int length ) {
 		return ( string.length() > length ) ? string.substring( 0, length - 3 ) + "..." : string;
 	}
+
+
+	/**
+	 * Repeats a given string as many times as requested and returns the result as a string.
+	 * 
+	 * @param string
+	 * @param times
+	 * @return The string repeated as many times as requested
+	 */
+	public static String repeat( final String string, final int times ) {
+		StringBuilder builder = new StringBuilder();
+
+		for ( int i = 0; i < times; i++ ) {
+			builder.append( string );
+		}
+
+		return builder.toString();
+	}
 }

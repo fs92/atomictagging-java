@@ -10,6 +10,7 @@ import java.util.List;
 import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.moleculehandler.IMoleculeViewer;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
+import org.atomictagging.core.moleculehandler.IMoleculeViewer.VERBOSITY;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.shell.IShell;
 
@@ -19,14 +20,6 @@ import org.atomictagging.shell.IShell;
  * @author Stephan Mann
  */
 public class ListCommand extends AbstractCommand {
-
-	/**
-	 * The max length the output will take.
-	 * 
-	 * TODO This should of course be dynamic depending on the terminals width
-	 */
-	private final int	MAX_LENGTH	= 120;
-
 
 	/**
 	 * @param shell
@@ -77,7 +70,7 @@ public class ListCommand extends AbstractCommand {
 
 		for ( IMolecule molecule : molecules ) {
 			IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getViewer( molecule );
-			stdout.println( viewer.getTextRepresentation( molecule, MAX_LENGTH ) );
+			stdout.println( viewer.getTextRepresentation( molecule, MAX_LENGTH, VERBOSITY.DEFAULT ) );
 		}
 		return 0;
 	}

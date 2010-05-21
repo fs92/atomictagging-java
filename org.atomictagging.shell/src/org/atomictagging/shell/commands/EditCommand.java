@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.shell.commands;
 
@@ -61,7 +71,7 @@ public class EditCommand extends AbstractModifyCommand {
 			e.printStackTrace();
 		}
 
-		if (atom == null) {
+		if ( atom == null ) {
 			stdout.println( "No atom found with the given ID " + id );
 			return 1;
 		}
@@ -69,7 +79,7 @@ public class EditCommand extends AbstractModifyCommand {
 		File temp = writeAtomTempFile( atom );
 
 		// This can't happen, can it?
-		if (temp == null) {
+		if ( temp == null ) {
 			stdout.println( "Failed to create temporarry file." );
 			return 1;
 		}
@@ -99,7 +109,7 @@ public class EditCommand extends AbstractModifyCommand {
 			boolean startData = false;
 
 			while ( ( line = reader.readLine() ) != null ) {
-				if (line.startsWith( "Tags:" )) {
+				if ( line.startsWith( "Tags:" ) ) {
 					String[] newTags = line.substring( 5 ).split( "," );
 					for ( String tag : newTags ) {
 						tags.add( tag.trim() );
@@ -107,12 +117,12 @@ public class EditCommand extends AbstractModifyCommand {
 					continue;
 				}
 
-				if (line.startsWith( "Data:" )) {
+				if ( line.startsWith( "Data:" ) ) {
 					startData = true;
 					continue;
 				}
 
-				if (startData) {
+				if ( startData ) {
 					builder.append( line );
 				}
 			}
@@ -169,7 +179,7 @@ public class EditCommand extends AbstractModifyCommand {
 		} catch ( IOException x ) {
 			System.err.println( x );
 		} finally {
-			if (writer != null) {
+			if ( writer != null ) {
 				try {
 					writer.flush();
 					writer.close();
@@ -187,7 +197,7 @@ public class EditCommand extends AbstractModifyCommand {
 		IMolecule molecule = null;
 		molecule = DbReader.read( id );
 
-		if (molecule == null) {
+		if ( molecule == null ) {
 			stdout.println( "No molecule found with the given ID " + id );
 			return 1;
 		}
@@ -209,7 +219,7 @@ public class EditCommand extends AbstractModifyCommand {
 		} catch ( IOException x ) {
 			System.err.println( x );
 		} finally {
-			if (writer != null) {
+			if ( writer != null ) {
 				try {
 					writer.flush();
 					writer.close();
@@ -220,7 +230,7 @@ public class EditCommand extends AbstractModifyCommand {
 		}
 
 		// This can't happen, can it?
-		if (temp == null) {
+		if ( temp == null ) {
 			stdout.println( "Failed to create temporarry file." );
 			return 1;
 		}
@@ -235,7 +245,7 @@ public class EditCommand extends AbstractModifyCommand {
 			String line = null;
 
 			while ( ( line = reader.readLine() ) != null ) {
-				if (line.startsWith( "Tags:" )) {
+				if ( line.startsWith( "Tags:" ) ) {
 					String[] newTags = line.substring( 5 ).split( "," );
 					for ( String tag : newTags ) {
 						tags.add( tag.trim() );
@@ -243,7 +253,7 @@ public class EditCommand extends AbstractModifyCommand {
 					continue;
 				}
 
-				if (line.startsWith( "Atoms:" )) {
+				if ( line.startsWith( "Atoms:" ) ) {
 					String[] newAtoms = line.substring( 6 ).split( "," );
 					for ( String atom : newAtoms ) {
 						atoms.add( atom.trim() );
@@ -267,7 +277,7 @@ public class EditCommand extends AbstractModifyCommand {
 			try {
 				IAtom atom = DbReader.readAtom( Long.parseLong( atomId ) );
 
-				if (atom == null) {
+				if ( atom == null ) {
 					stdout.println( "Unknown atom with ID: " + atomId );
 					return 1;
 				}

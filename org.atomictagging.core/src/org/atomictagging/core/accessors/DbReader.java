@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.accessors;
 
@@ -39,7 +49,7 @@ public class DbReader {
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
-			if (!tagFilter.isEmpty()) {
+			if ( !tagFilter.isEmpty() ) {
 				// TODO stephan@2010-04-07 My SQL got rusty. There must be a better solution than this!
 				moleculeSQL =
 				// Select molecules with all their tags
@@ -78,10 +88,10 @@ public class DbReader {
 
 			// Build molecules with all their atoms
 			while ( moleculeResult.next() ) {
-				if (moleculeId != moleculeResult.getLong( "moleculeid" )) {
+				if ( moleculeId != moleculeResult.getLong( "moleculeid" ) ) {
 
 					// Whenever the molecule ID changes, but not in first iteration
-					if (moleculeId != 0) {
+					if ( moleculeId != 0 ) {
 						result.add( builder.buildWithAtomsAndTags() );
 						builder = Molecule.build();
 					}
@@ -102,7 +112,7 @@ public class DbReader {
 			}
 
 			// Only if there was at least one molecule
-			if (moleculeId != 0) {
+			if ( moleculeId != 0 ) {
 				result.add( builder.buildWithAtomsAndTags() );
 			}
 
@@ -134,7 +144,7 @@ public class DbReader {
 	 * @return The molecule with the given ID
 	 */
 	public static IMolecule read( long moleculeId ) {
-		if (moleculeId <= 0) {
+		if ( moleculeId <= 0 ) {
 			throw new IllegalArgumentException( "Invalid molecule ID." );
 		}
 
@@ -146,7 +156,7 @@ public class DbReader {
 
 			while ( moleculeResult.next() ) {
 
-				if (first) {
+				if ( first ) {
 					builder.withId( moleculeResult.getLong( "molecules_moleculeid" ) );
 					first = false;
 				}
@@ -161,7 +171,7 @@ public class DbReader {
 			}
 
 			// No molecule found
-			if (first) {
+			if ( first ) {
 				return null;
 			}
 
@@ -198,7 +208,7 @@ public class DbReader {
 		readAtom.setLong( 1, atomId );
 		ResultSet atomResult = readAtom.executeQuery();
 
-		if (atomResult.next()) {
+		if ( atomResult.next() ) {
 			AtomBuilder builder = Atom.build().withId( atomResult.getLong( "atomid" ) ).withData(
 					atomResult.getString( "data" ) ).withTag( atomResult.getString( "tag" ) );
 

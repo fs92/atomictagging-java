@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.utils;
 
@@ -25,12 +35,12 @@ public class FileUtils {
 	 * @param target
 	 */
 	public static void copyFile( File source, File target ) {
-		if (!source.exists() || !source.canRead()) {
+		if ( !source.exists() || !source.canRead() ) {
 			throw new IllegalArgumentException( "Can't read from given source file: " + source.getAbsolutePath() );
 		}
-		if (!target.exists()) {
+		if ( !target.exists() ) {
 			try {
-				if (!target.createNewFile()) {
+				if ( !target.createNewFile() ) {
 					throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath() );
 				}
 			} catch ( IOException e ) {
@@ -47,7 +57,7 @@ public class FileUtils {
 			// Was checked previously.
 		}
 
-		if (fis == null || fos == null) {
+		if ( fis == null || fos == null ) {
 			throw new RuntimeException( "Failed to create file streams." );
 		}
 

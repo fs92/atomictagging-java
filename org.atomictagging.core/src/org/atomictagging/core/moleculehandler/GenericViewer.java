@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.moleculehandler;
 
@@ -66,7 +76,7 @@ public class GenericViewer implements IMoleculeViewer {
 	public String getTextRepresentation( IMolecule molecule, int length, VERBOSITY verbosity ) {
 		int remainingLength = length - ID_LENGTH - TAG_LENGTH - 3; // white spaces
 
-		if (remainingLength < DATA_MIN_LENGTH) {
+		if ( remainingLength < DATA_MIN_LENGTH ) {
 			remainingLength = DATA_MIN_LENGTH;
 		}
 
@@ -108,7 +118,7 @@ public class GenericViewer implements IMoleculeViewer {
 		for ( String defaultTag : DEFAULT_TAGS ) {
 			for ( IAtom atom : molecule.getAtoms() ) {
 				for ( String tag : atom.getTags() ) {
-					if (defaultTag.equals( tag )) {
+					if ( defaultTag.equals( tag ) ) {
 						data = atom.getData();
 					}
 				}
@@ -116,7 +126,7 @@ public class GenericViewer implements IMoleculeViewer {
 		}
 
 		// Fallback
-		if (data == null) {
+		if ( data == null ) {
 			List<String> dataList = new ArrayList<String>();
 			for ( IAtom atom : molecule.getAtoms() ) {
 				dataList.add( atom.getData() );
@@ -131,7 +141,7 @@ public class GenericViewer implements IMoleculeViewer {
 	@Override
 	public void showMolecule( IMolecule molecule ) {
 		for ( IAtom atom : molecule.getAtoms() ) {
-			if (atom.getTags().contains( CoreTags.FILEREF_TAG )) {
+			if ( atom.getTags().contains( CoreTags.FILEREF_TAG ) ) {
 				try {
 					Desktop dt = Desktop.getDesktop();
 					dt.open( new File( Configuration.BASE_DIR + atom.getData() ) );

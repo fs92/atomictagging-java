@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.accessors;
 
@@ -41,7 +51,7 @@ public class DbRemover {
 				result.next();
 				int amount = result.getInt( "amount" );
 
-				if (amount == 0) {
+				if ( amount == 0 ) {
 					DB.CONN.rollback();
 					throw new RuntimeException( "This can't be. There is no link to this atom." );
 				}
@@ -56,7 +66,7 @@ public class DbRemover {
 				deleteAtomLink.setLong( 2, atom.getId() );
 				deleteAtomLink.execute();
 
-				if (amount == 1) {
+				if ( amount == 1 ) {
 					deleteAtomTags.setLong( 1, atom.getId() );
 					deleteAtomTags.execute();
 

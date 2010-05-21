@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.types;
 
@@ -88,7 +98,7 @@ public class Molecule implements IMolecule {
 		 * @return The builder
 		 */
 		public MoleculeBuilder withId( long id ) {
-			if (id < 0) {
+			if ( id < 0 ) {
 				throw new IllegalArgumentException( "ID of a molecule must be a number greater 0." );
 			}
 
@@ -104,10 +114,10 @@ public class Molecule implements IMolecule {
 		 * @return The builder
 		 */
 		public MoleculeBuilder withAtom( IAtom atom ) {
-			if (atom == null) {
+			if ( atom == null ) {
 				throw new IllegalArgumentException( "Atom must not be NULL." );
 			}
-			if (molAtoms.contains( atom )) {
+			if ( molAtoms.contains( atom ) ) {
 				throw new IllegalArgumentException( "Duplicate atom <" + atom + "> in molecule." );
 			}
 
@@ -123,7 +133,7 @@ public class Molecule implements IMolecule {
 		 * @return The builder
 		 */
 		public MoleculeBuilder withAtoms( List<IAtom> atoms ) {
-			if (atoms == null || atoms.contains( null )) {
+			if ( atoms == null || atoms.contains( null ) ) {
 				throw new IllegalArgumentException( "List of atoms must not be NULL or contain NULL elements." );
 			}
 
@@ -154,11 +164,11 @@ public class Molecule implements IMolecule {
 		 * @return The builder
 		 */
 		public MoleculeBuilder withTag( String tag ) {
-			if (tag == null || tag.isEmpty()) {
+			if ( tag == null || tag.isEmpty() ) {
 				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
 
-			if (molTags.contains( tag )) {
+			if ( molTags.contains( tag ) ) {
 				throw new IllegalArgumentException( "Duplicate tag <" + tag + "> for molecule." );
 			}
 
@@ -202,10 +212,10 @@ public class Molecule implements IMolecule {
 		 * @return A consistent molecule instance
 		 */
 		public Molecule buildWithAtomsAndTags() {
-			if (molAtoms.size() == 0) {
+			if ( molAtoms.size() == 0 ) {
 				throw new IllegalArgumentException( "Molecules must have at least one atom." );
 			}
-			if (molTags.size() == 0) {
+			if ( molTags.size() == 0 ) {
 				throw new IllegalArgumentException( "A molecule must have at least one tag." );
 			}
 

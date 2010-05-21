@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.shell.commands;
 
@@ -49,18 +59,18 @@ public class NewCommand extends AbstractModifyCommand {
 	@Override
 	public int handleInput( String input, PrintStream stdout ) {
 		String[] parts = input.trim().split( " ", 1 );
-		if (parts.length != 1) {
+		if ( parts.length != 1 ) {
 			stdout.println( "Please specify type (atom, molecule)." );
 			return 1;
 		}
 
 		String type = parts[0];
-		if (!type.equals( "atom" ) && !type.equals( "molecule" )) {
+		if ( !type.equals( "atom" ) && !type.equals( "molecule" ) ) {
 			stdout.println( "Please specify valid type: atom or molecule." );
 			return 1;
 		}
 
-		if (type.equals( "atom" )) {
+		if ( type.equals( "atom" ) ) {
 			return handleAtom( 0, stdout );
 		}
 		return handleMolecule( 0, stdout );
@@ -83,7 +93,7 @@ public class NewCommand extends AbstractModifyCommand {
 
 	@Override
 	protected int handleMolecule( long id, PrintStream stdout ) {
-		if (atoms.size() == 0) {
+		if ( atoms.size() == 0 ) {
 			stdout.println( "Create atoms first via \"new atom\"." );
 			return 1;
 		}

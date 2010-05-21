@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.shell.commands;
 
@@ -45,7 +55,7 @@ public abstract class AbstractCommand implements ICommand {
 
 
 	protected static long validateAndParseId( String input, PrintStream stdout ) {
-		if (input.trim().isEmpty()) {
+		if ( input.trim().isEmpty() ) {
 			stdout.println( "Please specifiy a molecule ID." );
 			return 0;
 		}
@@ -55,14 +65,14 @@ public abstract class AbstractCommand implements ICommand {
 
 
 	protected static IMolecule validateAndLoad( long moleculeId, PrintStream stdout ) {
-		if (moleculeId == 0) {
+		if ( moleculeId == 0 ) {
 			stdout.println( "No valid molecule ID given." );
 			return null;
 		}
 
 		IMolecule molecule = DbReader.read( moleculeId );
 
-		if (molecule == null) {
+		if ( molecule == null ) {
 			stdout.println( "No molecule found with given ID " + moleculeId );
 			return null;
 		}

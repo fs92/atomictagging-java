@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.moleculehandler;
 
@@ -42,7 +52,7 @@ public class MoleculeHandlerFactory {
 	 * @return The instance of the handler factory
 	 */
 	public static MoleculeHandlerFactory getInstance() {
-		if (instance == null) {
+		if ( instance == null ) {
 			instance = new MoleculeHandlerFactory();
 		}
 		return instance;
@@ -62,7 +72,7 @@ public class MoleculeHandlerFactory {
 		IMoleculeViewer result = null;
 
 		for ( IMoleculeViewer viewer : viewers.values() ) {
-			if (viewer.canHandle( molecule )) {
+			if ( viewer.canHandle( molecule ) ) {
 				result = viewer;
 			}
 		}
@@ -84,7 +94,7 @@ public class MoleculeHandlerFactory {
 		IMoleculeExporter result = null;
 
 		for ( IMoleculeExporter exporter : exporters.values() ) {
-			if (exporter.canHandle( molecule )) {
+			if ( exporter.canHandle( molecule ) ) {
 				result = exporter;
 			}
 		}
@@ -104,7 +114,7 @@ public class MoleculeHandlerFactory {
 	 * @return An importer which can handle the given file
 	 */
 	public IMoleculeImporter getImporter( File file ) {
-		if (!file.exists() || !file.canRead()) {
+		if ( !file.exists() || !file.canRead() ) {
 			throw new IllegalArgumentException( "Given file <" + file.getAbsolutePath()
 					+ "> doesn't exist or is not readable." );
 		}
@@ -112,7 +122,7 @@ public class MoleculeHandlerFactory {
 		IMoleculeImporter result = null;
 
 		for ( IMoleculeImporter importer : importers.values() ) {
-			if (importer.canHandle( file )) {
+			if ( importer.canHandle( file ) ) {
 				result = importer;
 				break;
 			}
@@ -195,7 +205,7 @@ public class MoleculeHandlerFactory {
 
 
 	private void validateOrdinal( int ordinal ) {
-		if (ordinal == Integer.MAX_VALUE) {
+		if ( ordinal == Integer.MAX_VALUE ) {
 			throw new IllegalArgumentException(
 					"INTEGER.MAX_VALUE is reserved for the default handlers and must not be used." );
 		}

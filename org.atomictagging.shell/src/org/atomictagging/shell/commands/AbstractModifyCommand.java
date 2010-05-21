@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.shell.commands;
 
@@ -25,13 +35,13 @@ public abstract class AbstractModifyCommand extends AbstractCommand {
 	@Override
 	public int handleInput( String input, PrintStream stdout ) {
 		String[] parts = input.trim().split( " ", 2 );
-		if (parts.length != 2) {
+		if ( parts.length != 2 ) {
 			stdout.println( "Please specify type (atom, molecule) and ID." );
 			return 1;
 		}
 
 		String type = parts[0];
-		if (!type.equals( "atom" ) && !type.equals( "molecule" )) {
+		if ( !type.equals( "atom" ) && !type.equals( "molecule" ) ) {
 			stdout.println( "Please specify valid type: atom or molecule." );
 			return 1;
 		}
@@ -44,7 +54,7 @@ public abstract class AbstractModifyCommand extends AbstractCommand {
 			return 1;
 		}
 
-		if (type.equals( "atom" )) {
+		if ( type.equals( "atom" ) ) {
 			return handleAtom( id, stdout );
 		}
 		return handleMolecule( id, stdout );

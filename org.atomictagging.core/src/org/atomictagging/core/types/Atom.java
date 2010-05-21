@@ -1,3 +1,16 @@
+/**
+ * This file is part of Atomic Tagging.
+ * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
 package org.atomictagging.core.types;
 
 import java.util.ArrayList;
@@ -81,27 +94,27 @@ public class Atom implements IAtom {
 
 	@Override
 	public boolean equals( Object obj ) {
-		if (this == obj) {
+		if ( this == obj ) {
 			return true;
 		}
-		if (obj == null) {
+		if ( obj == null ) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if ( getClass() != obj.getClass() ) {
 			return false;
 		}
 		Atom other = (Atom) obj;
-		if (data == null) {
-			if (other.data != null) {
+		if ( data == null ) {
+			if ( other.data != null ) {
 				return false;
 			}
-		} else if (!data.equals( other.data )) {
+		} else if ( !data.equals( other.data ) ) {
 			return false;
 		}
-		if (id != other.id) {
+		if ( id != other.id ) {
 			return false;
 		}
-		if (tags == null && other.tags != null) {
+		if ( tags == null && other.tags != null ) {
 			return false;
 		}
 
@@ -111,7 +124,7 @@ public class Atom implements IAtom {
 		Collections.sort( me );
 		Collections.sort( you );
 
-		if (!me.equals( you )) {
+		if ( !me.equals( you ) ) {
 			return false;
 		}
 		return true;
@@ -135,7 +148,7 @@ public class Atom implements IAtom {
 		 * @return The builder
 		 */
 		public AtomBuilder withId( long id ) {
-			if (id < 0) {
+			if ( id < 0 ) {
 				throw new IllegalArgumentException( "ID of an atom must be a number greater 0." );
 			}
 
@@ -151,7 +164,7 @@ public class Atom implements IAtom {
 		 * @return The builder
 		 */
 		public AtomBuilder withData( String data ) {
-			if (data == null || data.isEmpty()) {
+			if ( data == null || data.isEmpty() ) {
 				throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
 			}
 
@@ -167,11 +180,11 @@ public class Atom implements IAtom {
 		 * @return The builder
 		 */
 		public AtomBuilder withTag( String tag ) {
-			if (tag == null || tag.isEmpty()) {
+			if ( tag == null || tag.isEmpty() ) {
 				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
 
-			if (atomTags.contains( tag )) {
+			if ( atomTags.contains( tag ) ) {
 				throw new IllegalArgumentException( "Duplicate tag <" + tag + "> for atom." );
 			}
 
@@ -215,11 +228,11 @@ public class Atom implements IAtom {
 		 * @return A consistent atom instance
 		 */
 		public Atom buildWithDataAndTag() {
-			if (atomData == null || atomData.isEmpty()) {
+			if ( atomData == null || atomData.isEmpty() ) {
 				throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
 			}
 
-			if (atomTags.size() == 0) {
+			if ( atomTags.size() == 0 ) {
 				throw new IllegalArgumentException( "An atom must have at least one tag." );
 			}
 

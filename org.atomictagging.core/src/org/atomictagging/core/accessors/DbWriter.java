@@ -1,5 +1,15 @@
 /**
+ * This file is part of Atomic Tagging.
  * 
+ * Atomic Tagging is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Atomic Tagging is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.atomictagging.core.accessors;
 
@@ -76,7 +86,7 @@ public class DbWriter {
 	private static long getAutoIncrementId( PreparedStatement statement ) throws SQLException {
 		ResultSet resultSet = statement.getGeneratedKeys();
 
-		if (resultSet.next()) {
+		if ( resultSet.next() ) {
 			return resultSet.getLong( "GENERATED_KEY" );
 		}
 
@@ -87,7 +97,7 @@ public class DbWriter {
 	private static long getIdOfExistingEntity( PreparedStatement statement, String column ) throws SQLException {
 		ResultSet possiblyExisting = statement.getResultSet();
 
-		if (possiblyExisting.next()) {
+		if ( possiblyExisting.next() ) {
 			return possiblyExisting.getLong( column );
 		}
 
@@ -139,7 +149,7 @@ public class DbWriter {
 			checkAtom.execute();
 			long atomId = getIdOfExistingEntity( checkAtom, "atomid" );
 
-			if (atomId == -1) {
+			if ( atomId == -1 ) {
 				insertAtom.setString( 1, atom.getData() );
 				insertAtom.execute();
 				atomId = getAutoIncrementId( insertAtom );
@@ -153,7 +163,7 @@ public class DbWriter {
 				checkAtomTags.execute();
 				long tagCheck = getIdOfExistingEntity( checkAtomTags, "atoms_atomid" );
 
-				if (tagCheck == -1) {
+				if ( tagCheck == -1 ) {
 					insertAtomTags.setLong( 1, atomId );
 					insertAtomTags.setLong( 2, tagId );
 					insertAtomTags.execute();
@@ -181,7 +191,7 @@ public class DbWriter {
 		checkTag.execute();
 		long tagId = getIdOfExistingEntity( checkTag, "tagid" );
 
-		if (tagId == -1) {
+		if ( tagId == -1 ) {
 			insertTag.setString( 1, tag );
 			insertTag.execute();
 			tagId = getAutoIncrementId( insertTag );

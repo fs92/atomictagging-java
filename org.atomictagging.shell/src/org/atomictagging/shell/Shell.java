@@ -14,13 +14,16 @@
 package org.atomictagging.shell;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.shell.commands.EditCommand;
 import org.atomictagging.shell.commands.HelpCommand;
 import org.atomictagging.shell.commands.ICommand;
@@ -40,25 +43,107 @@ import org.atomictagging.shell.commands.TestDataCommand;
  */
 public class Shell implements IShell {
 	/**
+	 * Main entry point if a CLI is to be executed.
+	 * 
 	 * @param args
 	 */
 	public static void main( String[] args ) {
 		Shell shell = new Shell();
-		shell.register( new HelpCommand( shell ) );
-		shell.register( new ListCommand( shell ) );
-		shell.register( new TestDataCommand( shell ) );
-		shell.register( new ShowCommand( shell ) );
-		shell.register( new OpenCommand( shell ) );
-		shell.register( new ImportCommand( shell ) );
-		shell.register( new SetScopeCommand( shell ) );
-		shell.register( new EditCommand( shell ) );
-		shell.register( new NewCommand( shell ) );
-		shell.register( new RemoveCommand( shell ) );
 		shell.run();
 	}
 
-	Map<String, ICommand>	commands	= new HashMap<String, ICommand>();
-	Map<String, String>		environment	= new HashMap<String, String>();
+	private final Map<String, ICommand>	commands	= new HashMap<String, ICommand>();
+	private final Map<String, String>	environment	= new HashMap<String, String>();
+
+	private static final String			CONF_NAME	= "atomictagging.conf";
+
+
+	/**
+	 * Default constructor
+	 */
+	public Shell() {
+		initConfiguration();
+		initCommands();
+	}
+
+
+	/**
+	 * Initializes configuration by checking various locations for configuration files.
+	 */
+	private void initConfiguration() {
+		boolean foundAnyConfig = false;
+
+		// Local configuration next to the executed JAR.
+		URL locationUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
+		File location = new File( locationUrl.getPath() );
+
+		if ( !location.isDirectory() ) {
+			location = new File( location.getParent() );
+		}
+
+		File localConf = new File( location.getAbsolutePath() + "/" + CONF_NAME );
+		if ( localConf.canRead() ) {
+			try {
+				Configuration.addFile( localConf );
+				foundAnyConfig = true;
+			} catch ( Exception e ) {
+				System.err.println( "Failed to add configuration from " + localConf.getAbsolutePath() );
+				System.err.println( "Cause: " + e.getMessage() );
+				System.err.println( "Trying to proceed without it." );
+			}
+		}
+
+		// User configuration.
+		File userConf = new File( System.getProperty( "user.home" ) + "/.atomictagging/" + CONF_NAME );
+		if ( userConf.canRead() ) {
+			try {
+				Configuration.addFile( userConf );
+				foundAnyConfig = true;
+			} catch ( Exception e ) {
+				System.err.println( "Failed to add configuration from " + userConf.getAbsolutePath() );
+				System.err.println( "Cause: " + e.getMessage() );
+				System.err.println( "Trying to proceed without it." );
+			}
+		}
+
+		// Global configuration.
+		if ( System.getProperty( "os.name" ) == "Linux" ) {
+			File globalConf = new File( "/etc/atomictagging/" + CONF_NAME );
+			if ( globalConf.canRead() ) {
+				try {
+					Configuration.addFile( globalConf );
+					foundAnyConfig = true;
+				} catch ( Exception e ) {
+					System.err.println( "Failed to add configuration from " + globalConf.getAbsolutePath() );
+					System.err.println( "Cause: " + e.getMessage() );
+					System.err.println( "Trying to proceed without it." );
+				}
+			}
+		}
+
+		if ( !foundAnyConfig ) {
+			System.err
+					.println( "Could not load any configuration. Please check the manual on how to configure AtomicTagging Shell." );
+			System.exit( 1 );
+		}
+	}
+
+
+	/**
+	 * Initialize all commands.
+	 */
+	private void initCommands() {
+		register( new HelpCommand( this ) );
+		register( new ListCommand( this ) );
+		register( new TestDataCommand( this ) );
+		register( new ShowCommand( this ) );
+		register( new OpenCommand( this ) );
+		register( new ImportCommand( this ) );
+		register( new SetScopeCommand( this ) );
+		register( new EditCommand( this ) );
+		register( new NewCommand( this ) );
+		register( new RemoveCommand( this ) );
+	}
 
 
 	@Override
@@ -165,7 +250,7 @@ public class Shell implements IShell {
 
 
 	private static void printWelcomeMessage() {
-		System.out.println( "Welcome to Atomic Tagging Shell version 0.0.4. Type 'help' to get startet.\n\n"
+		System.out.println( "Welcome to AtomicTagging Shell version 0.0.4. Type 'help' to get startet.\n\n"
 				+ "This program comes with ABSOLUTELY NO WARRANTY. It is free software,\n"
 				+ "and you are welcome to redistribute it under the terms of GPLv3.\n"
 				+ "For more details see COPYING or <http://www.gnu.org/licenses/>." );

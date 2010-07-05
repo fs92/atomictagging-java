@@ -16,7 +16,6 @@ package org.atomictagging.core.configuration;
 import java.io.File;
 
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 
 /**
@@ -55,9 +54,9 @@ public class Configuration {
 	 * Adds a configuration file to the global configuration.
 	 * 
 	 * @param file
-	 * @throws ConfigurationException
+	 * @throws Exception
 	 */
-	public static void addFile( File file ) throws ConfigurationException {
+	public static void addFile( File file ) throws Exception {
 		conf.addConfiguration( new HierarchicalINIConfiguration( file ) );
 	}
 

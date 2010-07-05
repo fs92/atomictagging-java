@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +80,7 @@ public class ConfigurationTest {
 		try {
 			Configuration.addFile( test1 );
 			Configuration.addFile( test2 );
-		} catch ( ConfigurationException e ) {
+		} catch ( Exception e ) {
 			fail( "Failed to load configuration. There seems to be something wrong with the test files." );
 		}
 
@@ -103,7 +102,7 @@ public class ConfigurationTest {
 		try {
 			Configuration.addFile( test2 );
 			Configuration.addFile( test1 );
-		} catch ( ConfigurationException e ) {
+		} catch ( Exception e ) {
 			fail( "Failed to load configuration. There seems to be something wrong with the test files." );
 		}
 

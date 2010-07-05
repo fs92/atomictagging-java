@@ -19,35 +19,16 @@ import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 
 /**
- * The users configuration
- * 
- * TODO stephan@2010-04-02 Of course that must be externalized to a file or to system properties
+ * Representation of the users configuration<br>
+ * <br>
+ * Core is depending on meaningful values being returned, so it is the applications job to initialize this
+ * configuration.
  * 
  * @author Stephan Mann
  */
 public class Configuration {
 
-	private static CombinedConfiguration	conf		= new CombinedConfiguration();
-
-	/**
-	 * JDBC connection string to connect to the database. (jdbc:[dbtype]://[host]/[database])
-	 */
-	public static final String				JDBC_URL	= "jdbc:mysql://localhost/atomictagging";
-
-	/**
-	 * Database user
-	 */
-	public static final String				DB_USER		= "atomictagging";
-
-	/**
-	 * Database password
-	 */
-	public static final String				DB_PASSWORD	= "";
-
-	/**
-	 * Directory in with all imported files will be stored.
-	 */
-	public static final String				BASE_DIR	= System.getProperty( "user.home" ) + "/.atomictagging/";
+	private static CombinedConfiguration	conf	= new CombinedConfiguration();
 
 
 	/**

@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.commons.configuration.CombinedConfiguration;
 import org.atomictagging.core.configuration.Configuration;
 
 /**
@@ -37,9 +38,19 @@ public class DB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		CombinedConfiguration conf = Configuration.get();
+
+		String type = conf.getString( "database.type" );
+		String host = conf.getString( "database.host" );
+		String db = conf.getString( "database.db" );
+		String user = conf.getString( "database.user" );
+		String pass = conf.getString( "database.pass" );
+
+		String connectString = "jdbc:" + type + "://" + host + "/" + db;
+
 		try {
-			CONN = DriverManager.getConnection( Configuration.JDBC_URL, Configuration.DB_USER,
-					Configuration.DB_PASSWORD );
+			CONN = DriverManager.getConnection( connectString, user, pass );
 		} catch ( SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

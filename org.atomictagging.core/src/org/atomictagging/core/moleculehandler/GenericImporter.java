@@ -66,16 +66,18 @@ public class GenericImporter implements IMoleculeImporter {
 
 	@Override
 	public void importFile( final Collection<IMolecule> molecules, final File file ) {
+		String baseDir = Configuration.get().getString( "base.dir" );
+
 		String hash = getHashedPath( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
 		pathArray.add( hash.substring( 0, 2 ) );
 		pathArray.add( hash.substring( 2, 4 ) );
 
-		File targetDir = new File( Configuration.BASE_DIR + StringUtils.join( pathArray, "/" ) );
+		File targetDir = new File( baseDir + StringUtils.join( pathArray, "/" ) );
 
 		pathArray.add( hash.substring( 4 ) );
 
-		File target = new File( Configuration.BASE_DIR + StringUtils.join( pathArray, "/" ) );
+		File target = new File( baseDir + StringUtils.join( pathArray, "/" ) );
 		try {
 			targetDir.mkdirs();
 			target.createNewFile();

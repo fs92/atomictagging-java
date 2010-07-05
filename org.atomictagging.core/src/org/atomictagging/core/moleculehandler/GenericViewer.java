@@ -144,7 +144,7 @@ public class GenericViewer implements IMoleculeViewer {
 			if ( atom.getTags().contains( CoreTags.FILEREF_TAG ) ) {
 				try {
 					Desktop dt = Desktop.getDesktop();
-					dt.open( new File( Configuration.BASE_DIR + atom.getData() ) );
+					dt.open( new File( Configuration.get().getString( "base.dir" ) + atom.getData() ) );
 				} catch ( IOException e ) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

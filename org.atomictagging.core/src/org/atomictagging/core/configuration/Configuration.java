@@ -13,6 +13,12 @@
  */
 package org.atomictagging.core.configuration;
 
+import java.io.File;
+
+import org.apache.commons.configuration.CombinedConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalINIConfiguration;
+
 /**
  * The users configuration
  * 
@@ -21,23 +27,48 @@ package org.atomictagging.core.configuration;
  * @author Stephan Mann
  */
 public class Configuration {
+
+	private static CombinedConfiguration	conf		= new CombinedConfiguration();
+
 	/**
 	 * JDBC connection string to connect to the database. (jdbc:[dbtype]://[host]/[database])
 	 */
-	public static final String	JDBC_URL	= "jdbc:mysql://localhost/atomictagging";
+	public static final String				JDBC_URL	= "jdbc:mysql://localhost/atomictagging";
 
 	/**
 	 * Database user
 	 */
-	public static final String	DB_USER		= "atomictagging";
+	public static final String				DB_USER		= "atomictagging";
 
 	/**
 	 * Database password
 	 */
-	public static final String	DB_PASSWORD	= "";
+	public static final String				DB_PASSWORD	= "";
 
 	/**
 	 * Directory in with all imported files will be stored.
 	 */
-	public static final String	BASE_DIR	= System.getProperty( "user.home" ) + "/.atomictagging/";
+	public static final String				BASE_DIR	= System.getProperty( "user.home" ) + "/.atomictagging/";
+
+
+	/**
+	 * Adds a configuration file to the global configuration.
+	 * 
+	 * @param file
+	 * @throws ConfigurationException
+	 */
+	public static void addFile( File file ) throws ConfigurationException {
+		conf.addConfiguration( new HierarchicalINIConfiguration( file ) );
+	}
+
+
+	/**
+	 * Returns a copy of the current configuration state.
+	 * 
+	 * @return Current global configuration
+	 */
+	public static CombinedConfiguration get() {
+		return (CombinedConfiguration) conf.clone();
+	}
+
 }

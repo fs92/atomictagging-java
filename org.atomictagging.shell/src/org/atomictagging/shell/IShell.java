@@ -32,7 +32,7 @@ public interface IShell {
 
 
 	/**
-	 * Gets the current value of the specified environment variable.
+	 * Returns the current value of the specified environment variable.
 	 * 
 	 * @param key
 	 * @return The value or null if no value was set for this key
@@ -50,7 +50,7 @@ public interface IShell {
 
 
 	/**
-	 * Gets the command that was registered using the given key.
+	 * Returns the command that was registered using the given key.
 	 * 
 	 * @param commandString
 	 * @return The command or null if no command was registered under this key
@@ -59,7 +59,7 @@ public interface IShell {
 
 
 	/**
-	 * Gets all registered commands.
+	 * Returns all registered commands.
 	 * 
 	 * @return An unmodifiable list of all registered commands. Will be a new list every time it is called.
 	 */

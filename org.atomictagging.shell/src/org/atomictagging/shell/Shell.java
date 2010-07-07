@@ -123,7 +123,7 @@ public class Shell implements IShell {
 
 		if ( !foundAnyConfig ) {
 			System.err
-					.println( "Could not load any configuration. Please check the manual on how to configure AtomicTagging Shell." );
+					.println( "Could not load any configuration. Please check the manual on how to configure Atomic Tagging Shell." );
 			System.exit( 1 );
 		}
 	}
@@ -250,7 +250,7 @@ public class Shell implements IShell {
 
 
 	private static void printWelcomeMessage() {
-		System.out.println( "Welcome to AtomicTagging Shell version 0.0.4. Type 'help' to get startet.\n\n"
+		System.out.println( "Welcome to Atomic Tagging Shell version 0.0.4. Type 'help' to get startet.\n\n"
 				+ "This program comes with ABSOLUTELY NO WARRANTY. It is free software,\n"
 				+ "and you are welcome to redistribute it under the terms of GPLv3.\n"
 				+ "For more details see COPYING or <http://www.gnu.org/licenses/>." );

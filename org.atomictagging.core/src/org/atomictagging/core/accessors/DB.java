@@ -15,13 +15,12 @@ package org.atomictagging.core.accessors;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.atomictagging.core.configuration.Configuration;
 
 /**
- * A temporary class holding the connection to the MySQL server
+ * A class holding the connection to the MySQL server
  * 
  * @author Stephan Mann
  */
@@ -29,20 +28,23 @@ public class DB {
 	/**
 	 * Connection to the MySQL server.
 	 */
-	static public Connection	CONN;
+	public static Connection	CONN;
 
 
 	private DB() {
 		// Utility class
 	}
 
-	static {
-		try {
-			Class.forName( "com.mysql.jdbc.Driver" );
-		} catch ( ClassNotFoundException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	/**
+	 * Initializes the connection to the DB by retrieving all required data from the configuration and trying to
+	 * connect.
+	 * 
+	 * @throws Exception
+	 *             If either loading of the driver or connecting to the DB failed for whatever reason
+	 */
+	public static void init() throws Exception {
+		Class.forName( "com.mysql.jdbc.Driver" );
 
 		CombinedConfiguration conf = Configuration.get();
 
@@ -53,12 +55,6 @@ public class DB {
 		String pass = conf.getString( "database.pass" );
 
 		String connectString = "jdbc:" + type + "://" + host + "/" + db;
-
-		try {
-			CONN = DriverManager.getConnection( connectString, user, pass );
-		} catch ( SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		CONN = DriverManager.getConnection( connectString, user, pass );
 	}
 }

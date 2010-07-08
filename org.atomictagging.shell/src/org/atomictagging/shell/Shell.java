@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.shell.commands.EditCommand;
 import org.atomictagging.shell.commands.HelpCommand;
@@ -61,6 +62,14 @@ public class Shell implements IShell {
 		if ( !Configuration.init() ) {
 			System.err
 					.println( "Could not load any configuration. Please check the manual on how to configure Atomic Tagging Shell." );
+			System.exit( 1 );
+		}
+
+		try {
+			DB.init();
+		} catch ( Exception e ) {
+			System.err.println( "Could not connect to database." );
+			System.err.println( "Cause: " + e.getMessage() );
 			System.exit( 1 );
 		}
 

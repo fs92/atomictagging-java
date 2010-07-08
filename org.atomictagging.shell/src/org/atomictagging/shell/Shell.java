@@ -14,10 +14,8 @@
 package org.atomictagging.shell;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,77 +53,18 @@ public class Shell implements IShell {
 	private final Map<String, ICommand>	commands	= new HashMap<String, ICommand>();
 	private final Map<String, String>	environment	= new HashMap<String, String>();
 
-	private static final String			CONF_NAME	= "atomictagging.conf";
-
 
 	/**
 	 * Default constructor
 	 */
 	public Shell() {
-		initConfiguration();
-		initCommands();
-	}
-
-
-	/**
-	 * Initializes configuration by checking various locations for configuration files.
-	 */
-	private void initConfiguration() {
-		boolean foundAnyConfig = false;
-
-		// Local configuration next to the executed JAR.
-		URL locationUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
-		File location = new File( locationUrl.getPath() );
-
-		if ( !location.isDirectory() ) {
-			location = new File( location.getParent() );
-		}
-
-		File localConf = new File( location.getAbsolutePath() + "/" + CONF_NAME );
-		if ( localConf.canRead() ) {
-			try {
-				Configuration.addFile( localConf );
-				foundAnyConfig = true;
-			} catch ( Exception e ) {
-				System.err.println( "Failed to add configuration from " + localConf.getAbsolutePath() );
-				System.err.println( "Cause: " + e.getMessage() );
-				System.err.println( "Trying to proceed without it." );
-			}
-		}
-
-		// User configuration.
-		File userConf = new File( System.getProperty( "user.home" ) + "/.atomictagging/" + CONF_NAME );
-		if ( userConf.canRead() ) {
-			try {
-				Configuration.addFile( userConf );
-				foundAnyConfig = true;
-			} catch ( Exception e ) {
-				System.err.println( "Failed to add configuration from " + userConf.getAbsolutePath() );
-				System.err.println( "Cause: " + e.getMessage() );
-				System.err.println( "Trying to proceed without it." );
-			}
-		}
-
-		// Global configuration.
-		if ( System.getProperty( "os.name" ) == "Linux" ) {
-			File globalConf = new File( "/etc/atomictagging/" + CONF_NAME );
-			if ( globalConf.canRead() ) {
-				try {
-					Configuration.addFile( globalConf );
-					foundAnyConfig = true;
-				} catch ( Exception e ) {
-					System.err.println( "Failed to add configuration from " + globalConf.getAbsolutePath() );
-					System.err.println( "Cause: " + e.getMessage() );
-					System.err.println( "Trying to proceed without it." );
-				}
-			}
-		}
-
-		if ( !foundAnyConfig ) {
+		if ( !Configuration.init() ) {
 			System.err
 					.println( "Could not load any configuration. Please check the manual on how to configure Atomic Tagging Shell." );
 			System.exit( 1 );
 		}
+
+		initCommands();
 	}
 
 

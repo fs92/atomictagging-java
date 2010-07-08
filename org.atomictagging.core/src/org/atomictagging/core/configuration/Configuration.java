@@ -14,6 +14,7 @@
 package org.atomictagging.core.configuration;
 
 import java.io.File;
+import java.net.URL;
 
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -22,13 +23,14 @@ import org.apache.commons.configuration.HierarchicalINIConfiguration;
  * Representation of the users configuration<br>
  * <br>
  * Core is depending on meaningful values being returned, so it is the applications job to initialize this
- * configuration.
+ * configuration. The application can however take advantage of the provided {@link #init()} method.
  * 
  * @author Stephan Mann
  */
 public class Configuration {
 
-	private static CombinedConfiguration	conf	= new CombinedConfiguration();
+	private static CombinedConfiguration	conf		= new CombinedConfiguration();
+	private static final String				CONF_FILE	= "atomictagging.conf";
 
 
 	/**
@@ -49,6 +51,71 @@ public class Configuration {
 	 */
 	public static CombinedConfiguration get() {
 		return (CombinedConfiguration) conf.clone();
+	}
+
+
+	/**
+	 * Initializes the configuration by trying to load a configuration file from one of the following locations:<br>
+	 * <ul>
+	 * <li>The directory the JAR was executed from</li>
+	 * <li>The users home directory (~/.atomictagging)</li>
+	 * <li>For Linux systems, /etc/atomictagging</li>
+	 * </ul>
+	 * 
+	 * @return Whether at least one configuration was found
+	 */
+	public static boolean init() {
+		boolean foundAnyConfig = false;
+
+		// Local configuration next to the executed JAR.
+		URL locationUrl = Configuration.class.getProtectionDomain().getCodeSource().getLocation();
+		File location = new File( locationUrl.getPath() );
+
+		if ( !location.isDirectory() ) {
+			location = new File( location.getParent() );
+		}
+
+		File localConf = new File( location.getAbsolutePath() + "/" + CONF_FILE );
+		if ( localConf.canRead() ) {
+			try {
+				Configuration.addFile( localConf );
+				foundAnyConfig = true;
+			} catch ( Exception e ) {
+				System.err.println( "Failed to add configuration from " + localConf.getAbsolutePath() );
+				System.err.println( "Cause: " + e.getMessage() );
+				System.err.println( "Trying to proceed without it." );
+			}
+		}
+
+		// User configuration.
+		File userConf = new File( System.getProperty( "user.home" ) + "/.atomictagging/" + CONF_FILE );
+		if ( userConf.canRead() ) {
+			try {
+				Configuration.addFile( userConf );
+				foundAnyConfig = true;
+			} catch ( Exception e ) {
+				System.err.println( "Failed to add configuration from " + userConf.getAbsolutePath() );
+				System.err.println( "Cause: " + e.getMessage() );
+				System.err.println( "Trying to proceed without it." );
+			}
+		}
+
+		// Global configuration.
+		if ( System.getProperty( "os.name" ) == "Linux" ) {
+			File globalConf = new File( "/etc/atomictagging/" + CONF_FILE );
+			if ( globalConf.canRead() ) {
+				try {
+					Configuration.addFile( globalConf );
+					foundAnyConfig = true;
+				} catch ( Exception e ) {
+					System.err.println( "Failed to add configuration from " + globalConf.getAbsolutePath() );
+					System.err.println( "Cause: " + e.getMessage() );
+					System.err.println( "Trying to proceed without it." );
+				}
+			}
+		}
+
+		return foundAnyConfig;
 	}
 
 }

@@ -33,6 +33,11 @@ public class Configuration {
 	private static final String				CONF_FILE	= "atomictagging.conf";
 
 
+	private Configuration() {
+		// Utility class
+	}
+
+
 	/**
 	 * Adds a configuration file to the global configuration.
 	 * 

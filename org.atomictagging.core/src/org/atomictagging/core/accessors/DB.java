@@ -31,6 +31,11 @@ public class DB {
 	 */
 	static public Connection	CONN;
 
+
+	private DB() {
+		// Utility class
+	}
+
 	static {
 		try {
 			Class.forName( "com.mysql.jdbc.Driver" );

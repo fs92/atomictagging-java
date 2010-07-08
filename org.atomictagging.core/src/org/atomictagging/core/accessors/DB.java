@@ -54,6 +54,11 @@ public class DB {
 		String user = conf.getString( "database.user" );
 		String pass = conf.getString( "database.pass" );
 
+		if ( type == null || host == null || db == null || user == null ) {
+			throw new Exception(
+					"Failed to load database configuration. Please specify valid values for database type, host, name and user." );
+		}
+
 		String connectString = "jdbc:" + type + "://" + host + "/" + db;
 		CONN = DriverManager.getConnection( connectString, user, pass );
 	}

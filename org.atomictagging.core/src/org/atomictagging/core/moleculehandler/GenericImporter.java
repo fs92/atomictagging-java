@@ -14,15 +14,14 @@
 package org.atomictagging.core.moleculehandler;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.types.Atom;
@@ -68,7 +67,7 @@ public class GenericImporter implements IMoleculeImporter {
 	public void importFile( final Collection<IMolecule> molecules, final File file ) {
 		String baseDir = Configuration.get().getString( "base.dir" );
 
-		String hash = getHashedPath( file );
+		String hash = getHashSum( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
 		pathArray.add( hash.substring( 0, 2 ) );
 		pathArray.add( hash.substring( 2, 4 ) );
@@ -104,31 +103,19 @@ public class GenericImporter implements IMoleculeImporter {
 	}
 
 
-	// TODO We need to hash the files content of course, not the path.
-	private static String getHashedPath( final File file ) {
-
-		String hash = null;
-		MessageDigest md;
+	private static String getHashSum( final File file ) {
 		try {
-			md = MessageDigest.getInstance( "MD5" );
-			byte[] thedigest = md.digest( file.getAbsolutePath().getBytes( "UTF-8" ) );
-
-			BigInteger bigInt = new BigInteger( 1, thedigest );
-			hash = bigInt.toString( 16 );
-			// Now we need to zero pad it if you actually want the full 32 chars.
-			while ( hash.length() < 32 ) {
-				hash = "0" + hash;
-			}
-
-		} catch ( NoSuchAlgorithmException e ) {
+			FileInputStream fis = new FileInputStream( file );
+			return DigestUtils.md5Hex( fis );
+		} catch ( FileNotFoundException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( UnsupportedEncodingException e ) {
+		} catch ( IOException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return hash;
+		return null;
 	}
 
 }

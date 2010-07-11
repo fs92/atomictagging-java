@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="/org.atomictagging.libraries/lib/commons-lang/commons-lang-2.5.jar" sourcepath="/org.atomictagging.libraries/lib/commons-lang/commons-lang-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="/org.atomictagging.libraries/lib/commons-logging/commons-logging-1.1.1.jar" sourcepath="/org.atomictagging.libraries/lib/commons-logging/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="/org.atomictagging.libraries/lib/commons-collections/commons-collections-3.2.1.jar" sourcepath="/org.atomictagging.libraries/lib/commons-collections/commons-collections-3.2.1-sources.jar"/>
+	<classpathentry kind="lib" path="/org.atomictagging.libraries/lib/commons-codec/commons-codec-1.4.jar" sourcepath="/org.atomictagging.libraries/lib/commons-codec/commons-codec-1.4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

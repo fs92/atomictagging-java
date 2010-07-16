@@ -65,7 +65,7 @@ public class GenericImporter implements IMoleculeImporter {
 
 	@Override
 	public void importFile( final Collection<IMolecule> molecules, final File file ) {
-		String baseDir = Configuration.get().getString( "base.dir" );
+		String baseDir = Configuration.get().getString( "base.dir" ) + "/";
 
 		String hash = getHashSum( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
@@ -104,9 +104,11 @@ public class GenericImporter implements IMoleculeImporter {
 
 
 	private static String getHashSum( final File file ) {
+		String hash = null;
 		try {
 			FileInputStream fis = new FileInputStream( file );
-			return DigestUtils.md5Hex( fis );
+			hash = DigestUtils.md5Hex( fis );
+			fis.close();
 		} catch ( FileNotFoundException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,8 +116,7 @@ public class GenericImporter implements IMoleculeImporter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return null;
+		return hash;
 	}
 
 }

@@ -23,5 +23,11 @@ public final class CoreTags {
 	/**
 	 * The tag that gets attached to all atoms pointing to a file on the file system.
 	 */
-	public final static String	FILEREF_TAG	= "x-fileref";
+	public final static String	FILEREF_TAG			= "x-fileref";
+
+	/**
+	 * The tag that gets attached to all atoms pointing to a file not on the local file system. These files might not be
+	 * available at all times and therefore need special treatment.
+	 */
+	public final static String	FILEREF_REMOTE_TAG	= "x-remotefile";
 }

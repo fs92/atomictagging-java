@@ -76,6 +76,18 @@ public class Molecule implements IMolecule {
 
 
 	@Override
+	public List<String> getAtomTags() {
+		ArrayList<String> result = new ArrayList<String>();
+
+		for ( IAtom atom : atoms ) {
+			result.addAll( atom.getTags() );
+		}
+
+		return result;
+	}
+
+
+	@Override
 	public String toString() {
 		return "Molecule: id=" + id + "; tags=" + tags + "; atom#=" + atoms.size();
 	}

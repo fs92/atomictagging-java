@@ -49,6 +49,14 @@ public interface IMolecule {
 
 
 	/**
+	 * Returns all tags of all atoms.
+	 * 
+	 * @return All the tags of all atoms
+	 */
+	List<String> getAtomTags();
+
+
+	/**
 	 * Modify a molecule.
 	 * 
 	 * @return A MoleculeBuilder object containing the data of the molecule.

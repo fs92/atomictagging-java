@@ -15,6 +15,7 @@ package org.atomictagging.moleculehandler.base;
 
 import java.io.File;
 
+import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.GenericViewer;
 import org.atomictagging.core.moleculehandler.IMoleculeViewer;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
@@ -42,10 +43,13 @@ public class RemoteMoleculeViewer extends GenericViewer {
 			if ( atom.getTags().contains( CoreTags.FILEREF_TAG )
 					&& atom.getTags().contains( CoreTags.FILEREF_REMOTE_TAG ) ) {
 
-				File file = new File( atom.getData() );
+				String fileName = Configuration.get().getString( "base.dir" ) + atom.getData();
+				File file = new File( fileName );
 				if ( file.canRead() ) {
 					IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getNextViewer( molecule, this );
 					viewer.showMolecule( molecule );
+				} else {
+					System.out.println( "File is not readable at the moment." );
 				}
 			}
 		}

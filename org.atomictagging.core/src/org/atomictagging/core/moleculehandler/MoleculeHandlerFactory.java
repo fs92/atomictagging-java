@@ -82,6 +82,20 @@ public class MoleculeHandlerFactory {
 	}
 
 
+	public IMoleculeViewer getNextViewer( final IMolecule molecule, final IMoleculeViewer notThisViewer ) {
+		IMoleculeViewer result = null;
+
+		for ( IMoleculeViewer viewer : viewers.values() ) {
+			if ( viewer != notThisViewer && viewer.canHandle( molecule ) ) {
+				result = viewer;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+
 	/**
 	 * Get an exporter that is capable of handling the given molecule.<br>
 	 * <br>

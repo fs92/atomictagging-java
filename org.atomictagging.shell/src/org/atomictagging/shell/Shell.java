@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.configuration.Configuration;
+import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
+import org.atomictagging.moleculehandler.base.RemoteMoleculeViewer;
 import org.atomictagging.shell.commands.EditCommand;
 import org.atomictagging.shell.commands.HelpCommand;
 import org.atomictagging.shell.commands.ICommand;
@@ -74,6 +76,7 @@ public class Shell implements IShell {
 		}
 
 		initCommands();
+		initHandlers();
 	}
 
 
@@ -91,6 +94,15 @@ public class Shell implements IShell {
 		register( new EditCommand( this ) );
 		register( new NewCommand( this ) );
 		register( new RemoveCommand( this ) );
+	}
+
+
+	/**
+	 * Initialize additional handlers.
+	 */
+	private void initHandlers() {
+		MoleculeHandlerFactory factory = MoleculeHandlerFactory.getInstance();
+		factory.registerViewer( new RemoteMoleculeViewer() );
 	}
 
 

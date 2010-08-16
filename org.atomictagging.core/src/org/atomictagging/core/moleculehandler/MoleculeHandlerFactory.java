@@ -74,6 +74,7 @@ public class MoleculeHandlerFactory {
 		for ( IMoleculeViewer viewer : viewers.values() ) {
 			if ( viewer.canHandle( molecule ) ) {
 				result = viewer;
+				break;
 			}
 		}
 
@@ -96,6 +97,7 @@ public class MoleculeHandlerFactory {
 		for ( IMoleculeExporter exporter : exporters.values() ) {
 			if ( exporter.canHandle( molecule ) ) {
 				result = exporter;
+				break;
 			}
 		}
 

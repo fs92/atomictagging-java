@@ -57,7 +57,13 @@ public class EditCommand extends AbstractModifyCommand {
 
 	@Override
 	public String getHelpMessage() {
-		return "edit <a/m> <ID>\t-Edit an atom or a molecule";
+		return "edit <a/m> <ID>\t- Edit an atom or a molecule";
+	}
+
+
+	@Override
+	public String getVerboseHelpMessage() {
+		return getHelpMessage() + "\n" + "\t\t  Example 'edit atom 2' to edit the atom with ID 2.";
 	}
 
 

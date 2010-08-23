@@ -14,6 +14,7 @@
 package org.atomictagging.moleculehandler.base;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.GenericViewer;
@@ -39,6 +40,36 @@ public class RemoteMoleculeViewer extends GenericViewer {
 
 	@Override
 	public void showMolecule( IMolecule molecule ) {
+		String confKey = null;
+		String remoteLoc = null;
+
+		for ( IAtom atom : molecule.getAtoms() ) {
+			if ( atom.getTags().contains( CoreTags.FILEREF_REMOTE_LOCATION ) ) {
+				confKey = atom.getData();
+				break;
+			}
+		}
+
+		if ( confKey == null ) {
+			System.out.println( "Remote molecule has no location atom. Invalid molecule state." );
+			return;
+		}
+
+		Iterator<?> remoteItr = Configuration.get().getKeys( "remote" );
+		while ( remoteItr.hasNext() ) {
+			String remoteId = (String) remoteItr.next();
+
+			if ( confKey.equals( remoteId.split( "." )[1] ) ) {
+				remoteLoc = Configuration.get().getString( remoteId );
+			}
+		}
+
+		if ( remoteLoc == null ) {
+			System.out.println( "Failed to retrieve remote location for identifier '" + confKey
+					+ "' from configuration." );
+			return;
+		}
+
 		for ( IAtom atom : molecule.getAtoms() ) {
 			if ( atom.getTags().contains( CoreTags.FILEREF_TAG )
 					&& atom.getTags().contains( CoreTags.FILEREF_REMOTE_TAG ) ) {
@@ -49,11 +80,11 @@ public class RemoteMoleculeViewer extends GenericViewer {
 					IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getNextViewer( molecule, this );
 					viewer.showMolecule( molecule );
 				} else {
-					System.out.println( "File is not readable at the moment." );
+					System.out.println( "File is not readable at the moment. Try providing the remote source "
+							+ remoteLoc + "." );
 				}
 			}
 		}
-
 	}
 
 

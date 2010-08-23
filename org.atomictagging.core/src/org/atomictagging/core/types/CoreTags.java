@@ -31,5 +31,8 @@ public final class CoreTags {
 	 */
 	public final static String	FILEREF_REMOTE_TAG		= "x-remotefile";
 
+	/**
+	 * The tag that gets attached to atoms that point to a remote location specified by the configuration.
+	 */
 	public final static String	FILEREF_REMOTE_LOCATION	= "x-remotelocation";
 }

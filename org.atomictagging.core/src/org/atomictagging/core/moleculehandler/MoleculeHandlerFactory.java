@@ -82,6 +82,14 @@ public class MoleculeHandlerFactory {
 	}
 
 
+	/**
+	 * Get a viewer that is capable of handling the given molecule but ignore the viewer that was given as second
+	 * parameter.
+	 * 
+	 * @param molecule
+	 * @param notThisViewer
+	 * @return A viewer which can handle the given molecule
+	 */
 	public IMoleculeViewer getNextViewer( final IMolecule molecule, final IMoleculeViewer notThisViewer ) {
 		IMoleculeViewer result = null;
 

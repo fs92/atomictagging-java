@@ -95,7 +95,7 @@ public class GenericImporter implements IMoleculeImporter {
 
 		IAtom filename = Atom.build().withData( file.getName() ).withTag( "filename" ).buildWithDataAndTag();
 		IAtom binRef = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag( CoreTags.FILEREF_TAG )
-				.withTag( "x-filetype-unknown" ).buildWithDataAndTag();
+				.withTag( CoreTags.FILETYPE_UNKNOWN ).buildWithDataAndTag();
 		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();
 		DbWriter.write( molecule );

@@ -15,6 +15,7 @@ package org.atomictagging.core.configuration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
 
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -121,6 +122,25 @@ public class Configuration {
 		}
 
 		return foundAnyConfig;
+	}
+
+
+	/**
+	 * Retrieve the value of the remote location option with the given name.
+	 * 
+	 * @param name
+	 * @return The remote location or null, if no location with the given name was found.
+	 */
+	public static String getRepository( String name ) {
+		Iterator<?> remoteItr = Configuration.get().getKeys( "remote" );
+		while ( remoteItr.hasNext() ) {
+			String remoteId = (String) remoteItr.next();
+			if ( name.equals( remoteId.split( "." )[1] ) ) {
+				return Configuration.get().getString( remoteId );
+			}
+		}
+
+		return null;
 	}
 
 }

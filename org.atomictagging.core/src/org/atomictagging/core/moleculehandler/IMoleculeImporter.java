@@ -51,4 +51,16 @@ public interface IMoleculeImporter extends IMoleculeHandler {
 	 *            Source to read from
 	 */
 	public void importFile( Collection<IMolecule> molecules, File file );
+
+
+	/**
+	 * Same as {@link #importFile(Collection, File)} with the possibility to specify a repository. The importer will
+	 * treat an explicit specified repository as remote repository and attach the appropriate tags to the atoms.
+	 * 
+	 * @param molecules
+	 * @param file
+	 * @param repository
+	 *            The path of the repository the file will be copied to.
+	 */
+	public void importFile( Collection<IMolecule> molecules, File file, String repository );
 }

@@ -29,6 +29,7 @@ import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
+import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.utils.FileUtils;
 import org.atomictagging.utils.StringUtils;
 
@@ -65,18 +66,30 @@ public class GenericImporter implements IMoleculeImporter {
 
 	@Override
 	public void importFile( final Collection<IMolecule> molecules, final File file ) {
-		String baseDir = Configuration.get().getString( "base.dir" ) + "/";
+		importFile( molecules, file, null );
+	}
+
+
+	@Override
+	public void importFile( final Collection<IMolecule> molecules, final File file, final String repository ) {
+		boolean isRemote = true;
+		String targetDirName = repository;
+
+		if ( targetDirName == null ) {
+			targetDirName = Configuration.get().getString( "base.dir" ) + "/";
+			isRemote = false;
+		}
 
 		String hash = getHashSum( file );
 		List<String> pathArray = new ArrayList<String>( 3 );
 		pathArray.add( hash.substring( 0, 2 ) );
 		pathArray.add( hash.substring( 2, 4 ) );
 
-		File targetDir = new File( baseDir + StringUtils.join( pathArray, "/" ) );
+		File targetDir = new File( targetDirName + StringUtils.join( pathArray, "/" ) );
 
 		pathArray.add( hash.substring( 4 ) );
 
-		File target = new File( baseDir + StringUtils.join( pathArray, "/" ) );
+		File target = new File( targetDirName + StringUtils.join( pathArray, "/" ) );
 		try {
 			targetDir.mkdirs();
 			target.createNewFile();
@@ -94,8 +107,14 @@ public class GenericImporter implements IMoleculeImporter {
 		System.out.println( "Created file: " + target.getAbsolutePath() );
 
 		IAtom filename = Atom.build().withData( file.getName() ).withTag( "filename" ).buildWithDataAndTag();
-		IAtom binRef = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag( CoreTags.FILEREF_TAG )
-				.withTag( CoreTags.FILETYPE_UNKNOWN ).buildWithDataAndTag();
+		AtomBuilder binRefBuilder = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag(
+				CoreTags.FILEREF_TAG ).withTag( CoreTags.FILETYPE_UNKNOWN );
+
+		if ( isRemote ) {
+			binRefBuilder.withTag( CoreTags.FILEREF_REMOTE_TAG );
+		}
+
+		IAtom binRef = binRefBuilder.buildWithDataAndTag();
 		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
 				.buildWithAtomsAndTags();
 		DbWriter.write( molecule );

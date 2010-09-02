@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.IMoleculeImporter;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.IMolecule;
@@ -50,8 +51,33 @@ public class ImportCommand extends AbstractCommand {
 
 
 	@Override
+	public String getVerboseHelpMessage() {
+		return getHelpMessage();
+	}
+
+
+	@Override
 	public int handleInput( String input, PrintStream stdout ) {
-		File file = new File( input );
+		String fileName = input;
+		String remoteLoc = null;
+		String[] parts = input.trim().split( " ", 2 );
+
+		if ( parts.length == 2 ) {
+			fileName = parts[1];
+			remoteLoc = Configuration.getRepository( parts[0] );
+
+			if ( remoteLoc == null ) {
+				stdout.println( "Unkown remote location \"" + parts[0] + "\". Check your config." );
+				return 1;
+			}
+		} else if ( parts.length == 1 ) {
+			fileName = parts[0];
+		} else {
+			stdout.println( "Invalid parameter count." );
+			return 1;
+		}
+
+		File file = new File( fileName );
 		if ( !file.exists() || !file.canRead() ) {
 			stdout.println( "Can't read from given file: " + file.getAbsolutePath() );
 			return 1;
@@ -63,9 +89,13 @@ public class ImportCommand extends AbstractCommand {
 		}
 
 		IMoleculeImporter importer = MoleculeHandlerFactory.getInstance().getImporter( file );
-		importer.importFile( new ArrayList<IMolecule>(), file );
+
+		if ( remoteLoc == null ) {
+			importer.importFile( new ArrayList<IMolecule>(), file );
+		} else {
+			importer.importFile( new ArrayList<IMolecule>(), file, remoteLoc );
+		}
 
 		return 0;
 	}
-
 }

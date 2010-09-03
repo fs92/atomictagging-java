@@ -30,6 +30,7 @@ import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
 import org.atomictagging.core.types.Atom.AtomBuilder;
+import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.utils.FileUtils;
 import org.atomictagging.utils.StringUtils;
 
@@ -73,10 +74,15 @@ public class GenericImporter implements IMoleculeImporter {
 	@Override
 	public void importFile( final Collection<IMolecule> molecules, final File file, final String repository ) {
 		boolean isRemote = true;
-		String targetDirName = repository;
+		String targetDirName = Configuration.getRepository( repository );
+
+		if ( repository != null && targetDirName == null ) {
+			System.out.println( "Unkown remote location \"" + repository + "\". Check your config." );
+			return;
+		}
 
 		if ( targetDirName == null ) {
-			targetDirName = Configuration.get().getString( "base.dir" ) + "/";
+			targetDirName = Configuration.get().getString( "base.dir" );
 			isRemote = false;
 		}
 
@@ -85,23 +91,19 @@ public class GenericImporter implements IMoleculeImporter {
 		pathArray.add( hash.substring( 0, 2 ) );
 		pathArray.add( hash.substring( 2, 4 ) );
 
-		File targetDir = new File( targetDirName + StringUtils.join( pathArray, "/" ) );
+		File targetDir = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
 
 		pathArray.add( hash.substring( 4 ) );
 
-		File target = new File( targetDirName + StringUtils.join( pathArray, "/" ) );
+		File target = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
 		try {
 			targetDir.mkdirs();
 			target.createNewFile();
-		} catch ( IOException e1 ) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
 			FileUtils.copyFile( file, target );
 		} catch ( Exception e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
 		}
 
 		System.out.println( "Created file: " + target.getAbsolutePath() );
@@ -114,9 +116,16 @@ public class GenericImporter implements IMoleculeImporter {
 			binRefBuilder.withTag( CoreTags.FILEREF_REMOTE_TAG );
 		}
 
-		IAtom binRef = binRefBuilder.buildWithDataAndTag();
-		IMolecule molecule = Molecule.build().withAtom( filename ).withAtom( binRef ).withTag( "generic-file" )
-				.buildWithAtomsAndTags();
+		MoleculeBuilder mBuilder = Molecule.build().withAtom( filename ).withAtom( binRefBuilder.buildWithDataAndTag() )
+				.withTag( "generic-file" );
+
+		if ( isRemote ) {
+			IAtom remote = Atom.build().withData( repository ).withTag( CoreTags.FILEREF_REMOTE_LOCATION )
+					.buildWithDataAndTag();
+			mBuilder.withAtom( remote );
+		}
+
+		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
 		DbWriter.write( molecule );
 		molecules.add( molecule );
 	}

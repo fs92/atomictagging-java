@@ -135,7 +135,7 @@ public class Configuration {
 		Iterator<?> remoteItr = Configuration.get().getKeys( "remote" );
 		while ( remoteItr.hasNext() ) {
 			String remoteId = (String) remoteItr.next();
-			if ( name.equals( remoteId.split( "." )[1] ) ) {
+			if ( name.equals( remoteId.split( "\\." )[1] ) ) {
 				return Configuration.get().getString( remoteId );
 			}
 		}

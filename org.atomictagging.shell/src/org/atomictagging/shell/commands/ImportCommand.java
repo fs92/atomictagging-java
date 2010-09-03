@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.IMoleculeImporter;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.IMolecule;
@@ -59,17 +58,12 @@ public class ImportCommand extends AbstractCommand {
 	@Override
 	public int handleInput( String input, PrintStream stdout ) {
 		String fileName = input;
-		String remoteLoc = null;
+		String remoteName = null;
 		String[] parts = input.trim().split( " ", 2 );
 
 		if ( parts.length == 2 ) {
 			fileName = parts[1];
-			remoteLoc = Configuration.getRepository( parts[0] );
-
-			if ( remoteLoc == null ) {
-				stdout.println( "Unkown remote location \"" + parts[0] + "\". Check your config." );
-				return 1;
-			}
+			remoteName = parts[0];
 		} else if ( parts.length == 1 ) {
 			fileName = parts[0];
 		} else {
@@ -90,10 +84,10 @@ public class ImportCommand extends AbstractCommand {
 
 		IMoleculeImporter importer = MoleculeHandlerFactory.getInstance().getImporter( file );
 
-		if ( remoteLoc == null ) {
+		if ( remoteName == null ) {
 			importer.importFile( new ArrayList<IMolecule>(), file );
 		} else {
-			importer.importFile( new ArrayList<IMolecule>(), file, remoteLoc );
+			importer.importFile( new ArrayList<IMolecule>(), file, remoteName );
 		}
 
 		return 0;

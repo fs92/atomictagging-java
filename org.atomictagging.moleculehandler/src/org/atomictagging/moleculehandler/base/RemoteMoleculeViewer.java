@@ -13,12 +13,12 @@
  */
 package org.atomictagging.moleculehandler.base;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.GenericViewer;
-import org.atomictagging.core.moleculehandler.IMoleculeViewer;
-import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
@@ -65,11 +65,18 @@ public class RemoteMoleculeViewer extends GenericViewer {
 			if ( atom.getTags().contains( CoreTags.FILEREF_TAG )
 					&& atom.getTags().contains( CoreTags.FILEREF_REMOTE_TAG ) ) {
 
-				String fileName = Configuration.get().getString( "base.dir" ) + atom.getData();
+				String fileName = remoteLoc + "/" + atom.getData();
 				File file = new File( fileName );
 				if ( file.canRead() ) {
-					IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getNextViewer( molecule, this );
-					viewer.showMolecule( molecule );
+					// IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getNextViewer( molecule, this );
+					// viewer.showMolecule( molecule );
+					try {
+						Desktop dt = Desktop.getDesktop();
+						dt.open( file );
+					} catch ( IOException e ) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} else {
 					System.out.println( "File is not readable at the moment. Try providing the remote source "
 							+ remoteLoc + "." );

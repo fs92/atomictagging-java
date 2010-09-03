@@ -51,7 +51,8 @@ public class ImportCommand extends AbstractCommand {
 
 	@Override
 	public String getVerboseHelpMessage() {
-		return getHelpMessage();
+		return getHelpMessage() + "\n"
+				+ "\t\t  Use \"import <REPO> <FILE>\" to import to a remote repository as specified in your config";
 	}
 
 

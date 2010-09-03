@@ -60,7 +60,7 @@ public interface IMoleculeImporter extends IMoleculeHandler {
 	 * @param molecules
 	 * @param file
 	 * @param repository
-	 *            The path of the repository the file will be copied to.
+	 *            The repository the file will be copied to.
 	 */
 	public void importFile( Collection<IMolecule> molecules, File file, String repository );
 }

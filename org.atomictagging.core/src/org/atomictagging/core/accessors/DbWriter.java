@@ -141,7 +141,7 @@ public class DbWriter {
 	 * @return List of atom IDs
 	 * @throws SQLException
 	 */
-	private static List<Long> writeList( List<IAtom> atoms ) throws SQLException {
+	public static List<Long> writeList( List<IAtom> atoms ) throws SQLException {
 		List<Long> atomIds = new ArrayList<Long>();
 
 		for ( IAtom atom : atoms ) {

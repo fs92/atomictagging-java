@@ -15,13 +15,17 @@ package org.atomictagging.shell.commands;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.atomictagging.core.accessors.DbModifier;
+import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
 import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
@@ -58,20 +62,28 @@ public class NewCommand extends AbstractModifyCommand {
 
 	@Override
 	public int handleInput( String input, PrintStream stdout ) {
-		String[] parts = input.trim().split( " ", 1 );
-		if ( parts.length != 1 ) {
+		String[] parts = input.trim().split( " ", 2 );
+		String type = null;
+		long id = 0;
+
+		if ( parts.length == 2 ) {
+			type = parts[0];
+			id = Integer.parseInt( parts[1] );
+		} else if ( parts.length == 1 ) {
+			type = parts[0];
+		} else {
 			stdout.println( "Please specify type (atom, molecule)." );
 			return 1;
 		}
 
-		String type = parts[0];
 		if ( !type.equals( "atom" ) && !type.equals( "molecule" ) ) {
 			stdout.println( "Please specify valid type: atom or molecule." );
 			return 1;
 		}
 
 		if ( type.equals( "atom" ) ) {
-			return handleAtom( 0, stdout );
+			// FIXME Misuse of the id parameter to pass the *molecule* id!
+			return handleAtom( id, stdout );
 		}
 		return handleMolecule( 0, stdout );
 	}
@@ -79,14 +91,37 @@ public class NewCommand extends AbstractModifyCommand {
 
 	@Override
 	protected int handleAtom( long id, PrintStream stdout ) {
+		IMolecule molecule = null;
+
+		if ( id != 0 ) {
+			molecule = DbReader.read( id );
+
+			if ( molecule == null ) {
+				stdout.println( "No molecule found with the given ID " + id );
+				return 1;
+			}
+		}
+
 		File temp = EditCommand.writeAtomTempFile( Arrays.asList( "orphan" ), "" );
 		EditCommand.openEditorAndWait( temp );
 		AtomBuilder builder = EditCommand.getAtomFromFile( Atom.build(), temp );
 		temp.delete();
 
-		atoms.add( builder.buildWithDataAndTag() );
-		stdout.println( atoms.size()
-				+ " new molecule(s) cached. Use \"new molecule\" to create a molecule containing them." );
+		if ( molecule != null ) {
+			IAtom atom = builder.buildWithDataAndTag();
+			try {
+				List<Long> ids = DbWriter.writeList( Arrays.asList( atom ) );
+				atom = builder.withId( ids.get( 0 ) ).buildWithDataAndTag();
+				DbModifier.modify( molecule.modify().withAtom( atom ).buildWithAtomsAndTags() );
+			} catch ( SQLException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			atoms.add( builder.buildWithDataAndTag() );
+			stdout.println( atoms.size()
+					+ " new atom(s) cached. Use \"new molecule\" to create a molecule containing them." );
+		}
 		return 0;
 	}
 

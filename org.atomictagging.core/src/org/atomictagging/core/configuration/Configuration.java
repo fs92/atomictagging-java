@@ -132,6 +132,10 @@ public class Configuration {
 	 * @return The remote location or null, if no location with the given name was found.
 	 */
 	public static String getRepository( String name ) {
+		if ( name == null ) {
+			return null;
+		}
+
 		Iterator<?> remoteItr = Configuration.get().getKeys( "remote" );
 		while ( remoteItr.hasNext() ) {
 			String remoteId = (String) remoteItr.next();

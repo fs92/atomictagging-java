@@ -25,6 +25,7 @@ import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.moleculehandler.base.RemoteMoleculeViewer;
+import org.atomictagging.moleculehandler.video.IMDBMoleculeImporter;
 import org.atomictagging.shell.commands.EditCommand;
 import org.atomictagging.shell.commands.HelpCommand;
 import org.atomictagging.shell.commands.ICommand;
@@ -103,6 +104,7 @@ public class Shell implements IShell {
 	private void initHandlers() {
 		MoleculeHandlerFactory factory = MoleculeHandlerFactory.getInstance();
 		factory.registerViewer( new RemoteMoleculeViewer() );
+		factory.registerImporter( new IMDBMoleculeImporter() );
 	}
 
 

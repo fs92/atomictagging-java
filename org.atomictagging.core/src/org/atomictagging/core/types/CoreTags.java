@@ -40,4 +40,9 @@ public final class CoreTags {
 	 * Generic tag for files which type is unknown.
 	 */
 	public final static String	FILETYPE_UNKNOWN		= "x-filetype-unknown";
+
+	/**
+	 * Tag for video files.
+	 */
+	public final static String	FILETYPE_VIDEO			= "x-filetype-video";
 }

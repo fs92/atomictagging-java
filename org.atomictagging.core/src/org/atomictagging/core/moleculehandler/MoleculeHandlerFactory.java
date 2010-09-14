@@ -157,6 +157,33 @@ public class MoleculeHandlerFactory {
 
 
 	/**
+	 * Get an importer that is capable of handling the given file but ignore the importer given as a second parameter.
+	 * 
+	 * @param file
+	 * @param notThisImporter
+	 * @return An importer which can handle the given file
+	 * @see #getImporter(File)
+	 */
+	public IMoleculeImporter getNextImporter( File file, IMoleculeImporter notThisImporter ) {
+		if ( !file.exists() || !file.canRead() ) {
+			throw new IllegalArgumentException( "Given file <" + file.getAbsolutePath()
+					+ "> doesn't exist or is not readable." );
+		}
+
+		IMoleculeImporter result = null;
+
+		for ( IMoleculeImporter importer : importers.values() ) {
+			if ( importer != notThisImporter && importer.canHandle( file ) ) {
+				result = importer;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+
+	/**
 	 * Register a molecule viewer with the factory. The viewers ordinal will be used.
 	 * 
 	 * @param viewer

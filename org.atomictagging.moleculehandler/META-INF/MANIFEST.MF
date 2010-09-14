@@ -5,4 +5,5 @@ Bundle-SymbolicName: org.atomictagging.moleculehandler
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.atomictagging.core;bundle-version="1.0.0"
-Export-Package: org.atomictagging.moleculehandler.base
+Export-Package: org.atomictagging.moleculehandler.base,
+ org.atomictagging.moleculehandler.video

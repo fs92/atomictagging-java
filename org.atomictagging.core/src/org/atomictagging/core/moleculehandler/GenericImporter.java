@@ -86,31 +86,15 @@ public class GenericImporter implements IMoleculeImporter {
 			isRemote = false;
 		}
 
-		String hash = getHashSum( file );
-		List<String> pathArray = new ArrayList<String>( 3 );
-		pathArray.add( hash.substring( 0, 2 ) );
-		pathArray.add( hash.substring( 2, 4 ) );
-
-		File targetDir = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
-
-		pathArray.add( hash.substring( 4 ) );
-
-		File target = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
-		try {
-			targetDir.mkdirs();
-			target.createNewFile();
-			FileUtils.copyFile( file, target );
-		} catch ( Exception e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String fileName = copyFile( file, targetDirName );
+		if ( fileName == null ) {
+			System.out.println( "Error. No file imported." );
 			return;
 		}
 
-		System.out.println( "Created file: " + target.getAbsolutePath() );
-
 		IAtom filename = Atom.build().withData( file.getName() ).withTag( "filename" ).buildWithDataAndTag();
-		AtomBuilder binRefBuilder = Atom.build().withData( "/" + StringUtils.join( pathArray, "/" ) ).withTag(
-				CoreTags.FILEREF_TAG ).withTag( CoreTags.FILETYPE_UNKNOWN );
+		AtomBuilder binRefBuilder = Atom.build().withData( "/" + fileName ).withTag( CoreTags.FILEREF_TAG ).withTag(
+				CoreTags.FILETYPE_UNKNOWN );
 
 		if ( isRemote ) {
 			binRefBuilder.withTag( CoreTags.FILEREF_REMOTE_TAG );
@@ -128,6 +112,38 @@ public class GenericImporter implements IMoleculeImporter {
 		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
 		DbWriter.write( molecule );
 		molecules.add( molecule );
+	}
+
+
+	/**
+	 * @param file
+	 * @param targetDirName
+	 * @return The resulting file name the file was copied to without the repository directory
+	 */
+	public static String copyFile( final File file, String targetDirName ) {
+		System.out.println( "Copying file..." );
+		String hash = getHashSum( file );
+		List<String> pathArray = new ArrayList<String>( 3 );
+		pathArray.add( hash.substring( 0, 2 ) );
+		pathArray.add( hash.substring( 2, 4 ) );
+
+		File targetDir = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
+
+		pathArray.add( hash.substring( 4 ) );
+
+		File target = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
+		try {
+			targetDir.mkdirs();
+			target.createNewFile();
+			FileUtils.copyFile( file, target );
+		} catch ( Exception e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+		System.out.println( "Created file: " + target.getAbsolutePath() );
+		return StringUtils.join( pathArray, "/" );
 	}
 
 

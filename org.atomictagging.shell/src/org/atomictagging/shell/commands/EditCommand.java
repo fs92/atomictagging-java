@@ -123,7 +123,7 @@ public class EditCommand extends AbstractModifyCommand {
 					continue;
 				}
 
-				if ( line.startsWith( "Data:" ) ) {
+				if ( !startData && line.startsWith( "Data:" ) ) {
 					startData = true;
 					if ( !"".equals( line.substring( 5 ).trim() ) ) {
 						data.append( line.substring( 5 ) );

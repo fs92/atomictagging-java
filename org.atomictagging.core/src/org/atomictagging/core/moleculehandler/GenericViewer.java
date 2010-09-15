@@ -86,21 +86,23 @@ public class GenericViewer implements IMoleculeViewer {
 		case DEFAULT:
 			final String tags = StringUtils.cut( molecule.getTags().toString(), TAG_LENGTH );
 			final String data = StringUtils.cut( defaultVerbosity( molecule ), remainingLength );
-			return String.format( format, molecule.getId(), tags, data );
+			return String.format( format, molecule.getId(), tags, data.replace( System.getProperty( "line.separator" ),
+					" " ) );
 
 		case VERBOSE:
 			StringBuilder builder = new StringBuilder();
 
 			String mTags = StringUtils.cut( molecule.getTags().toString(), length - ID_LENGTH - 2 );
 			builder.append( String.format( " %" + ID_LENGTH + "d %s\n", molecule.getId(), mTags ) );
-			builder.append( " " + StringUtils.repeat( "-", length - 1 ) + "\n" );
+			builder.append( " " + StringUtils.repeat( "-", length - 1 ) + System.getProperty( "line.separator" ) );
 
 			for ( IAtom atom : molecule.getAtoms() ) {
 				String aTags = StringUtils.cut( atom.getTags().toString(), TAG_LENGTH );
 				String aData = StringUtils.cut( atom.getData(), remainingLength );
 
-				builder.append( String.format( format, atom.getId(), aTags, aData ) );
-				builder.append( "\n" );
+				builder.append( String.format( format, atom.getId(), aTags, aData.replace( System
+						.getProperty( "line.separator" ), " " ) ) );
+				builder.append( System.getProperty( "line.separator" ) );
 			}
 
 			builder.deleteCharAt( builder.length() - 1 );

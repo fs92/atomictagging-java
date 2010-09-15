@@ -125,12 +125,16 @@ public class EditCommand extends AbstractModifyCommand {
 
 				if ( line.startsWith( "Data:" ) ) {
 					startData = true;
-					data.append( line.substring( 5 ).trim() );
+					if ( !"".equals( line.substring( 5 ).trim() ) ) {
+						data.append( line.substring( 5 ) );
+						data.append( System.getProperty( "line.separator" ) );
+					}
 					continue;
 				}
 
 				if ( startData ) {
 					data.append( line );
+					data.append( System.getProperty( "line.separator" ) );
 				}
 			}
 		} catch ( FileNotFoundException e ) {

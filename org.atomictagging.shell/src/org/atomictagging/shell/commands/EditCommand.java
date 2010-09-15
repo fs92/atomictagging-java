@@ -106,7 +106,7 @@ public class EditCommand extends AbstractModifyCommand {
 	 * @return
 	 */
 	static AtomBuilder getAtomFromFile( AtomBuilder aBuilder, File temp ) {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder data = new StringBuilder();
 		List<String> tags = new ArrayList<String>();
 
 		try {
@@ -125,11 +125,12 @@ public class EditCommand extends AbstractModifyCommand {
 
 				if ( line.startsWith( "Data:" ) ) {
 					startData = true;
+					data.append( line.substring( 5 ).trim() );
 					continue;
 				}
 
 				if ( startData ) {
-					builder.append( line );
+					data.append( line );
 				}
 			}
 		} catch ( FileNotFoundException e ) {
@@ -140,7 +141,7 @@ public class EditCommand extends AbstractModifyCommand {
 			e.printStackTrace();
 		}
 
-		aBuilder.withData( builder.toString() );
+		aBuilder.withData( data.toString() );
 		aBuilder.replaceTags( tags );
 		return aBuilder;
 	}

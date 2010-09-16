@@ -33,17 +33,31 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * A build-in platform agnostic editor to fall back to if the user doesn't provide an editor via the configuration.
+ * 
+ * @author Oros
+ */
 public class AtomicTaggingEditor extends JFrame {
+	private static final long		serialVersionUID	= 1L;
 
-	private JTextArea		editArea	= null;
+	private JTextArea				editArea			= null;
 
-	private final Action	saveAction	= new SaveAction();
-	private final Action	exitAction	= new ExitAction();
+	private final Action			saveAction			= new SaveAction();
+	private final Action			exitAction			= new ExitAction();
 
-	private File			file;
-	private CountDownLatch	latch;
+	private final File				file;
+	private final CountDownLatch	latch;
 
 
+	/**
+	 * Creates and starts a new editor.
+	 * 
+	 * @param file
+	 *            The file the editor shall display
+	 * @param latch
+	 *            A latch the application can wait for as it will be counted down once during editor shutdown.
+	 */
 	public AtomicTaggingEditor( File file, CountDownLatch latch ) {
 		this.file = file;
 		this.latch = latch;
@@ -51,7 +65,7 @@ public class AtomicTaggingEditor extends JFrame {
 	}
 
 
-	public void init() {
+	private void init() {
 		editArea = new JTextArea( 15, 80 );
 		editArea.setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 		editArea.setFont( new Font( "monospaced", Font.PLAIN, 14 ) );
@@ -76,22 +90,13 @@ public class AtomicTaggingEditor extends JFrame {
 		setLocationRelativeTo( null );
 		setVisible( true );
 
-		if ( file != null )
-			openFile( file );
+		if ( file != null ) {
+			openFile();
+		}
 	}
 
 
-	public void setFile( File file ) {
-		this.file = file;
-	}
-
-
-	public void setCountDownLatch( CountDownLatch latch ) {
-		this.latch = latch;
-	}
-
-
-	public void openFile( File file ) {
+	private void openFile() {
 		try {
 			FileReader reader = new FileReader( file );
 			editArea.read( reader, "" );
@@ -106,7 +111,10 @@ public class AtomicTaggingEditor extends JFrame {
 		dispose();
 	}
 
-	class SaveAction extends AbstractAction {
+	private class SaveAction extends AbstractAction {
+		private static final long	serialVersionUID	= 1L;
+
+
 		SaveAction() {
 			super( "Save..." );
 			putValue( MNEMONIC_KEY, new Integer( 'S' ) );
@@ -128,7 +136,9 @@ public class AtomicTaggingEditor extends JFrame {
 		}
 	}
 
-	class ExitAction extends AbstractAction {
+	private class ExitAction extends AbstractAction {
+		private static final long	serialVersionUID	= 1L;
+
 
 		public ExitAction() {
 			super( "Exit" );

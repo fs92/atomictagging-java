@@ -24,14 +24,17 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
+import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.shell.IShell;
+import org.atomictagging.shell.swingeditor.AtomicTaggingEditor;
 import org.atomictagging.utils.StringUtils;
 
 /**
@@ -154,8 +157,29 @@ public class EditCommand extends AbstractModifyCommand {
 	/**
 	 * @param temp
 	 */
-	static void openEditorAndWait( File temp ) {
-		ProcessBuilder pb = new ProcessBuilder( "gedit", temp.getAbsolutePath() );
+	static void openEditorAndWait( final File temp ) {
+		String editor = Configuration.get().getString( "base.editor" );
+		if ( editor == null || editor.isEmpty() ) {
+			openBuildInEditor( temp );
+		} else {
+			openExternalEditor( editor, temp );
+		}
+	}
+
+
+	private static void openBuildInEditor( final File temp ) {
+		CountDownLatch loginSignal = new CountDownLatch( 1 );
+		new AtomicTaggingEditor( temp, loginSignal );
+		try {
+			loginSignal.await();
+		} catch ( InterruptedException e1 ) {
+			e1.printStackTrace();
+		}
+	}
+
+
+	private static void openExternalEditor( final String executable, final File temp ) {
+		ProcessBuilder pb = new ProcessBuilder( executable, temp.getAbsolutePath() );
 		try {
 			Process p = pb.start();
 			p.waitFor();

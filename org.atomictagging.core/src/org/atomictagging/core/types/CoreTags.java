@@ -45,4 +45,9 @@ public final class CoreTags {
 	 * Tag for video files.
 	 */
 	public final static String	FILETYPE_VIDEO			= "x-filetype-video";
+
+	/**
+	 * Tag for image files.
+	 */
+	public final static String	FILETYPE_IMAGE			= "x-filetype-image";
 }

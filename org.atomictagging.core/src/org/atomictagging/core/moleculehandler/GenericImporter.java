@@ -116,6 +116,41 @@ public class GenericImporter implements IMoleculeImporter {
 
 
 	/**
+	 * @param bytes
+	 * @param targetDirName
+	 * @return
+	 */
+	public static String saveFile( final byte[] bytes, String targetDirName ) {
+		System.out.println( "Saving file..." );
+
+		String hash = DigestUtils.md5Hex( bytes );
+		List<String> pathArray = new ArrayList<String>( 3 );
+		pathArray.add( hash.substring( 0, 2 ) );
+		pathArray.add( hash.substring( 2, 4 ) );
+
+		File targetDir = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
+
+		pathArray.add( hash.substring( 4 ) );
+
+		File target = new File( targetDirName + "/" + StringUtils.join( pathArray, "/" ) );
+		try {
+			targetDir.mkdirs();
+			target.createNewFile();
+
+			FileUtils.saveFile( bytes, target );
+
+		} catch ( Exception e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+		System.out.println( "Created file: " + target.getAbsolutePath() );
+		return StringUtils.join( pathArray, "/" );
+	}
+
+
+	/**
 	 * @param file
 	 * @param targetDirName
 	 * @return The resulting file name the file was copied to without the repository directory

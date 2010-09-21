@@ -69,10 +69,8 @@ public abstract class Entity {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) ( id ^ ( id >>> 32 ) );
-		return result;
+		// Copied from java.lang.Long
+		return (int) ( id ^ ( id >>> 32 ) );
 	}
 
 

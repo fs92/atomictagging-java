@@ -46,6 +46,7 @@ public class Molecule implements IMolecule {
 	}
 
 
+	@Override
 	public MoleculeBuilder modify() {
 		// We don't need to do the checks. The molecule must have been
 		// consistent since there is only one way to create it.

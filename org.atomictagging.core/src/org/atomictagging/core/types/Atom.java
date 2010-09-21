@@ -46,6 +46,7 @@ public class Atom implements IAtom {
 	}
 
 
+	@Override
 	public AtomBuilder modify() {
 		// We don't need to do the checks. The atom must have been
 		// consistent since there is only one way to create it.

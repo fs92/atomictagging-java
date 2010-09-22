@@ -13,8 +13,6 @@
  */
 package org.atomictagging.core.types;
 
-import org.junit.Assert;
-
 /**
  * Base class for all entities that supplies better equals and hashCode methods than Object does. It also provides a
  * negative ID generator to identify entities that have not been persisted.
@@ -24,14 +22,14 @@ import org.junit.Assert;
 public abstract class Entity {
 
 	private static long	ID_GENERATOR	= -1;
-	private long		id;
+	protected long		id;
 
 
 	/**
 	 * Create a new entity. The ID of this entity will be a session-unique negative long unless overwritten explicitly.
 	 */
 	public Entity() {
-		setId( ID_GENERATOR-- );
+		this.id = ID_GENERATOR--;
 	}
 
 
@@ -43,17 +41,6 @@ public abstract class Entity {
 	 */
 	public long getId() {
 		return id;
-	}
-
-
-	/**
-	 * Sets an ID for this entity. Must be greater than zero.
-	 * 
-	 * @param id
-	 */
-	public void setId( long id ) {
-		Assert.assertTrue( "ID of an entity must be greater than zero.", id > 0 );
-		this.id = id;
 	}
 
 

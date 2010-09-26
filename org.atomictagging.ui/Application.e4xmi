@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_ZkvWAMZ6Ed-2FaVmxRLI2g" elementId="org.eclipse.e4.ide.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_Zkv9HcZ6Ed-2FaVmxRLI2g" label="org.atomictagging.ui" width="600" height="500">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_ZkwkJMZ6Ed-2FaVmxRLI2g">
+      <children xsi:type="advanced:Perspective" xmi:id="_ZkwkJcZ6Ed-2FaVmxRLI2g">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_ZkwkJsZ6Ed-2FaVmxRLI2g">
+          <children xsi:type="basic:PartStack" xmi:id="_ZkwkJ8Z6Ed-2FaVmxRLI2g">
+            <children xsi:type="basic:Part" xmi:id="_opGGAMZ6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.atompart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.AtomPart" label="Atom"/>
+            <children xsi:type="basic:Part" xmi:id="_skOwsMc8Ed-eYq7gQlFEVg" elementId="org.atomictagging.ui.parts.ImagePart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.ImagePart" label="ImageMoleculePart"/>
+            <children xsi:type="basic:Part" xmi:id="_TmRvwMh4Ed-Evsa0Vw38Vw" elementId="org.atomictagging.ui.parts.imageimportpart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.ImageImportPart" label="Image Importer"/>
+          </children>
+        </children>
+      </children>
+    </children>
+    <mainMenu xmi:id="_Zkv9HsZ6Ed-2FaVmxRLI2g" elementId="menu:org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_Zkv9H8Z6Ed-2FaVmxRLI2g" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_Zkv9IMZ6Ed-2FaVmxRLI2g" label="Open" iconURI="platform:/plugin/org.atomictagging.ui/icons/sample.gif" command="_Zkv9FMZ6Ed-2FaVmxRLI2g"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZkwkIMZ6Ed-2FaVmxRLI2g" label="Save" iconURI="platform:/plugin/org.atomictagging.ui/icons/save_edit.gif" command="_Zkv9F8Z6Ed-2FaVmxRLI2g"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZkwkIcZ6Ed-2FaVmxRLI2g" label="Quit" command="_Zkv9EMZ6Ed-2FaVmxRLI2g"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_ZkwkIsZ6Ed-2FaVmxRLI2g" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZkwkI8Z6Ed-2FaVmxRLI2g" label="About" command="_Zkv9GsZ6Ed-2FaVmxRLI2g"/>
+      </children>
+    </mainMenu>
+    <trimBars xmi:id="_ZkwkKMZ6Ed-2FaVmxRLI2g">
+      <children xsi:type="menu:ToolBar" xmi:id="_ZkwkKcZ6Ed-2FaVmxRLI2g" elementId="toolbar:org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_ZkwkKsZ6Ed-2FaVmxRLI2g" iconURI="platform:/plugin/org.atomictagging.ui/icons/sample.gif" command="_Zkv9FMZ6Ed-2FaVmxRLI2g"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_ZkwkK8Z6Ed-2FaVmxRLI2g" iconURI="platform:/plugin/org.atomictagging.ui/icons/save_edit.gif" command="_Zkv9F8Z6Ed-2FaVmxRLI2g"/>
+      </children>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_Zkv9EcZ6Ed-2FaVmxRLI2g" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.handlers.QuitHandler" command="_Zkv9EMZ6Ed-2FaVmxRLI2g"/>
+  <handlers xmi:id="_Zkv9FcZ6Ed-2FaVmxRLI2g" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.handlers.OpenHandler" command="_Zkv9FMZ6Ed-2FaVmxRLI2g"/>
+  <handlers xmi:id="_Zkv9GMZ6Ed-2FaVmxRLI2g" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.handlers.SaveHandler" command="_Zkv9F8Z6Ed-2FaVmxRLI2g"/>
+  <handlers xmi:id="_Zkv9G8Z6Ed-2FaVmxRLI2g" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.handlers.AboutHandler" command="_Zkv9GsZ6Ed-2FaVmxRLI2g"/>
+  <bindingTables xmi:id="_Zkv9EsZ6Ed-2FaVmxRLI2g" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+    <bindings xmi:id="_Zkv9E8Z6Ed-2FaVmxRLI2g" keySequence="Ctrl+Q" command="_Zkv9EMZ6Ed-2FaVmxRLI2g"/>
+    <bindings xmi:id="_Zkv9FsZ6Ed-2FaVmxRLI2g" keySequence="Ctrl+O" command="_Zkv9FMZ6Ed-2FaVmxRLI2g"/>
+    <bindings xmi:id="_Zkv9GcZ6Ed-2FaVmxRLI2g" keySequence="Ctrl+S" command="_Zkv9F8Z6Ed-2FaVmxRLI2g"/>
+    <bindings xmi:id="_Zkv9HMZ6Ed-2FaVmxRLI2g" keySequence="Ctrl+A" command="_Zkv9GsZ6Ed-2FaVmxRLI2g"/>
+  </bindingTables>
+  <rootContext xmi:id="_ZkvWAcZ6Ed-2FaVmxRLI2g" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_ZkvWAsZ6Ed-2FaVmxRLI2g" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_ZkvWA8Z6Ed-2FaVmxRLI2g" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
+  <commands xmi:id="_Zkv9EMZ6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.quitCommand" commandName="quitCommand"/>
+  <commands xmi:id="_Zkv9FMZ6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.openCommand" commandName="openCommand"/>
+  <commands xmi:id="_Zkv9F8Z6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.saveCommand" commandName="saveCommand"/>
+  <commands xmi:id="_Zkv9GsZ6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.aboutCommand" commandName="aboutCommand"/>
+</application:Application>

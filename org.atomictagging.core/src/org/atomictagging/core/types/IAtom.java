@@ -41,6 +41,14 @@ public interface IAtom {
 
 
 	/**
+	 * Set the data of this atom.
+	 * 
+	 * @param data
+	 */
+	void setData( String data );
+
+
+	/**
 	 * Get all tags of this atom.
 	 * 
 	 * @return The atoms tags
@@ -49,9 +57,18 @@ public interface IAtom {
 
 
 	/**
+	 * Override the tags of this atom.
+	 * 
+	 * @param tags
+	 */
+	void setTags( List<String> tags );
+
+
+	/**
 	 * Modify an atom.
 	 * 
 	 * @return An AtomBuilder object containing the data of the atom.
 	 */
 	public AtomBuilder modify();
+
 }

@@ -14,7 +14,6 @@
 package org.atomictagging.core.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,15 +21,16 @@ import java.util.List;
  * 
  * @author Stephan Mann
  */
-public class Atom implements IAtom {
+public class Atom extends Entity implements IAtom {
 
-	private final long			id;
-	private final String		data;
-	private final List<String>	tags;
+	private String			data;
+	private List<String>	tags;
 
 
 	private Atom( AtomBuilder builder ) {
-		this.id = builder.atomId;
+		if ( builder.atomId > 0 ) {
+			this.id = builder.atomId;
+		}
 		this.data = builder.atomData;
 		this.tags = builder.atomTags;
 	}
@@ -59,76 +59,34 @@ public class Atom implements IAtom {
 
 
 	@Override
-	public long getId() {
-		return id;
-	}
-
-
-	@Override
 	public String getData() {
 		return data;
 	}
 
 
 	@Override
+	public void setData( String data ) {
+		this.data = data;
+	}
+
+
+	@Override
 	public List<String> getTags() {
-		return Collections.unmodifiableList( tags );
+		// TODO Check whether this is required to work within a Eclipse 4 application.
+		// return Collections.unmodifiableList( tags );
+		return tags;
+	}
+
+
+	@Override
+	public void setTags( List<String> tags ) {
+		this.tags = tags;
 	}
 
 
 	@Override
 	public String toString() {
-		return "Atom: id=" + id + "; data=" + data + "; tags=" + tags;
-	}
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ( ( data == null ) ? 0 : data.hashCode() );
-		result = prime * result + (int) ( id ^ ( id >>> 32 ) );
-		result = prime * result + ( ( tags == null ) ? 0 : tags.hashCode() );
-		return result;
-	}
-
-
-	@Override
-	public boolean equals( Object obj ) {
-		if ( this == obj ) {
-			return true;
-		}
-		if ( obj == null ) {
-			return false;
-		}
-		if ( getClass() != obj.getClass() ) {
-			return false;
-		}
-		Atom other = (Atom) obj;
-		if ( data == null ) {
-			if ( other.data != null ) {
-				return false;
-			}
-		} else if ( !data.equals( other.data ) ) {
-			return false;
-		}
-		if ( id != other.id ) {
-			return false;
-		}
-		if ( tags == null && other.tags != null ) {
-			return false;
-		}
-
-		// The order of the tags is not important. See List.equals()
-		List<String> me = new ArrayList<String>( getTags() );
-		List<String> you = new ArrayList<String>( other.getTags() );
-		Collections.sort( me );
-		Collections.sort( you );
-
-		if ( !me.equals( you ) ) {
-			return false;
-		}
-		return true;
+		return "Atom: id=" + getId() + "; data=" + getData() + "; tags=" + tags;
 	}
 
 	/**

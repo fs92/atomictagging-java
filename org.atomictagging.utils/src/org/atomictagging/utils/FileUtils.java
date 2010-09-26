@@ -81,4 +81,49 @@ public class FileUtils {
 		}
 	}
 
+
+	/**
+	 * save an array of bytes
+	 * 
+	 * @param bytes
+	 * @param target
+	 */
+	public static void saveFile( byte[] bytes, File target ) {
+		if ( !target.exists() ) {
+			try {
+				if ( !target.createNewFile() ) {
+					throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath() );
+				}
+			} catch ( IOException e ) {
+				throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath(), e );
+			}
+		}
+
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream( target );
+		} catch ( FileNotFoundException ignore ) {
+			// Was checked previously.
+		}
+
+		if ( fos == null ) {
+			throw new RuntimeException( "Failed to create file streams." );
+		}
+
+		try {
+
+			fos.write( bytes, 0, bytes.length );
+
+		} catch ( IOException e ) {
+			// FIXME
+			throw new RuntimeException( "Failed to copy file.", e );
+		} finally {
+			try {
+				fos.close();
+			} catch ( IOException e ) {
+				// Nothing we can do, or is there?
+				e.printStackTrace();
+			}
+		}
+	}
 }

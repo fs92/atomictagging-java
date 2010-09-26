@@ -41,11 +41,27 @@ public interface IMolecule {
 
 
 	/**
+	 * Override atoms of this molecule.
+	 * 
+	 * @param atoms
+	 */
+	void setAtoms( List<IAtom> atoms );
+
+
+	/**
 	 * Get all tags of this molecule.
 	 * 
 	 * @return The molecules tags
 	 */
 	List<String> getTags();
+
+
+	/**
+	 * Override tags of this molecule.
+	 * 
+	 * @param tags
+	 */
+	void setTags( List<String> tags );
 
 
 	/**

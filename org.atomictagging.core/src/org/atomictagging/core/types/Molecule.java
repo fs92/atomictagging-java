@@ -14,7 +14,6 @@
 package org.atomictagging.core.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,17 +21,16 @@ import java.util.List;
  * 
  * @author Stephan Mann
  */
-public class Molecule implements IMolecule {
+public class Molecule extends Entity implements IMolecule {
 
-	private final long			id;
-	private final List<IAtom>	atoms;
-	private final List<String>	tags;
+	private List<IAtom>		atoms;
+	private List<String>	tags;
 
 
 	private Molecule( MoleculeBuilder builder ) {
 		this.id = builder.molId;
-		this.atoms = Collections.unmodifiableList( builder.molAtoms );
-		this.tags = Collections.unmodifiableList( builder.molTags );
+		this.atoms = builder.molAtoms;
+		this.tags = builder.molTags;
 	}
 
 
@@ -58,20 +56,26 @@ public class Molecule implements IMolecule {
 
 
 	@Override
-	public long getId() {
-		return id;
+	public List<IAtom> getAtoms() {
+		return atoms;
 	}
 
 
 	@Override
-	public List<IAtom> getAtoms() {
-		return new ArrayList<IAtom>( atoms );
+	public void setAtoms( List<IAtom> atoms ) {
+		this.atoms = atoms;
 	}
 
 
 	@Override
 	public List<String> getTags() {
-		return new ArrayList<String>( tags );
+		return tags;
+	}
+
+
+	@Override
+	public void setTags( List<String> tags ) {
+		this.tags = tags;
 	}
 
 

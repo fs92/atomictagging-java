@@ -14,7 +14,6 @@
 package org.atomictagging.core.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,8 +23,8 @@ import java.util.List;
  */
 public class Atom extends Entity implements IAtom {
 
-	private final String		data;
-	private final List<String>	tags;
+	private String			data;
+	private List<String>	tags;
 
 
 	private Atom( AtomBuilder builder ) {
@@ -65,8 +64,22 @@ public class Atom extends Entity implements IAtom {
 
 
 	@Override
+	public void setData( String data ) {
+		this.data = data;
+	}
+
+
+	@Override
 	public List<String> getTags() {
-		return Collections.unmodifiableList( tags );
+		// TODO Check whether this is required to work within a Eclipse 4 application.
+		// return Collections.unmodifiableList( tags );
+		return tags;
+	}
+
+
+	@Override
+	public void setTags( List<String> tags ) {
+		this.tags = tags;
 	}
 
 

@@ -45,6 +45,18 @@ public abstract class Entity {
 
 
 	/**
+	 * Set the ID of the entity.
+	 * <p>
+	 * TODO Check whether we need to disallow setting a negative ID.
+	 * 
+	 * @param id
+	 */
+	public void setId( long id ) {
+		this.id = id;
+	}
+
+
+	/**
 	 * Returns whether this entity has been persisted. This is decided solely on its ID.
 	 * 
 	 * @return Persistence state

@@ -1,4 +1,4 @@
-#Fri May 21 17:41:03 CEST 2010
+#Mon Sep 27 08:00:25 CEST 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.codeComplete.argumentPrefixes=
 org.eclipse.jdt.core.codeComplete.argumentSuffixes=
@@ -48,7 +48,7 @@ org.eclipse.jdt.core.compiler.problem.localVariableHiding=warning
 org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=warning
 org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=warning
 org.eclipse.jdt.core.compiler.problem.missingHashCodeMethod=error
-org.eclipse.jdt.core.compiler.problem.missingJavadocComments=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocComments=ignore
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsVisibility=public
 org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=return_tag

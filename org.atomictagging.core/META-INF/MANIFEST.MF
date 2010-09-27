@@ -11,4 +11,5 @@ Require-Bundle: org.atomictagging.utils;bundle-version="1.0.0",
 Export-Package: org.atomictagging.core.accessors,
  org.atomictagging.core.configuration,
  org.atomictagging.core.moleculehandler,
+ org.atomictagging.core.services,
  org.atomictagging.core.types

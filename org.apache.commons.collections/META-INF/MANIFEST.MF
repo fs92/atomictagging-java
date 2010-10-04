@@ -18,3 +18,4 @@ Export-Package: org.apache.commons.collections,
  org.apache.commons.collections.map,
  org.apache.commons.collections.set
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-BuddyPolicy: registered

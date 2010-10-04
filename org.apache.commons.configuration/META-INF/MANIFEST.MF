@@ -15,3 +15,4 @@ Export-Package: org.apache.commons.configuration,
  org.apache.commons.configuration.tree.xpath,
  org.apache.commons.configuration.web
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-BuddyPolicy: registered

@@ -19,3 +19,5 @@ Export-Package: org.atomictagging.core.accessors,
  org.atomictagging.core.moleculehandler,
  org.atomictagging.core.services,
  org.atomictagging.core.types
+Bundle-Activator: org.atomictagging.core.internal.Activator
+Eclipse-RegisterBuddy: org.apache.commons.codec,org.apache.commons.collections,org.apache.commons.configuration,org.apache.commons.lang,org.apache.commons.logging

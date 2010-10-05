@@ -16,12 +16,30 @@ package org.atomictagging.core.services;
 import org.atomictagging.core.services.impl.TagService;
 
 /**
- * @author tokei
+ * Since we seem to be unable to get OSGI services to run the way we want them to, we'll be using singletons for the
+ * time being. As long as this factory is used exclusively to access these singletons, we can easily switch the
+ * "service" from single instance to multiple instance if we need to. Also, we can switch easily to OSGI service should
+ * we ever figure out how to use them properly.
  * 
+ * @author Stephan Mann
  */
 public final class ATService {
+
+	private static ITagService	tagService	= null;
+
+
+	/**
+	 * Get an instance that implements the {@link ITagService} interface.
+	 * <p>
+	 * <b>Note:</b> You should not make any assumptions whether the returned instance is a singleon or not. It is, at
+	 * the moment but it might change.
+	 * 
+	 * @return An instance that implements {@link ITagService}
+	 */
 	public static ITagService getTagService() {
-		TagService ts = new TagService();
-		return ts;
+		if ( tagService == null ) {
+			tagService = new TagService();
+		}
+		return tagService;
 	}
 }

@@ -13,6 +13,7 @@
  */
 package org.atomictagging.core.services;
 
+import org.atomictagging.core.services.impl.AtomService;
 import org.atomictagging.core.services.impl.TagService;
 
 /**
@@ -26,6 +27,7 @@ import org.atomictagging.core.services.impl.TagService;
 public final class ATService {
 
 	private static ITagService	tagService	= null;
+	private static IAtomService	atomService	= null;
 
 
 	/**
@@ -41,5 +43,13 @@ public final class ATService {
 			tagService = new TagService();
 		}
 		return tagService;
+	}
+
+
+	public static IAtomService getAtomService() {
+		if ( atomService == null ) {
+			atomService = new AtomService();
+		}
+		return atomService;
 	}
 }

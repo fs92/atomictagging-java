@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 
@@ -33,26 +34,26 @@ public class DbModifier {
 	 * 
 	 * @param atom
 	 */
-	public static void modify( IAtom atom ) {
+	public static void modify( final IAtom atom ) {
 		if ( atom.getId() == 0 ) {
 			throw new IllegalArgumentException( "Can't modify atom that has no ID." );
 		}
 
 		try {
-			PreparedStatement statement = DB.CONN.prepareStatement( "UPDATE atoms SET data = ? WHERE atomid = ?" );
+			final PreparedStatement statement = DB.CONN.prepareStatement( "UPDATE atoms SET data = ? WHERE atomid = ?" );
 			statement.setString( 1, atom.getData() );
 			statement.setLong( 2, atom.getId() );
 			statement.execute();
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		try {
-			IAtom reference = DbReader.readAtom( atom.getId() );
+			final IAtom reference = ATService.getAtomService().find( atom.getId() );
 
-			List<String> curTags = new ArrayList<String>( atom.getTags() );
-			List<String> refTags = new ArrayList<String>( reference.getTags() );
+			final List<String> curTags = new ArrayList<String>( atom.getTags() );
+			final List<String> refTags = new ArrayList<String>( reference.getTags() );
 
 			curTags.removeAll( reference.getTags() );
 			refTags.removeAll( atom.getTags() );
@@ -61,27 +62,27 @@ public class DbModifier {
 			// refTags now contains tags that need to be removed from the atom.
 
 			// For all tags in curTags, check whether tag exists and create link to atom.
-			for ( String tag : curTags ) {
+			for ( final String tag : curTags ) {
 				// FIXME Gaaah!
-				long tagId = DbWriter.writeTag( tag );
+				final long tagId = DbWriter.writeTag( tag );
 				DbWriter.insertAtomTags.setLong( 1, atom.getId() );
 				DbWriter.insertAtomTags.setLong( 2, tagId );
 				DbWriter.insertAtomTags.execute();
 			}
 
 			// For all tags in refTags, remove link from atom and check whether the tag can be removed.
-			PreparedStatement removeTag = DB.CONN
+			final PreparedStatement removeTag = DB.CONN
 					.prepareStatement( "DELETE FROM atom_has_tags WHERE atoms_atomid = ? AND tags_tagid = ?" );
 
-			for ( String tag : refTags ) {
-				long tagId = DbWriter.writeTag( tag );
+			for ( final String tag : refTags ) {
+				final long tagId = DbWriter.writeTag( tag );
 				removeTag.setLong( 1, atom.getId() );
 				removeTag.setLong( 2, tagId );
 				removeTag.execute();
 			}
 
 			// TODO check for obsolete tags that need to be removed.
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -93,16 +94,16 @@ public class DbModifier {
 	 * 
 	 * @param molecule
 	 */
-	public static void modify( IMolecule molecule ) {
+	public static void modify( final IMolecule molecule ) {
 		if ( molecule.getId() == 0 ) {
 			throw new IllegalArgumentException( "Can't modify molecule that has no ID." );
 		}
 
 		try {
-			IMolecule reference = DbReader.read( molecule.getId() );
+			final IMolecule reference = DbReader.read( molecule.getId() );
 
-			List<String> curTags = new ArrayList<String>( molecule.getTags() );
-			List<String> refTags = new ArrayList<String>( reference.getTags() );
+			final List<String> curTags = new ArrayList<String>( molecule.getTags() );
+			final List<String> refTags = new ArrayList<String>( reference.getTags() );
 
 			curTags.removeAll( reference.getTags() );
 			refTags.removeAll( molecule.getTags() );
@@ -111,30 +112,30 @@ public class DbModifier {
 			// refTags now contains tags that need to be removed from the molecule.
 
 			// For all tags in curTags, check whether tag exists and create link to atom.
-			PreparedStatement insertTags = DB.CONN
+			final PreparedStatement insertTags = DB.CONN
 					.prepareStatement( "INSERT INTO molecule_has_tags (molecules_moleculeid, tags_tagid) VALUES (?, ?)" );
 			insertTags.setLong( 1, molecule.getId() );
 
-			for ( String tag : curTags ) {
-				long tagId = DbWriter.writeTag( tag );
+			for ( final String tag : curTags ) {
+				final long tagId = DbWriter.writeTag( tag );
 				insertTags.setLong( 2, tagId );
 				insertTags.execute();
 			}
 
 			// For all tags in refTags, remove link from atom and check whether the tag can be removed.
-			PreparedStatement removeTag = DB.CONN
+			final PreparedStatement removeTag = DB.CONN
 					.prepareStatement( "DELETE FROM molecule_has_tags WHERE molecules_moleculeid = ? AND tags_tagid = ?" );
 
-			for ( String tag : refTags ) {
-				long tagId = DbWriter.writeTag( tag );
+			for ( final String tag : refTags ) {
+				final long tagId = DbWriter.writeTag( tag );
 				removeTag.setLong( 1, molecule.getId() );
 				removeTag.setLong( 2, tagId );
 				removeTag.execute();
 			}
 
 			// Update the atoms
-			List<IAtom> curAtoms = new ArrayList<IAtom>( molecule.getAtoms() );
-			List<IAtom> refAtoms = new ArrayList<IAtom>( reference.getAtoms() );
+			final List<IAtom> curAtoms = new ArrayList<IAtom>( molecule.getAtoms() );
+			final List<IAtom> refAtoms = new ArrayList<IAtom>( reference.getAtoms() );
 
 			curAtoms.removeAll( reference.getAtoms() );
 			refAtoms.removeAll( molecule.getAtoms() );
@@ -142,20 +143,20 @@ public class DbModifier {
 			// curAtoms now contains atoms that need to be added to the molecule.
 			// refAtoms now contains atoms that need to be removed from the molecule.
 
-			PreparedStatement addAtom = DB.CONN
+			final PreparedStatement addAtom = DB.CONN
 					.prepareStatement( "INSERT INTO molecule_has_atoms (molecules_moleculeid, atoms_atomid) VALUES (?, ?)" );
 			addAtom.setLong( 1, molecule.getId() );
 
-			for ( IAtom atom : curAtoms ) {
+			for ( final IAtom atom : curAtoms ) {
 				addAtom.setLong( 2, atom.getId() );
 				addAtom.execute();
 			}
 
-			PreparedStatement removeAtom = DB.CONN
+			final PreparedStatement removeAtom = DB.CONN
 					.prepareStatement( "DELETE FROM molecule_has_atoms WHERE molecules_moleculeid = ? AND atoms_atomid = ?" );
 			removeAtom.setLong( 1, molecule.getId() );
 
-			for ( IAtom atom : refAtoms ) {
+			for ( final IAtom atom : refAtoms ) {
 				removeAtom.setLong( 2, atom.getId() );
 				removeAtom.execute();
 			}
@@ -163,7 +164,7 @@ public class DbModifier {
 			// TODO check for obsolete tags that need to be removed.
 			// TODO check for orphan atoms that need to be removed
 			// TODO all this needs to be a transaction and of course we remove orphan atoms only at the users request
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

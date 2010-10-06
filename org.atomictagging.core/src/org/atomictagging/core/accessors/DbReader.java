@@ -19,11 +19,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomictagging.core.types.Atom;
-import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
-import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.utils.StringUtils;
 
@@ -41,11 +39,11 @@ public class DbReader {
 	 * @param tags
 	 * @return List of molecules as read from the DB.
 	 */
-	public static List<IMolecule> read( List<String> tags ) {
-		List<IMolecule> result = new ArrayList<IMolecule>();
+	public static List<IMolecule> read( final List<String> tags ) {
+		final List<IMolecule> result = new ArrayList<IMolecule>();
 
 		try {
-			String tagFilter = StringUtils.join( tags, "' OR tag = '" );
+			final String tagFilter = StringUtils.join( tags, "' OR tag = '" );
 			String moleculeSQL;
 
 			// FIXME SQL injection! Fix this!!
@@ -74,15 +72,15 @@ public class DbReader {
 						+ "WHERE moleculeid = molecules_moleculeid AND tags_tagid = tagid";
 			}
 
-			PreparedStatement readMolecules = DB.CONN.prepareStatement( moleculeSQL );
+			final PreparedStatement readMolecules = DB.CONN.prepareStatement( moleculeSQL );
 
-			String atomSQL = "SELECT ma.atoms_atomid AS atomid "
+			final String atomSQL = "SELECT ma.atoms_atomid AS atomid "
 					+ "FROM molecule_has_atoms AS ma JOIN atom_has_tags AS at JOIN tags "
 					+ "WHERE at.atoms_atomid = at.tags_tagid AND tags_tagid = tagid AND molecules_moleculeid = ? "
 					+ "GROUP BY ma.atoms_atomid";
-			PreparedStatement readAtoms = DB.CONN.prepareStatement( atomSQL );
+			final PreparedStatement readAtoms = DB.CONN.prepareStatement( atomSQL );
 
-			ResultSet moleculeResult = readMolecules.executeQuery();
+			final ResultSet moleculeResult = readMolecules.executeQuery();
 			MoleculeBuilder builder = Molecule.build();
 			long moleculeId = 0;
 
@@ -100,11 +98,11 @@ public class DbReader {
 					builder.withId( moleculeId );
 
 					readAtoms.setLong( 1, moleculeId );
-					ResultSet atomResult = readAtoms.executeQuery();
+					final ResultSet atomResult = readAtoms.executeQuery();
 
 					while ( atomResult.next() ) {
-						long atomId = atomResult.getLong( "atomid" );
-						builder.withAtom( readAtom( atomId ) );
+						final long atomId = atomResult.getLong( "atomid" );
+						builder.withAtom( ATService.getAtomService().find( atomId ) );
 					}
 				}
 
@@ -116,7 +114,7 @@ public class DbReader {
 				result.add( builder.buildWithAtomsAndTags() );
 			}
 
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -132,7 +130,7 @@ public class DbReader {
 					.prepareStatement( "SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?" );
 			readMoleculeTags = DB.CONN
 					.prepareStatement( "SELECT tagid, tag FROM tags JOIN molecule_has_tags WHERE tagid = tags_tagid AND molecules_moleculeid = ?" );
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -143,16 +141,16 @@ public class DbReader {
 	 * @param moleculeId
 	 * @return The molecule with the given ID
 	 */
-	public static IMolecule read( long moleculeId ) {
+	public static IMolecule read( final long moleculeId ) {
 		if ( moleculeId <= 0 ) {
 			throw new IllegalArgumentException( "Invalid molecule ID." );
 		}
 
 		try {
 			readMolecule.setLong( 1, moleculeId );
-			ResultSet moleculeResult = readMolecule.executeQuery();
+			final ResultSet moleculeResult = readMolecule.executeQuery();
 			boolean first = true;
-			MoleculeBuilder builder = Molecule.build();
+			final MoleculeBuilder builder = Molecule.build();
 
 			while ( moleculeResult.next() ) {
 
@@ -161,11 +159,12 @@ public class DbReader {
 					first = false;
 				}
 
-				builder.withAtom( readAtom( moleculeResult.getLong( "atoms_atomid" ) ) );
+				final long atomId = moleculeResult.getLong( "atoms_atomid" );
+				builder.withAtom( ATService.getAtomService().find( atomId ) );
 			}
 
 			readMoleculeTags.setLong( 1, moleculeId );
-			ResultSet moleculeTagResult = readMoleculeTags.executeQuery();
+			final ResultSet moleculeTagResult = readMoleculeTags.executeQuery();
 			while ( moleculeTagResult.next() ) {
 				builder.withTag( moleculeTagResult.getString( "tag" ) );
 			}
@@ -176,47 +175,9 @@ public class DbReader {
 			}
 
 			return builder.buildWithAtomsAndTags();
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private static PreparedStatement	readAtom;
-	static {
-		try {
-			readAtom = DB.CONN.prepareStatement( "SELECT atomid, data, tag "
-					+ "FROM atoms JOIN atom_has_tags JOIN tags "
-					+ "WHERE atomid = atoms_atomid AND tags_tagid = tagid AND atomid = ?" );
-		} catch ( SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
-	/**
-	 * Get the atom with the specified ID from the database.
-	 * 
-	 * @param atomId
-	 * @return A consistent atom or null if no atom was found with the given ID
-	 * @throws SQLException
-	 */
-	public static IAtom readAtom( long atomId ) throws SQLException {
-		readAtom.setLong( 1, atomId );
-		ResultSet atomResult = readAtom.executeQuery();
-
-		if ( atomResult.next() ) {
-			AtomBuilder builder = Atom.build().withId( atomResult.getLong( "atomid" ) ).withData(
-					atomResult.getString( "data" ) ).withTag( atomResult.getString( "tag" ) );
-
-			while ( atomResult.next() && atomResult.getLong( "atomid" ) == atomId ) {
-				builder.withTag( atomResult.getString( "tag" ) );
-			}
-
-			return builder.buildWithDataAndTag();
 		}
 
 		return null;

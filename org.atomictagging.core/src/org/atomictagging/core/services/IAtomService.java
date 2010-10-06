@@ -13,9 +13,35 @@
  */
 package org.atomictagging.core.services;
 
+import java.util.List;
+
+import org.atomictagging.core.types.IAtom;
+
 /**
  * @author Stephan Mann
  */
 public interface IAtomService {
+
+	public enum Filter {
+		INCLUDE, EXCLUDE
+	}
+
+
+	IAtom find( long atomId );
+
+
+	List<IAtom> find( List<String> tags );
+
+
+	List<IAtom> find( List<String> tags, Filter filter );
+
+
+	List<IAtom> findUserAtoms( List<String> tags );
+
+
+	void save( IAtom atom );
+
+
+	void delete( IAtom atom );
 
 }

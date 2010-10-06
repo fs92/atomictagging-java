@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -29,9 +28,10 @@ import java.util.concurrent.CountDownLatch;
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.configuration.Configuration;
+import org.atomictagging.core.services.ATService;
+import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
-import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.shell.IShell;
 import org.atomictagging.shell.swingeditor.AtomicTaggingEditor;
@@ -47,7 +47,7 @@ public class EditCommand extends AbstractModifyCommand {
 	/**
 	 * @param shell
 	 */
-	public EditCommand( IShell shell ) {
+	public EditCommand( final IShell shell ) {
 		super( shell );
 	}
 
@@ -71,21 +71,15 @@ public class EditCommand extends AbstractModifyCommand {
 
 
 	@Override
-	protected int handleAtom( long id, PrintStream stdout ) {
-		IAtom atom = null;
-		try {
-			atom = DbReader.readAtom( id );
-		} catch ( SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	protected int handleAtom( final long id, final PrintStream stdout ) {
+		final IAtom atom = ATService.getAtomService().find( id );
 
 		if ( atom == null ) {
 			stdout.println( "No atom found with the given ID " + id );
 			return 1;
 		}
 
-		File temp = writeAtomTempFile( atom );
+		final File temp = writeAtomTempFile( atom );
 
 		// This can't happen, can it?
 		if ( temp == null ) {
@@ -95,7 +89,7 @@ public class EditCommand extends AbstractModifyCommand {
 
 		openEditorAndWait( temp );
 
-		AtomBuilder aBuilder = getAtomFromFile( atom.modify(), temp );
+		final AtomBuilder aBuilder = getAtomFromFile( atom.modify(), temp );
 		DbModifier.modify( aBuilder.buildWithDataAndTag() );
 
 		temp.delete();
@@ -108,19 +102,19 @@ public class EditCommand extends AbstractModifyCommand {
 	 * @param temp
 	 * @return
 	 */
-	static AtomBuilder getAtomFromFile( AtomBuilder aBuilder, File temp ) {
-		StringBuilder data = new StringBuilder();
-		List<String> tags = new ArrayList<String>();
+	static AtomBuilder getAtomFromFile( final AtomBuilder aBuilder, final File temp ) {
+		final StringBuilder data = new StringBuilder();
+		final List<String> tags = new ArrayList<String>();
 
 		try {
-			BufferedReader reader = new BufferedReader( new FileReader( temp ) );
+			final BufferedReader reader = new BufferedReader( new FileReader( temp ) );
 			String line = null;
 			boolean startData = false;
 
 			while ( ( line = reader.readLine() ) != null ) {
 				if ( line.startsWith( "Tags:" ) ) {
-					String[] newTags = line.substring( 5 ).split( "," );
-					for ( String tag : newTags ) {
+					final String[] newTags = line.substring( 5 ).split( "," );
+					for ( final String tag : newTags ) {
 						tags.add( tag.trim() );
 					}
 					continue;
@@ -140,10 +134,10 @@ public class EditCommand extends AbstractModifyCommand {
 					data.append( System.getProperty( "line.separator" ) );
 				}
 			}
-		} catch ( FileNotFoundException e ) {
+		} catch ( final FileNotFoundException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -158,7 +152,7 @@ public class EditCommand extends AbstractModifyCommand {
 	 * @param temp
 	 */
 	static void openEditorAndWait( final File temp ) {
-		String editor = Configuration.get().getString( "base.editor" );
+		final String editor = Configuration.get().getString( "base.editor" );
 		if ( editor == null || editor.isEmpty() ) {
 			openBuildInEditor( temp );
 		} else {
@@ -168,32 +162,32 @@ public class EditCommand extends AbstractModifyCommand {
 
 
 	private static void openBuildInEditor( final File temp ) {
-		CountDownLatch loginSignal = new CountDownLatch( 1 );
+		final CountDownLatch loginSignal = new CountDownLatch( 1 );
 		new AtomicTaggingEditor( temp, loginSignal );
 		try {
 			loginSignal.await();
-		} catch ( InterruptedException e1 ) {
+		} catch ( final InterruptedException e1 ) {
 			e1.printStackTrace();
 		}
 	}
 
 
 	private static void openExternalEditor( final String executable, final File temp ) {
-		ProcessBuilder pb = new ProcessBuilder( executable, temp.getAbsolutePath() );
+		final ProcessBuilder pb = new ProcessBuilder( executable, temp.getAbsolutePath() );
 		try {
-			Process p = pb.start();
+			final Process p = pb.start();
 			p.waitFor();
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( InterruptedException e ) {
+		} catch ( final InterruptedException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 
-	private File writeAtomTempFile( IAtom atom ) {
+	private File writeAtomTempFile( final IAtom atom ) {
 		return writeAtomTempFile( atom.getTags(), atom.getData() );
 	}
 
@@ -203,7 +197,7 @@ public class EditCommand extends AbstractModifyCommand {
 	 * @param temp
 	 * @return
 	 */
-	static File writeAtomTempFile( List<String> tags, String data ) {
+	static File writeAtomTempFile( final List<String> tags, final String data ) {
 		File temp = null;
 		BufferedWriter writer = null;
 		try {
@@ -211,14 +205,14 @@ public class EditCommand extends AbstractModifyCommand {
 			writer = new BufferedWriter( new FileWriter( temp ) );
 			writer.write( "Tags: " + StringUtils.join( tags, ", " ) );
 			writer.write( "\nData:\n" + data );
-		} catch ( IOException x ) {
+		} catch ( final IOException x ) {
 			System.err.println( x );
 		} finally {
 			if ( writer != null ) {
 				try {
 					writer.flush();
 					writer.close();
-				} catch ( IOException ignore ) {
+				} catch ( final IOException ignore ) {
 				}
 			}
 
@@ -228,7 +222,7 @@ public class EditCommand extends AbstractModifyCommand {
 
 
 	@Override
-	protected int handleMolecule( long id, PrintStream stdout ) {
+	protected int handleMolecule( final long id, final PrintStream stdout ) {
 		IMolecule molecule = null;
 		molecule = DbReader.read( id );
 
@@ -245,20 +239,20 @@ public class EditCommand extends AbstractModifyCommand {
 			writer.write( "Tags: " + StringUtils.join( molecule.getTags(), ", " ) );
 			writer.write( "\nAtoms: " );
 
-			List<String> atomIds = new ArrayList<String>();
-			for ( IAtom atom : molecule.getAtoms() ) {
+			final List<String> atomIds = new ArrayList<String>();
+			for ( final IAtom atom : molecule.getAtoms() ) {
 				atomIds.add( String.valueOf( atom.getId() ) );
 			}
 
 			writer.write( StringUtils.join( atomIds, ", " ) );
-		} catch ( IOException x ) {
+		} catch ( final IOException x ) {
 			System.err.println( x );
 		} finally {
 			if ( writer != null ) {
 				try {
 					writer.flush();
 					writer.close();
-				} catch ( IOException ignore ) {
+				} catch ( final IOException ignore ) {
 				}
 			}
 
@@ -272,45 +266,45 @@ public class EditCommand extends AbstractModifyCommand {
 
 		openEditorAndWait( temp );
 
-		List<String> tags = new ArrayList<String>();
-		List<String> atoms = new ArrayList<String>();
+		final List<String> tags = new ArrayList<String>();
+		final List<String> atoms = new ArrayList<String>();
 
 		try {
-			BufferedReader reader = new BufferedReader( new FileReader( temp ) );
+			final BufferedReader reader = new BufferedReader( new FileReader( temp ) );
 			String line = null;
 
 			while ( ( line = reader.readLine() ) != null ) {
 				if ( line.startsWith( "Tags:" ) ) {
-					String[] newTags = line.substring( 5 ).split( "," );
-					for ( String tag : newTags ) {
+					final String[] newTags = line.substring( 5 ).split( "," );
+					for ( final String tag : newTags ) {
 						tags.add( tag.trim() );
 					}
 					continue;
 				}
 
 				if ( line.startsWith( "Atoms:" ) ) {
-					String[] newAtoms = line.substring( 6 ).split( "," );
-					for ( String atom : newAtoms ) {
+					final String[] newAtoms = line.substring( 6 ).split( "," );
+					for ( final String atom : newAtoms ) {
 						atoms.add( atom.trim() );
 					}
 					continue;
 				}
 			}
-		} catch ( FileNotFoundException e ) {
+		} catch ( final FileNotFoundException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		MoleculeBuilder mBuilder = molecule.modify();
+		final MoleculeBuilder mBuilder = molecule.modify();
 		mBuilder.replaceTags( tags );
 		mBuilder.deleteAtoms();
 
-		for ( String atomId : atoms ) {
+		for ( final String atomId : atoms ) {
 			try {
-				IAtom atom = DbReader.readAtom( Long.parseLong( atomId ) );
+				final IAtom atom = ATService.getAtomService().find( Long.parseLong( atomId ) );
 
 				if ( atom == null ) {
 					stdout.println( "Unknown atom with ID: " + atomId );
@@ -318,11 +312,7 @@ public class EditCommand extends AbstractModifyCommand {
 				}
 
 				mBuilder.withAtom( atom );
-			} catch ( NumberFormatException e ) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch ( SQLException e ) {
-				// TODO Auto-generated catch block
+			} catch ( final NumberFormatException e ) {
 				e.printStackTrace();
 			} finally {
 				temp.delete();

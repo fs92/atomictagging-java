@@ -23,11 +23,12 @@ import java.util.List;
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.accessors.DbWriter;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom;
+import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
-import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.shell.IShell;
 
@@ -43,7 +44,7 @@ public class NewCommand extends AbstractModifyCommand {
 	/**
 	 * @param shell
 	 */
-	public NewCommand( IShell shell ) {
+	public NewCommand( final IShell shell ) {
 		super( shell );
 	}
 
@@ -61,8 +62,8 @@ public class NewCommand extends AbstractModifyCommand {
 
 
 	@Override
-	public int handleInput( String input, PrintStream stdout ) {
-		String[] parts = input.trim().split( " ", 2 );
+	public int handleInput( final String input, final PrintStream stdout ) {
+		final String[] parts = input.trim().split( " ", 2 );
 		String type = null;
 		long id = 0;
 
@@ -90,7 +91,7 @@ public class NewCommand extends AbstractModifyCommand {
 
 
 	@Override
-	protected int handleAtom( long id, PrintStream stdout ) {
+	protected int handleAtom( final long id, final PrintStream stdout ) {
 		IMolecule molecule = null;
 
 		if ( id != 0 ) {
@@ -102,18 +103,18 @@ public class NewCommand extends AbstractModifyCommand {
 			}
 		}
 
-		File temp = EditCommand.writeAtomTempFile( Arrays.asList( "orphan" ), "" );
+		final File temp = EditCommand.writeAtomTempFile( Arrays.asList( "orphan" ), "" );
 		EditCommand.openEditorAndWait( temp );
-		AtomBuilder builder = EditCommand.getAtomFromFile( Atom.build(), temp );
+		final AtomBuilder builder = EditCommand.getAtomFromFile( Atom.build(), temp );
 		temp.delete();
 
 		if ( molecule != null ) {
 			IAtom atom = builder.buildWithDataAndTag();
 			try {
-				List<Long> ids = DbWriter.writeList( Arrays.asList( atom ) );
+				final List<Long> ids = ATService.getAtomService().save( Arrays.asList( atom ) );
 				atom = builder.withId( ids.get( 0 ) ).buildWithDataAndTag();
 				DbModifier.modify( molecule.modify().withAtom( atom ).buildWithAtomsAndTags() );
-			} catch ( SQLException e ) {
+			} catch ( final SQLException e ) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -127,13 +128,13 @@ public class NewCommand extends AbstractModifyCommand {
 
 
 	@Override
-	protected int handleMolecule( long id, PrintStream stdout ) {
+	protected int handleMolecule( final long id, final PrintStream stdout ) {
 		if ( atoms.size() == 0 ) {
 			stdout.println( "Create atoms first via \"new atom\"." );
 			return 1;
 		}
 
-		MoleculeBuilder builder = Molecule.build().withAtoms( atoms ).withTag( "created-via-shell" );
+		final MoleculeBuilder builder = Molecule.build().withAtoms( atoms ).withTag( "created-via-shell" );
 		DbWriter.write( builder.buildWithAtomsAndTags() );
 		atoms.clear();
 		return 0;

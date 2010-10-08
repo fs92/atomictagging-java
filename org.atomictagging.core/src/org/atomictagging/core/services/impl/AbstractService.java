@@ -11,28 +11,36 @@
  * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.atomictagging.core.services;
+package org.atomictagging.core.services.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
- * @author Stephan Mann
+ * @author tokei
+ * 
  */
-public interface ITagService {
+public abstract class AbstractService {
+	protected long getAutoIncrementId( final PreparedStatement statement ) throws SQLException {
+		final ResultSet resultSet = statement.getGeneratedKeys();
 
-	/**
-	 * Returns all tags in the order the database returns them.
-	 * 
-	 * @return All tags
-	 */
-	List<String> getAll();
+		if ( resultSet.next() ) {
+			return resultSet.getLong( "GENERATED_KEY" );
+		}
+
+		return -1;
+	}
 
 
-	/**
-	 * @param tag
-	 * @return
-	 * @throws SQLException
-	 */
-	long save( String tag );
+	protected long getIdOfExistingEntity( final PreparedStatement statement, final String column ) throws SQLException {
+		final ResultSet possiblyExisting = statement.getResultSet();
+
+		if ( possiblyExisting.next() ) {
+			return possiblyExisting.getLong( column );
+		}
+
+		return -1;
+	}
+
 }

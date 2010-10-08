@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomictagging.core.accessors.DB;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.Atom.AtomBuilder;
@@ -33,7 +34,7 @@ import org.eclipse.core.runtime.Assert;
  * @author tokei
  * 
  */
-public class AtomService implements IAtomService {
+public class AtomService extends AbstractService implements IAtomService {
 
 	private final static String			ID				= "atomid";
 	private final static String			DATA			= "data";
@@ -116,6 +117,71 @@ public class AtomService implements IAtomService {
 	public void save( final IAtom atom ) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private static PreparedStatement	checkAtom;
+	private static PreparedStatement	insertAtom;
+	private static PreparedStatement	checkAtomTags;
+
+	private static PreparedStatement	insertAtomTags;
+
+	static {
+		try {
+			insertAtomTags = DB.CONN
+					.prepareStatement( "INSERT INTO atom_has_tags (atoms_atomid, tags_tagid) VALUES (?, ?)" );
+		} catch ( final SQLException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	static {
+		try {
+			checkAtom = DB.CONN.prepareStatement( "SELECT atomid FROM atoms WHERE data = ?" );
+			insertAtom = DB.CONN.prepareStatement( "INSERT INTO atoms (data) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS );
+			checkAtomTags = DB.CONN
+					.prepareStatement( "SELECT atoms_atomid FROM atom_has_tags WHERE atoms_atomid = ? AND tags_tagid = ?" );
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public List<Long> save( final List<IAtom> atoms ) throws SQLException {
+		final List<Long> atomIds = new ArrayList<Long>();
+
+		for ( final IAtom atom : atoms ) {
+			checkAtom.setString( 1, atom.getData() );
+			checkAtom.execute();
+			long atomId = getIdOfExistingEntity( checkAtom, "atomid" );
+
+			if ( atomId == -1 ) {
+				insertAtom.setString( 1, atom.getData() );
+				insertAtom.execute();
+				atomId = getAutoIncrementId( insertAtom );
+			}
+
+			for ( final String tag : atom.getTags() ) {
+				final long tagId = ATService.getTagService().save( tag );
+
+				checkAtomTags.setLong( 1, atomId );
+				checkAtomTags.setLong( 2, tagId );
+				checkAtomTags.execute();
+				final long tagCheck = getIdOfExistingEntity( checkAtomTags, "atoms_atomid" );
+
+				if ( tagCheck == -1 ) {
+					insertAtomTags.setLong( 1, atomId );
+					insertAtomTags.setLong( 2, tagId );
+					insertAtomTags.execute();
+				}
+			}
+
+			atomIds.add( atomId );
+		}
+
+		return atomIds;
 	}
 
 

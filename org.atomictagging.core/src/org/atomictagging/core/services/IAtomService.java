@@ -13,6 +13,7 @@
  */
 package org.atomictagging.core.services;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.atomictagging.core.types.IAtom;
@@ -79,5 +80,13 @@ public interface IAtomService {
 
 
 	void delete( IAtom atom );
+
+
+	/**
+	 * @param atoms
+	 * @return
+	 * @throws SQLException
+	 */
+	List<Long> save( List<IAtom> atoms ) throws SQLException;
 
 }

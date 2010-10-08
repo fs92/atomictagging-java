@@ -16,16 +16,18 @@ package org.atomictagging.core.services.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.services.ITagService;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * @author Stephan Mann
  */
-public class TagService implements ITagService {
+public class TagService extends AbstractService implements ITagService {
 
 	@Override
 	public List<String> getAll() {
@@ -33,20 +35,61 @@ public class TagService implements ITagService {
 		final String getAll = "SELECT tag FROM tags";
 
 		try {
-			PreparedStatement readTags = DB.CONN.prepareStatement( getAll );
-			ResultSet tagResult = readTags.executeQuery();
+			final PreparedStatement readTags = DB.CONN.prepareStatement( getAll );
+			final ResultSet tagResult = readTags.executeQuery();
 
 			while ( tagResult.next() ) {
 				result.add( tagResult.getString( "tag" ) );
 			}
 
 			return result;
-		} catch ( SQLException e ) {
+		} catch ( final SQLException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return null;
+	}
+
+	private static PreparedStatement	checkTag;
+	private static PreparedStatement	insertTag;
+
+	static {
+		try {
+			checkTag = DB.CONN.prepareStatement( "SELECT tagid FROM tags WHERE tag = ?" );
+			insertTag = DB.CONN.prepareStatement( "INSERT INTO tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
+		} catch ( final SQLException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * 
+	 * @param tag
+	 * @return The tag ID
+	 */
+	@Override
+	public long save( final String tag ) {
+		Assert.isTrue( tag != null && !tag.isEmpty() );
+
+		long tagId = -1;
+		try {
+			checkTag.setString( 1, tag );
+			checkTag.execute();
+			tagId = getIdOfExistingEntity( checkTag, "tagid" );
+
+			if ( tagId == -1 ) {
+				insertTag.setString( 1, tag );
+				insertTag.execute();
+				tagId = getAutoIncrementId( insertTag );
+			}
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+
+		return tagId;
 	}
 
 }

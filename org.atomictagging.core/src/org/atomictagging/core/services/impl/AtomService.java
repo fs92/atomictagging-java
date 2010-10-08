@@ -18,8 +18,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
@@ -31,8 +33,7 @@ import org.atomictagging.utils.StringUtils;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * @author tokei
- * 
+ * @author Stephan Mann
  */
 public class AtomService extends AbstractService implements IAtomService {
 
@@ -40,16 +41,27 @@ public class AtomService extends AbstractService implements IAtomService {
 	private final static String			DATA			= "data";
 	private final static String			TAG				= "tag";
 
-	private static PreparedStatement	readAtom;
-
 	private final static String			SELECT_ALL		= "SELECT " + ID + ", " + DATA + ", " + TAG + " ";
 	private final static String			FROM_JOIN_WHERE	= " FROM atoms JOIN atom_has_tags JOIN tags "
 																+ "WHERE atomid = atoms_atomid AND tags_tagid = tagid ";
 
+	private static PreparedStatement	checkAtom;
+	private static PreparedStatement	readAtom;
+	private static PreparedStatement	insertAtom;
+	private static PreparedStatement	checkAtomTags;
+	private static PreparedStatement	insertAtomTags;
+
 	static {
 		try {
+			checkAtom = DB.CONN.prepareStatement( "SELECT atomid FROM atoms WHERE data = ?" );
 			readAtom = DB.CONN.prepareStatement( SELECT_ALL + FROM_JOIN_WHERE
 					+ " AND tags_tagid = tagid AND atomid = ?" );
+			insertAtom = DB.CONN.prepareStatement( "INSERT INTO atoms (data) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS );
+			checkAtomTags = DB.CONN
+					.prepareStatement( "SELECT atoms_atomid FROM atom_has_tags WHERE atoms_atomid = ? AND tags_tagid = ?" );
+			insertAtomTags = DB.CONN
+					.prepareStatement( "INSERT INTO atom_has_tags (atoms_atomid, tags_tagid) VALUES (?, ?)" );
 		} catch ( final SQLException e ) {
 			e.printStackTrace();
 		}
@@ -114,37 +126,14 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
-	public void save( final IAtom atom ) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private static PreparedStatement	checkAtom;
-	private static PreparedStatement	insertAtom;
-	private static PreparedStatement	checkAtomTags;
-
-	private static PreparedStatement	insertAtomTags;
-
-	static {
+	public long save( final IAtom atom ) {
 		try {
-			insertAtomTags = DB.CONN
-					.prepareStatement( "INSERT INTO atom_has_tags (atoms_atomid, tags_tagid) VALUES (?, ?)" );
-		} catch ( final SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	static {
-		try {
-			checkAtom = DB.CONN.prepareStatement( "SELECT atomid FROM atoms WHERE data = ?" );
-			insertAtom = DB.CONN.prepareStatement( "INSERT INTO atoms (data) VALUES (?)",
-					Statement.RETURN_GENERATED_KEYS );
-			checkAtomTags = DB.CONN
-					.prepareStatement( "SELECT atoms_atomid FROM atom_has_tags WHERE atoms_atomid = ? AND tags_tagid = ?" );
+			final List<Long> ids = save( Arrays.asList( atom ) );
+			Assert.isTrue( ids.size() == 1 );
 		} catch ( final SQLException e ) {
 			e.printStackTrace();
 		}
+		return -1;
 	}
 
 
@@ -187,8 +176,7 @@ public class AtomService extends AbstractService implements IAtomService {
 
 	@Override
 	public void delete( final IAtom atom ) {
-		// TODO Auto-generated method stub
-
+		throw new NotImplementedException( "Not yet implemented. Sorry." );
 	}
 
 

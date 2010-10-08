@@ -56,6 +56,11 @@ public final class CoreTags {
 	public final static String	FILETYPE_IMAGE			= "x-filetype-image";
 
 
+	/**
+	 * Returns all core tags as a list.
+	 * 
+	 * @return List of core tags.
+	 */
 	public static List<String> asList() {
 		final List<String> coreTags = new ArrayList<String>();
 

@@ -29,10 +29,66 @@ import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.utils.StringUtils;
 
 /**
- * @author tokei
- * 
+ * @author Stephan Mann
  */
 public class MoleculeService extends AbstractService implements IMoleculeService {
+
+	private static PreparedStatement	readMolecule;
+	private static PreparedStatement	readMoleculeTags;
+	static {
+		try {
+			readMolecule = DB.CONN
+					.prepareStatement( "SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?" );
+			readMoleculeTags = DB.CONN
+					.prepareStatement( "SELECT tagid, tag FROM tags JOIN molecule_has_tags WHERE tagid = tags_tagid AND molecules_moleculeid = ?" );
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public IMolecule find( final long moleculeId ) {
+		if ( moleculeId <= 0 ) {
+			throw new IllegalArgumentException( "Invalid molecule ID." );
+		}
+
+		try {
+			readMolecule.setLong( 1, moleculeId );
+			final ResultSet moleculeResult = readMolecule.executeQuery();
+			boolean first = true;
+			final MoleculeBuilder builder = Molecule.build();
+
+			while ( moleculeResult.next() ) {
+
+				if ( first ) {
+					builder.withId( moleculeResult.getLong( "molecules_moleculeid" ) );
+					first = false;
+				}
+
+				final long atomId = moleculeResult.getLong( "atoms_atomid" );
+				builder.withAtom( ATService.getAtomService().find( atomId ) );
+			}
+
+			readMoleculeTags.setLong( 1, moleculeId );
+			final ResultSet moleculeTagResult = readMoleculeTags.executeQuery();
+			while ( moleculeTagResult.next() ) {
+				builder.withTag( moleculeTagResult.getString( "tag" ) );
+			}
+
+			// No molecule found
+			if ( first ) {
+				return null;
+			}
+
+			return builder.buildWithAtomsAndTags();
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 
 	@Override
 	public List<IMolecule> find( final List<String> tags ) {
@@ -115,64 +171,6 @@ public class MoleculeService extends AbstractService implements IMoleculeService
 		}
 
 		return result;
-	}
-
-	private static PreparedStatement	readMolecule;
-	private static PreparedStatement	readMoleculeTags;
-	static {
-		try {
-			readMolecule = DB.CONN
-					.prepareStatement( "SELECT molecules_moleculeid, atoms_atomid FROM molecule_has_atoms WHERE molecules_moleculeid = ?" );
-			readMoleculeTags = DB.CONN
-					.prepareStatement( "SELECT tagid, tag FROM tags JOIN molecule_has_tags WHERE tagid = tags_tagid AND molecules_moleculeid = ?" );
-		} catch ( final SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
-	@Override
-	public IMolecule find( final long moleculeId ) {
-		if ( moleculeId <= 0 ) {
-			throw new IllegalArgumentException( "Invalid molecule ID." );
-		}
-
-		try {
-			readMolecule.setLong( 1, moleculeId );
-			final ResultSet moleculeResult = readMolecule.executeQuery();
-			boolean first = true;
-			final MoleculeBuilder builder = Molecule.build();
-
-			while ( moleculeResult.next() ) {
-
-				if ( first ) {
-					builder.withId( moleculeResult.getLong( "molecules_moleculeid" ) );
-					first = false;
-				}
-
-				final long atomId = moleculeResult.getLong( "atoms_atomid" );
-				builder.withAtom( ATService.getAtomService().find( atomId ) );
-			}
-
-			readMoleculeTags.setLong( 1, moleculeId );
-			final ResultSet moleculeTagResult = readMoleculeTags.executeQuery();
-			while ( moleculeTagResult.next() ) {
-				builder.withTag( moleculeTagResult.getString( "tag" ) );
-			}
-
-			// No molecule found
-			if ( first ) {
-				return null;
-			}
-
-			return builder.buildWithAtomsAndTags();
-		} catch ( final SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 

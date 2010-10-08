@@ -13,26 +13,29 @@
  */
 package org.atomictagging.core.services;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
+ * Service to handle tags.
+ * 
  * @author Stephan Mann
  */
 public interface ITagService {
 
 	/**
-	 * Returns all tags in the order the database returns them.
+	 * Returns all tags in the order the database returns them. An empty list in case that there are no tags.
 	 * 
-	 * @return All tags
+	 * @return A list of tags, never null.
 	 */
 	List<String> getAll();
 
 
 	/**
+	 * Saves a tag and returns its ID, as defined by the DB. If the tag already exists in the DB, it will not be
+	 * inserted again but rather the ID of the stored tag will be returned.
+	 * 
 	 * @param tag
-	 * @return
-	 * @throws SQLException
+	 * @return The ID of the tag as returned by the DB or <code>-1</code> if there was a DB error.
 	 */
 	long save( String tag );
 }

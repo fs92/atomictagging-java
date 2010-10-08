@@ -20,7 +20,7 @@ import org.atomictagging.core.services.impl.TagService;
 /**
  * Since we seem to be unable to get OSGI services to run the way we want them to, we'll be using singletons for the
  * time being. As long as this factory is used exclusively to access these singletons, we can easily switch the
- * "service" from single instance to multiple instance if we need to. Also, we can switch easily to OSGI service should
+ * "service" from single instance to multiple instance if we need to. Also, we can switch easily to OSGI services should
  * we ever figure out how to use them properly.
  * 
  * @author Stephan Mann
@@ -36,7 +36,7 @@ public final class ATService {
 	 * Get an instance that implements the {@link ITagService} interface.
 	 * <p>
 	 * <b>Note:</b> You should not make any assumptions whether the returned instance is a singleon or not. It is, at
-	 * the moment but it might change.
+	 * the moment, but it might change.
 	 * 
 	 * @return An instance that implements {@link ITagService}
 	 */
@@ -48,6 +48,14 @@ public final class ATService {
 	}
 
 
+	/**
+	 * Get an instance that implements the {@link IAtomService} interface.
+	 * <p>
+	 * <b>Note:</b> You should not make any assumptions whether the returned instance is a singleon or not. It is, at
+	 * the moment, but it might change.
+	 * 
+	 * @return An instance that implements {@link IAtomService}
+	 */
 	public static IAtomService getAtomService() {
 		if ( atomService == null ) {
 			atomService = new AtomService();
@@ -56,6 +64,14 @@ public final class ATService {
 	}
 
 
+	/**
+	 * Get an instance that implements the {@link IMoleculeService} interface.
+	 * <p>
+	 * <b>Note:</b> You should not make any assumptions whether the returned instance is a singleon or not. It is, at
+	 * the moment, but it might change.
+	 * 
+	 * @return An instance that implements {@link IMoleculeService}
+	 */
 	public static IMoleculeService getMoleculeService() {
 		if ( moleculeService == null ) {
 			moleculeService = new MoleculeService();

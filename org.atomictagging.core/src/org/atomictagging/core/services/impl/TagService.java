@@ -29,47 +29,39 @@ import org.eclipse.core.runtime.Assert;
  */
 public class TagService extends AbstractService implements ITagService {
 
-	@Override
-	public List<String> getAll() {
-		final List<String> result = new ArrayList<String>();
-		final String getAll = "SELECT tag FROM tags";
-
-		try {
-			final PreparedStatement readTags = DB.CONN.prepareStatement( getAll );
-			final ResultSet tagResult = readTags.executeQuery();
-
-			while ( tagResult.next() ) {
-				result.add( tagResult.getString( "tag" ) );
-			}
-
-			return result;
-		} catch ( final SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
+	private static PreparedStatement	allTags;
 	private static PreparedStatement	checkTag;
 	private static PreparedStatement	insertTag;
 
 	static {
 		try {
+			allTags = DB.CONN.prepareStatement( "SELECT tag FROM tags" );
 			checkTag = DB.CONN.prepareStatement( "SELECT tagid FROM tags WHERE tag = ?" );
 			insertTag = DB.CONN.prepareStatement( "INSERT INTO tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
 		} catch ( final SQLException e ) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 
-	/**
-	 * 
-	 * @param tag
-	 * @return The tag ID
-	 */
+	@Override
+	public List<String> getAll() {
+		final List<String> tags = new ArrayList<String>();
+
+		try {
+			final ResultSet tagResult = allTags.executeQuery();
+
+			while ( tagResult.next() ) {
+				tags.add( tagResult.getString( "tag" ) );
+			}
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+
+		return tags;
+	}
+
+
 	@Override
 	public long save( final String tag ) {
 		Assert.isTrue( tag != null && !tag.isEmpty() );

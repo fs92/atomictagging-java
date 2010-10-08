@@ -18,8 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author tokei
+ * Some convenience methods that are common to all services.
  * 
+ * @author Stephan Mann
  */
 public abstract class AbstractService {
 	protected long getAutoIncrementId( final PreparedStatement statement ) throws SQLException {

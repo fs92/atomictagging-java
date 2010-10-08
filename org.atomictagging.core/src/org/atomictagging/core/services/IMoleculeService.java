@@ -13,6 +13,8 @@
  */
 package org.atomictagging.core.services;
 
+import java.util.List;
+
 import org.atomictagging.core.types.IMolecule;
 
 /**
@@ -21,8 +23,25 @@ import org.atomictagging.core.types.IMolecule;
 public interface IMoleculeService {
 
 	/**
+	 * @param moleculeId
+	 * @return The molecule with the given ID
+	 */
+	IMolecule find( long moleculeId );
+
+
+	/**
+	 * Read all molecules from the DB that are either tagged with the given tags or contain an atom that is tagged with
+	 * those tags.
+	 * 
+	 * @param tags
+	 * @return List of molecules as read from the DB.
+	 */
+	List<IMolecule> find( List<String> tags );
+
+
+	/**
 	 * @param molecule
-	 * @return
+	 * @return The ID of the saved molecule as returned from the DB.
 	 */
 	long save( IMolecule molecule );
 

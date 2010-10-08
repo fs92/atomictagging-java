@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 
@@ -36,7 +37,7 @@ public class DbRemover {
 		try {
 			DB.CONN.setAutoCommit( false );
 
-			IMolecule molecule = DbReader.read( id );
+			IMolecule molecule = ATService.getMoleculeService().find( id );
 
 			// Delete all atoms that are only linked by this one molecule.
 			PreparedStatement checkAtom = DB.CONN

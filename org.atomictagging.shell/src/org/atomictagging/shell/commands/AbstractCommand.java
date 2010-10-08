@@ -15,7 +15,7 @@ package org.atomictagging.shell.commands;
 
 import java.io.PrintStream;
 
-import org.atomictagging.core.accessors.DbReader;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.shell.IShell;
 
@@ -70,7 +70,7 @@ public abstract class AbstractCommand implements ICommand {
 			return null;
 		}
 
-		IMolecule molecule = DbReader.read( moleculeId );
+		IMolecule molecule = ATService.getMoleculeService().find( moleculeId );
 
 		if ( molecule == null ) {
 			stdout.println( "No molecule found with given ID " + moleculeId );

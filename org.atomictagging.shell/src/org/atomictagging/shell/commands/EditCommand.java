@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.atomictagging.core.accessors.DbModifier;
-import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom.AtomBuilder;
@@ -224,7 +223,7 @@ public class EditCommand extends AbstractModifyCommand {
 	@Override
 	protected int handleMolecule( final long id, final PrintStream stdout ) {
 		IMolecule molecule = null;
-		molecule = DbReader.read( id );
+		molecule = ATService.getMoleculeService().find( id );
 
 		if ( molecule == null ) {
 			stdout.println( "No molecule found with the given ID " + id );

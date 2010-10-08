@@ -102,7 +102,7 @@ public class DbModifier {
 		}
 
 		try {
-			final IMolecule reference = DbReader.read( molecule.getId() );
+			final IMolecule reference = ATService.getMoleculeService().find( molecule.getId() );
 
 			final List<String> curTags = new ArrayList<String>( molecule.getTags() );
 			final List<String> refTags = new ArrayList<String>( reference.getTags() );

@@ -17,10 +17,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomictagging.core.accessors.DbReader;
 import org.atomictagging.core.moleculehandler.IMoleculeViewer;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
 import org.atomictagging.core.moleculehandler.IMoleculeViewer.VERBOSITY;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.shell.IShell;
 
@@ -76,7 +76,7 @@ public class ListCommand extends AbstractCommand {
 			}
 		}
 
-		List<IMolecule> molecules = DbReader.read( tags );
+		List<IMolecule> molecules = ATService.getMoleculeService().find( tags );
 
 		for ( IMolecule molecule : molecules ) {
 			IMoleculeViewer viewer = MoleculeHandlerFactory.getInstance().getViewer( molecule );

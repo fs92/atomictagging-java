@@ -13,6 +13,10 @@
  */
 package org.atomictagging.core.types;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Tags that are added and interpreted by the system.
  * 
@@ -50,4 +54,21 @@ public final class CoreTags {
 	 * Tag for image files.
 	 */
 	public final static String	FILETYPE_IMAGE			= "x-filetype-image";
+
+
+	public static List<String> asList() {
+		final List<String> coreTags = new ArrayList<String>();
+
+		try {
+			for ( final Field field : CoreTags.class.getDeclaredFields() ) {
+				coreTags.add( (String) field.get( CoreTags.class ) );
+			}
+		} catch ( final IllegalArgumentException e ) {
+			e.printStackTrace();
+		} catch ( final IllegalAccessException e ) {
+			e.printStackTrace();
+		}
+
+		return coreTags;
+	}
 }

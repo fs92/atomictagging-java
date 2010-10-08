@@ -1,8 +1,11 @@
 package org.atomictagging.ui.parts;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import org.atomictagging.core.services.ATService;
+import org.atomictagging.core.services.IAtomService.Filter;
 import org.atomictagging.core.services.ITagService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.Atom.AtomBuilder;
@@ -25,8 +28,8 @@ public class AtomPart {
 
 
 	@Inject
-	public AtomPart( Composite parent ) {
-		GridLayout layout = new GridLayout();
+	public AtomPart( final Composite parent ) {
+		final GridLayout layout = new GridLayout();
 		parent.setLayout( layout );
 
 		compAtomSearch = new CompositeAtomSearch( parent, SWT.BORDER );
@@ -35,9 +38,9 @@ public class AtomPart {
 		compAtom = new CompositeAtom( parent, SWT.BORDER );
 		compAtom.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
 
-		AtomBuilder atb = new AtomBuilder();
+		final AtomBuilder atb = new AtomBuilder();
 		atb.withData( "William Gibson" ).withTag( "Author" );
-		Atom atom = atb.buildWithDataAndTag();
+		final Atom atom = atb.buildWithDataAndTag();
 
 		compAtom.setInput( atom );
 	}
@@ -46,8 +49,12 @@ public class AtomPart {
 	@Focus
 	public void onFocus() {
 		System.out.println( test.getText() );
-		ITagService tagService = ATService.getTagService();
+		final ITagService tagService = ATService.getTagService();
 		System.out.println( tagService.getAll() );
+
+		System.out.println( ATService.getAtomService().find( Arrays.asList( "x-fileref" ), Filter.EXCLUDE ) );
+		System.out.println( "---------------------------------------------------------------------------------" );
+		System.out.println( ATService.getAtomService().findUserAtoms() );
 	}
 
 }

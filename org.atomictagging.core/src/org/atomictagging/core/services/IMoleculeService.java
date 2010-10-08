@@ -13,9 +13,17 @@
  */
 package org.atomictagging.core.services;
 
+import org.atomictagging.core.types.IMolecule;
+
 /**
  * @author Stephan Mann
  */
 public interface IMoleculeService {
+
+	/**
+	 * @param molecule
+	 * @return
+	 */
+	long save( IMolecule molecule );
 
 }

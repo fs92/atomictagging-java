@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.atomictagging.core.accessors.DbModifier;
 import org.atomictagging.core.accessors.DbReader;
-import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.Atom.AtomBuilder;
@@ -135,7 +134,7 @@ public class NewCommand extends AbstractModifyCommand {
 		}
 
 		final MoleculeBuilder builder = Molecule.build().withAtoms( atoms ).withTag( "created-via-shell" );
-		DbWriter.write( builder.buildWithAtomsAndTags() );
+		ATService.getMoleculeService().save( builder.buildWithAtomsAndTags() );
 		atoms.clear();
 		return 0;
 	}

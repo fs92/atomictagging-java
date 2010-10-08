@@ -21,10 +21,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Collection;
 
-import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.GenericImporter;
 import org.atomictagging.core.moleculehandler.IMoleculeImporter;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
@@ -106,7 +106,7 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 		mBuilder.withTag( "generic-file" );
 
 		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
-		DbWriter.write( molecule );
+		ATService.getMoleculeService().save( molecule );
 		molecules.add( molecule );
 	}
 

@@ -22,11 +22,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.moleculehandler.GenericImporter;
 import org.atomictagging.core.moleculehandler.IMoleculeImporter;
 import org.atomictagging.core.moleculehandler.MoleculeHandlerFactory;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
@@ -131,7 +131,7 @@ public class IMDBMoleculeImporter implements IMoleculeImporter {
 		}
 
 		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
-		DbWriter.write( molecule );
+		ATService.getMoleculeService().save( molecule );
 		molecules.add( molecule );
 	}
 

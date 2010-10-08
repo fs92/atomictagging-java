@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.atomictagging.core.accessors.DbWriter;
 import org.atomictagging.core.configuration.Configuration;
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
@@ -110,7 +110,7 @@ public class GenericImporter implements IMoleculeImporter {
 		}
 
 		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
-		DbWriter.write( molecule );
+		ATService.getMoleculeService().save( molecule );
 		molecules.add( molecule );
 	}
 

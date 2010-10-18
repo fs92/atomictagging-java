@@ -27,7 +27,12 @@ public class Atom extends Entity implements IAtom {
 	private List<String>	tags;
 
 
-	private Atom( AtomBuilder builder ) {
+	public Atom() {
+		tags = new ArrayList<String>();
+	}
+
+
+	private Atom( final AtomBuilder builder ) {
 		if ( builder.atomId > 0 ) {
 			this.id = builder.atomId;
 		}
@@ -50,7 +55,7 @@ public class Atom extends Entity implements IAtom {
 	public AtomBuilder modify() {
 		// We don't need to do the checks. The atom must have been
 		// consistent since there is only one way to create it.
-		AtomBuilder builder = new AtomBuilder();
+		final AtomBuilder builder = new AtomBuilder();
 		builder.atomId = getId();
 		builder.atomData = getData();
 		builder.atomTags = getTags();
@@ -65,7 +70,7 @@ public class Atom extends Entity implements IAtom {
 
 
 	@Override
-	public void setData( String data ) {
+	public void setData( final String data ) {
 		this.data = data;
 	}
 
@@ -79,7 +84,7 @@ public class Atom extends Entity implements IAtom {
 
 
 	@Override
-	public void setTags( List<String> tags ) {
+	public void setTags( final List<String> tags ) {
 		this.tags = tags;
 	}
 
@@ -106,7 +111,7 @@ public class Atom extends Entity implements IAtom {
 		 * @param id
 		 * @return The builder
 		 */
-		public AtomBuilder withId( long id ) {
+		public AtomBuilder withId( final long id ) {
 			if ( id < 0 ) {
 				throw new IllegalArgumentException( "ID of an atom must be a number greater 0." );
 			}
@@ -122,7 +127,7 @@ public class Atom extends Entity implements IAtom {
 		 * @param data
 		 * @return The builder
 		 */
-		public AtomBuilder withData( String data ) {
+		public AtomBuilder withData( final String data ) {
 			if ( data == null || data.isEmpty() ) {
 				throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
 			}
@@ -138,7 +143,7 @@ public class Atom extends Entity implements IAtom {
 		 * @param tag
 		 * @return The builder
 		 */
-		public AtomBuilder withTag( String tag ) {
+		public AtomBuilder withTag( final String tag ) {
 			if ( tag == null || tag.isEmpty() ) {
 				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
@@ -158,10 +163,10 @@ public class Atom extends Entity implements IAtom {
 		 * @param tags
 		 * @return The builder
 		 */
-		public AtomBuilder withTags( List<String> tags ) {
+		public AtomBuilder withTags( final List<String> tags ) {
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withTag(String).
-			for ( String tag : tags ) {
+			for ( final String tag : tags ) {
 				withTag( tag );
 			}
 			return this;
@@ -174,7 +179,7 @@ public class Atom extends Entity implements IAtom {
 		 * @param tags
 		 * @return The builder
 		 */
-		public AtomBuilder replaceTags( List<String> tags ) {
+		public AtomBuilder replaceTags( final List<String> tags ) {
 			this.atomTags = new ArrayList<String>();
 			withTags( tags );
 			return this;

@@ -27,7 +27,13 @@ public class Molecule extends Entity implements IMolecule {
 	private List<String>	tags;
 
 
-	private Molecule( MoleculeBuilder builder ) {
+	public Molecule() {
+		atoms = new ArrayList<IAtom>();
+		tags = new ArrayList<String>();
+	}
+
+
+	private Molecule( final MoleculeBuilder builder ) {
 		this.id = builder.molId;
 		this.atoms = builder.molAtoms;
 		this.tags = builder.molTags;
@@ -48,7 +54,7 @@ public class Molecule extends Entity implements IMolecule {
 	public MoleculeBuilder modify() {
 		// We don't need to do the checks. The molecule must have been
 		// consistent since there is only one way to create it.
-		MoleculeBuilder builder = new MoleculeBuilder();
+		final MoleculeBuilder builder = new MoleculeBuilder();
 		builder.molId = getId();
 		builder.molTags = getTags();
 		builder.molAtoms = getAtoms();
@@ -63,7 +69,7 @@ public class Molecule extends Entity implements IMolecule {
 
 
 	@Override
-	public void setAtoms( List<IAtom> atoms ) {
+	public void setAtoms( final List<IAtom> atoms ) {
 		this.atoms = atoms;
 	}
 
@@ -75,16 +81,16 @@ public class Molecule extends Entity implements IMolecule {
 
 
 	@Override
-	public void setTags( List<String> tags ) {
+	public void setTags( final List<String> tags ) {
 		this.tags = tags;
 	}
 
 
 	@Override
 	public List<String> getAtomTags() {
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 
-		for ( IAtom atom : atoms ) {
+		for ( final IAtom atom : atoms ) {
 			result.addAll( atom.getTags() );
 		}
 
@@ -114,7 +120,7 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param id
 		 * @return The builder
 		 */
-		public MoleculeBuilder withId( long id ) {
+		public MoleculeBuilder withId( final long id ) {
 			if ( id < 0 ) {
 				throw new IllegalArgumentException( "ID of a molecule must be a number greater 0." );
 			}
@@ -130,7 +136,7 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param atom
 		 * @return The builder
 		 */
-		public MoleculeBuilder withAtom( IAtom atom ) {
+		public MoleculeBuilder withAtom( final IAtom atom ) {
 			if ( atom == null ) {
 				throw new IllegalArgumentException( "Atom must not be NULL." );
 			}
@@ -149,14 +155,14 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param atoms
 		 * @return The builder
 		 */
-		public MoleculeBuilder withAtoms( List<IAtom> atoms ) {
+		public MoleculeBuilder withAtoms( final List<IAtom> atoms ) {
 			if ( atoms == null || atoms.contains( null ) ) {
 				throw new IllegalArgumentException( "List of atoms must not be NULL or contain NULL elements." );
 			}
 
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withAtom(IAtom).
-			for ( IAtom atom : atoms ) {
+			for ( final IAtom atom : atoms ) {
 				withAtom( atom );
 			}
 			return this;
@@ -180,7 +186,7 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param tag
 		 * @return The builder
 		 */
-		public MoleculeBuilder withTag( String tag ) {
+		public MoleculeBuilder withTag( final String tag ) {
 			if ( tag == null || tag.isEmpty() ) {
 				throw new IllegalArgumentException( "A tag must not be NULL or empty." );
 			}
@@ -200,10 +206,10 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param tags
 		 * @return The builder
 		 */
-		public MoleculeBuilder withTags( List<String> tags ) {
+		public MoleculeBuilder withTags( final List<String> tags ) {
 			// Don't add the list at once because we need to
 			// enforce the rules specified by withTag(String).
-			for ( String tag : tags ) {
+			for ( final String tag : tags ) {
 				withTag( tag );
 			}
 			return this;
@@ -216,7 +222,7 @@ public class Molecule extends Entity implements IMolecule {
 		 * @param tags
 		 * @return The builder
 		 */
-		public MoleculeBuilder replaceTags( List<String> tags ) {
+		public MoleculeBuilder replaceTags( final List<String> tags ) {
 			this.molTags = new ArrayList<String>();
 			withTags( tags );
 			return this;

@@ -13,11 +13,12 @@ import com.drew.metadata.exif.ExifDirectory;
 
 public class ExifUtil {
 
-	public static List<KeyValue> getExif(String file) {
+	
+	public static List<KeyValue> getExif(File file) {
 		List<KeyValue> result = new ArrayList<KeyValue>();
 		
 		try {
-			Metadata metadata = JpegMetadataReader.readMetadata(new File(file));
+			Metadata metadata = JpegMetadataReader.readMetadata(file);
 			
 			Directory directory = metadata.getDirectory(ExifDirectory.class);
 			result.add(getKeyValue(directory, ExifDirectory.TAG_MODEL));
@@ -32,6 +33,9 @@ public class ExifUtil {
 		}
 		
 		return result;
+	}
+	public static List<KeyValue> getExif(String file) {
+		return getExif(new File(file));
 	}
 	
 	public static KeyValue getKeyValue(Directory directory, int tag) throws MetadataException {

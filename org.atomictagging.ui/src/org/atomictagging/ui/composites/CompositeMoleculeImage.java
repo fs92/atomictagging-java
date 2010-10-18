@@ -2,7 +2,6 @@ package org.atomictagging.ui.composites;
 
 import java.io.ByteArrayInputStream;
 
-import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.ui.lists.ListViewerAtom;
 import org.atomictagging.ui.model.ImageMolecule;
 import org.atomictagging.ui.test.TestData;
@@ -36,7 +35,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	private ListViewer		lsTags;
 	private ListViewerAtom	lsAtoms;
 
-	private IMolecule		molecule;
+	private ImageMolecule	molecule;
 
 
 	public CompositeMoleculeImage( final Composite parent, final int style ) {
@@ -56,7 +55,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		lbImage = new Label( parent, SWT.BORDER );
 		lbImage.setImage( image );
 		lbImage.addMouseListener( this );
-		final GridData gd = new GridData( 150, 150 );
+		final GridData gd = new GridData( 200, 200 );
 		gd.horizontalAlignment = SWT.CENTER;
 		gd.horizontalSpan = 2;
 		lbImage.setLayoutData( gd );
@@ -91,14 +90,8 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	}
 
 
-	public void setInput( final IMolecule molecule ) {
-		this.molecule = molecule;
-		bind();
-	}
-
-
 	public void setInput( final ImageMolecule imd ) {
-		this.molecule = imd.getMolecule();
+		this.molecule = imd;
 		bind();
 
 		final ByteArrayInputStream bais = new ByteArrayInputStream( imd.getByteThumb() );
@@ -106,6 +99,11 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		final Image img = new Image( getDisplay(), imgData );
 
 		lbImage.setImage( img );
+	}
+
+
+	public ImageMolecule getInput() {
+		return molecule;
 	}
 
 

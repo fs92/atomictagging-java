@@ -206,7 +206,7 @@ public class ImageMolecule implements IMolecule {
 			}
 
 			try {
-				byteThumb = transform( file, 150, 150 );
+				byteThumb = transform( file, 200, 200 );
 			} catch ( final Exception e ) {
 				e.printStackTrace();
 			}

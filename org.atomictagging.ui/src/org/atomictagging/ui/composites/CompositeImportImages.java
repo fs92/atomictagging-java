@@ -73,6 +73,17 @@ public class CompositeImportImages extends ScrolledComposite {
 	}
 
 
+	public List<ImageMolecule> getInput() {
+		final List<ImageMolecule> list = new ArrayList<ImageMolecule>();
+
+		for ( final CompositeMoleculeImage cmi : compositeMoleculeImages ) {
+			list.add( cmi.getInput() );
+		}
+
+		return list;
+	}
+
+
 	public void addTagToAll( final String[] tags ) {
 		for ( final CompositeMoleculeImage cmi : compositeMoleculeImages ) {
 			cmi.addTag( tags );

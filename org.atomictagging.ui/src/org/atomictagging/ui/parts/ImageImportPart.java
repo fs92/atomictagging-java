@@ -19,10 +19,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 
+/**
+ * @author strangeoptics
+ * 
+ */
 public class ImageImportPart implements SelectionListener {
 
 	private final Composite				parent;
 	private final Button				btLoad;
+	private final Button				btSave;
 	private final GroupCommonTagsAtoms	groupCommon;
 	private final CompositeImportImages	compImportImages;
 
@@ -31,18 +36,22 @@ public class ImageImportPart implements SelectionListener {
 	public ImageImportPart( final Composite parent ) {
 		this.parent = parent;
 
-		final GridLayout layout = new GridLayout();
+		final GridLayout layout = new GridLayout( 2, false );
 		parent.setLayout( layout );
 
 		btLoad = new Button( parent, SWT.PUSH );
 		btLoad.setText( "Load Images" );
 		btLoad.addSelectionListener( this );
 
+		btSave = new Button( parent, SWT.PUSH );
+		btSave.setText( "Save" );
+		btSave.addSelectionListener( this );
+
 		groupCommon = new GroupCommonTagsAtoms( parent, SWT.NONE );
-		groupCommon.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+		groupCommon.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false, 2, 1 ) );
 
 		compImportImages = new CompositeImportImages( parent, SWT.NONE );
-		compImportImages.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
+		compImportImages.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 2, 1 ) );
 
 		groupCommon.setCompositeImportImages( compImportImages );
 
@@ -53,17 +62,7 @@ public class ImageImportPart implements SelectionListener {
 
 	@Focus
 	public void onFocus() {
-		// System.out.println("ImageImportPart.onFocus()");
-		// if(first == false) {
-		// first = true;
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// compImportImages.setInput();
-		// }
+
 	}
 
 
@@ -83,21 +82,10 @@ public class ImageImportPart implements SelectionListener {
 				list.add( imageMolecule );
 			}
 			compImportImages.setInput( list );
+		}
+		if ( e.widget == btSave ) {
+			final List<ImageMolecule> input = compImportImages.getInput();
 
-			// List<ImageMoleculeDto> list = new ArrayList<ImageMoleculeDto>();
-			// for(String fileName : fileNames) {
-			// MoleculeBuilder mb = new MoleculeBuilder();
-			// mb.withTag("image");
-			// AtomBuilder ab = new AtomBuilder();
-			// String fullFileName = filePath + "\\" + fileName;
-			// ab.withData(fullFileName);
-			// ab.withTag("image");
-			// mb.withAtom(ab.buildWithDataAndTag());
-			// ImageMoleculeDto iad = new ImageMoleculeDto(new File(fullFileName), mb.buildWithAtomsAndTags());
-			// list.add(iad);
-			// }
-			//
-			// compImportImages.setInput(list);
 		}
 	}
 

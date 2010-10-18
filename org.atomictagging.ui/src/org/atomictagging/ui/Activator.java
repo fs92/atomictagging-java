@@ -3,6 +3,10 @@ package org.atomictagging.ui;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * @author strangeoptics
+ * 
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext	context;
@@ -19,7 +23,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void start( BundleContext bundleContext ) throws Exception {
+	public void start( final BundleContext bundleContext ) throws Exception {
 		Activator.context = bundleContext;
 	}
 
@@ -30,7 +34,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void stop( BundleContext bundleContext ) throws Exception {
+	public void stop( final BundleContext bundleContext ) throws Exception {
 		Activator.context = null;
 	}
 

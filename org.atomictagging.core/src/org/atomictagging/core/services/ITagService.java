@@ -31,6 +31,14 @@ public interface ITagService {
 
 
 	/**
+	 * Returns all tags in the order the database returns them. An empty array in case that there are no tags.
+	 * 
+	 * @return A list of tags, never null.
+	 */
+	String[] getAllAsArray();
+
+
+	/**
 	 * Saves a tag and returns its ID, as defined by the DB. If the tag already exists in the DB, it will not be
 	 * inserted again but rather the ID of the stored tag will be returned.
 	 * 

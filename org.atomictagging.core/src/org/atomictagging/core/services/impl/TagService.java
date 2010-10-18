@@ -63,6 +63,16 @@ public class TagService extends AbstractService implements ITagService {
 
 
 	@Override
+	public String[] getAllAsArray() {
+		final List<String> list = getAll();
+
+		final String[] tags = list.toArray( new String[list.size()] );
+
+		return tags;
+	}
+
+
+	@Override
 	public long save( final String tag ) {
 		Assert.isTrue( tag != null && !tag.isEmpty() );
 

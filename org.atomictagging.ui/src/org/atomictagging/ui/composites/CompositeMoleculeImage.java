@@ -2,9 +2,9 @@ package org.atomictagging.ui.composites;
 
 import java.io.ByteArrayInputStream;
 
+import org.atomictagging.core.services.ATService;
 import org.atomictagging.ui.lists.ListViewerAtom;
 import org.atomictagging.ui.model.ImageMolecule;
-import org.atomictagging.ui.test.TestData;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -85,8 +85,11 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		gdAtoms.horizontalSpan = 2;
 		lsAtoms.getControl().setLayoutData( gdAtoms );
 
-		new AutoCompleteField( txTags, new TextsContentAdapter(), TestData.tags );
-		new AutoCompleteField( txAtoms, new TextsContentAdapter(), TestData.atoms );
+		final String[] tags = ATService.getTagService().getAllAsArray();
+		final String[] atoms = ATService.getAtomService().findUserAtomsAsArray();
+
+		new AutoCompleteField( txTags, new TextsContentAdapter(), tags );
+		new AutoCompleteField( txAtoms, new TextsContentAdapter(), atoms );
 	}
 
 

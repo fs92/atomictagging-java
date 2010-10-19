@@ -126,6 +126,19 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
+	public String[] findUserAtomsAsArray() {
+		final List<IAtom> atoms = findUserAtoms();
+		final String[] atomNames = new String[atoms.size()];
+
+		for ( int i = 0; i < atoms.size(); i++ ) {
+			atomNames[i] = atoms.get( i ).getData();
+		}
+
+		return atomNames;
+	}
+
+
+	@Override
 	public long save( final IAtom atom ) {
 		try {
 			final List<Long> ids = save( Arrays.asList( atom ) );

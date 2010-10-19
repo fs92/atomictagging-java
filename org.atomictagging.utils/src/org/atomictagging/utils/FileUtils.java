@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 /**
  * Some helper methods for handling files
  * 
@@ -34,7 +36,7 @@ public class FileUtils {
 	 * @param source
 	 * @param target
 	 */
-	public static void copyFile( File source, File target ) {
+	public static void copyFile( final File source, final File target ) {
 		if ( !source.exists() || !source.canRead() ) {
 			throw new IllegalArgumentException( "Can't read from given source file: " + source.getAbsolutePath() );
 		}
@@ -43,7 +45,7 @@ public class FileUtils {
 				if ( !target.createNewFile() ) {
 					throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath() );
 				}
-			} catch ( IOException e ) {
+			} catch ( final IOException e ) {
 				throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath(), e );
 			}
 		}
@@ -53,7 +55,7 @@ public class FileUtils {
 		try {
 			fis = new FileInputStream( source );
 			fos = new FileOutputStream( target );
-		} catch ( FileNotFoundException ignore ) {
+		} catch ( final FileNotFoundException ignore ) {
 			// Was checked previously.
 		}
 
@@ -62,19 +64,19 @@ public class FileUtils {
 		}
 
 		try {
-			byte[] buf = new byte[1024];
+			final byte[] buf = new byte[1024];
 			int i = 0;
 			while ( ( i = fis.read( buf ) ) != -1 ) {
 				fos.write( buf, 0, i );
 			}
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			// FIXME
 			throw new RuntimeException( "Failed to copy file.", e );
 		} finally {
 			try {
 				fis.close();
 				fos.close();
-			} catch ( IOException e ) {
+			} catch ( final IOException e ) {
 				// Nothing we can do, or is there?
 				e.printStackTrace();
 			}
@@ -88,13 +90,13 @@ public class FileUtils {
 	 * @param bytes
 	 * @param target
 	 */
-	public static void saveFile( byte[] bytes, File target ) {
+	public static void saveFile( final byte[] bytes, final File target ) {
 		if ( !target.exists() ) {
 			try {
 				if ( !target.createNewFile() ) {
 					throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath() );
 				}
-			} catch ( IOException e ) {
+			} catch ( final IOException e ) {
 				throw new IllegalArgumentException( "Can't write to given target file: " + target.getAbsolutePath(), e );
 			}
 		}
@@ -102,7 +104,7 @@ public class FileUtils {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream( target );
-		} catch ( FileNotFoundException ignore ) {
+		} catch ( final FileNotFoundException ignore ) {
 			// Was checked previously.
 		}
 
@@ -114,16 +116,33 @@ public class FileUtils {
 
 			fos.write( bytes, 0, bytes.length );
 
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			// FIXME
 			throw new RuntimeException( "Failed to copy file.", e );
 		} finally {
 			try {
 				fos.close();
-			} catch ( IOException e ) {
+			} catch ( final IOException e ) {
 				// Nothing we can do, or is there?
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	public static String getHashSum( final File file ) {
+		String hash = null;
+		try {
+			final FileInputStream fis = new FileInputStream( file );
+			hash = DigestUtils.md5Hex( fis );
+			fis.close();
+		} catch ( final FileNotFoundException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch ( final IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return hash;
 	}
 }

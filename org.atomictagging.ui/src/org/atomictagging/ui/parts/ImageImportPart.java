@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.atomictagging.core.services.ATService;
+import org.atomictagging.core.services.IMoleculeService;
 import org.atomictagging.ui.composites.CompositeImportImages;
 import org.atomictagging.ui.composites.GroupCommonTagsAtoms;
 import org.atomictagging.ui.model.ImageMolecule;
@@ -30,6 +32,8 @@ public class ImageImportPart implements SelectionListener {
 	private final Button				btSave;
 	private final GroupCommonTagsAtoms	groupCommon;
 	private final CompositeImportImages	compImportImages;
+
+	private final IMoleculeService		moleculeService	= ATService.getMoleculeService();
 
 
 	@Inject
@@ -86,6 +90,9 @@ public class ImageImportPart implements SelectionListener {
 		if ( e.widget == btSave ) {
 			final List<ImageMolecule> input = compImportImages.getInput();
 
+			for ( final ImageMolecule imolecule : input ) {
+				// moleculeService.save( imolecule.getMolecule() );
+			}
 		}
 	}
 

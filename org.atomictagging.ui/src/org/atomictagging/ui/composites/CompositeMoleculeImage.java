@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
+import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.IAtom;
+import org.atomictagging.ui.dialogs.DialogAtom;
 import org.atomictagging.ui.lists.ListViewerAtom;
 import org.atomictagging.ui.model.ImageMolecule;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -139,9 +141,17 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	 */
 	public void addAtoms( final String[] atoms ) {
 		for ( final String data : atoms ) {
-			final IAtom atom = atomService.findByData( data );
+			IAtom atom = atomService.findByData( data );
 
-			if ( !molecule.getAtoms().contains( atom ) ) {
+			if ( atom == null ) {
+				atom = new Atom();
+				atom.setData( data );
+				final DialogAtom dialog = new DialogAtom( getShell(), SWT.NONE );
+				dialog.setInput( atom );
+				dialog.open();
+			}
+
+			if ( atom != null && !molecule.getAtoms().contains( atom ) ) {
 				molecule.getAtoms().add( atom );
 				lsAtoms.refresh();
 			}

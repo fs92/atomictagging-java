@@ -60,7 +60,7 @@ public class ImageMolecule implements IMolecule {
 		setDirty( true );
 
 		molecule = new Molecule();
-		molecule.getTags().add( CoreTags.FILETYPE_IMAGE );
+		molecule.getTags().add( "mediatype-image" );
 		final IAtom atom = new Atom();
 		atom.setData( file.getAbsolutePath() );
 		atom.getTags().add( CoreTags.FILETYPE_IMAGE );

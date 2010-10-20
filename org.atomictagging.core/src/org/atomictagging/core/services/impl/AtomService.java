@@ -139,6 +139,24 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
+	public IAtom findByData( final String data ) {
+		IAtom atom = null;
+
+		try {
+			final String query = SELECT_ALL + FROM_JOIN_WHERE + " AND tags_tagid = tagid AND data = '" + data + "'";
+			final Statement stmt = DB.CONN.createStatement();
+			final ResultSet atomsResult = stmt.executeQuery( query );
+			final List<IAtom> resultSet = readFromResultSet( atomsResult );
+			atom = resultSet.get( 0 );
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+
+		return atom;
+	}
+
+
+	@Override
 	public long save( final IAtom atom ) {
 		try {
 			final List<Long> ids = save( Arrays.asList( atom ) );

@@ -13,44 +13,37 @@
  */
 package org.atomictagging.ui.tableviewer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.atomictagging.ui.listeners.AtomEvent;
+import org.atomictagging.ui.listeners.IAtomListener;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * @author work
+ * @author strangeoptics
  * 
  */
-public class TagsTableViewer extends TableViewer {
-
-	private final TagsLabelProvider	labelProvider;
-
-	private List<String>			tagsOrig;
-	private List<String>			tagsInput;
-
+public class AtomsTableViewer extends TableViewer implements IAtomListener {
 
 	/**
 	 * @param parent
 	 * @param style
 	 */
-	public TagsTableViewer( final Composite parent, final int style ) {
+	public AtomsTableViewer( final Composite parent, final int style ) {
 		super( parent, style );
 
 		setContentProvider( new ArrayContentProvider() );
-
-		labelProvider = new TagsLabelProvider( parent.getDisplay() );
-		setLabelProvider( labelProvider );
+		setLabelProvider( new AtomsLabelProvider() );
 	}
 
 
-	public void setInput( final List<String> tags ) {
-		tagsOrig = new ArrayList<String>( tags );
-		tagsInput = tags;
-		labelProvider.setTagsOriginal( tagsOrig );
-		super.setInput( tags );
+	// / IAtomListener ///////////////////////
+
+	@Override
+	public void atomsAvailable( final AtomEvent event ) {
+
+		setInput( event.getAtoms() );
+
 	}
 
 }

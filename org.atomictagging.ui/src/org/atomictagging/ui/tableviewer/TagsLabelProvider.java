@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with Atomic Tagging. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.atomictagging.ui.composites;
+package org.atomictagging.ui.tableviewer;
 
 import java.util.List;
 

@@ -163,6 +163,7 @@ public class AtomService extends AbstractService implements IAtomService {
 		try {
 			final List<Long> ids = save( Arrays.asList( atom ) );
 			Assert.isTrue( ids.size() == 1 );
+			return ids.get( 0 );
 		} catch ( final SQLException e ) {
 			e.printStackTrace();
 		}

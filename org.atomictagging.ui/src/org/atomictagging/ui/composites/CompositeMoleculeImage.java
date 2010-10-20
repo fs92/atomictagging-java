@@ -82,6 +82,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		createLabel( parent, "Atoms" );
 
 		txAtoms = createText( parent );
+		txAtoms.addKeyListener( this );
 
 		lsAtoms = new ListViewerAtom( parent, SWT.BORDER | SWT.V_SCROLL );
 		lsAtoms.getControl().setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
@@ -186,12 +187,33 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	@Override
 	public void keyPressed( final KeyEvent e ) {
 		if ( e.keyCode == SWT.ARROW_DOWN ) {
-			final String text = txTags.getText();
-			txTags.setText( "" );
+			if ( e.widget == txTags ) {
+				final String tags = txTags.getText();
+				if ( tags != null && !tags.equals( "" ) ) {
+					final String[] split = tags.split( "," );
+					for ( int i = 0; i < split.length; i++ ) {
+						split[i] = split[i].trim();
+					}
 
-			addTags( new String[] { text } );
+					addTags( split );
+
+					txTags.setText( "" );
+				}
+			}
+			if ( e.widget == txAtoms ) {
+				final String atoms = txAtoms.getText();
+				if ( atoms != null && !atoms.equals( "" ) ) {
+					final String[] split = atoms.split( "," );
+					for ( int i = 0; i < split.length; i++ ) {
+						split[i] = split[i].trim();
+					}
+
+					addAtoms( split );
+
+					txAtoms.setText( "" );
+				}
+			}
 		}
-
 	}
 
 

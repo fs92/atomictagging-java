@@ -251,7 +251,13 @@ public class ImageMolecule implements IMolecule {
 
 
 	public void processExif( final File file, final IMolecule molecule ) {
-		final List<KeyValue> list = ExifUtil.getExif( file );
+		List<KeyValue> list;
+		try {
+			list = ExifUtil.getExif( file );
+		} catch ( final Exception e ) {
+			e.printStackTrace();
+			return;
+		}
 
 		for ( final KeyValue kv : list ) {
 			final IAtom atom = new Atom();
@@ -260,6 +266,5 @@ public class ImageMolecule implements IMolecule {
 
 			molecule.getAtoms().add( atom );
 		}
-		// TODO: in Atome convertieren
 	}
 }

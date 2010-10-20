@@ -102,7 +102,6 @@ public class AtomPart implements SelectionListener, ISelectionChangedListener {
 
 	@Override
 	public void widgetDefaultSelected( final SelectionEvent e ) {
-		// TODO Auto-generated method stub
 
 	}
 

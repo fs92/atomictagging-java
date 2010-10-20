@@ -1,9 +1,6 @@
 package org.atomictagging.img.metadataextractor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,7 +17,15 @@ public class TestMDE {
 	
 	@Test
 	public void testExifUtil() {
-		List<KeyValue> list = ExifUtil.getExif("c:\\1\\bestofmexico\\IMG_1991.JPG");
+		try {
+			List<KeyValue> list = ExifUtil.getExif("c:\\1\\bestofmexico\\IMG_1991.JPG");
+		} catch (JpegProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MetadataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		System.out.println("TestMDE.testExifUtil()");
 	}

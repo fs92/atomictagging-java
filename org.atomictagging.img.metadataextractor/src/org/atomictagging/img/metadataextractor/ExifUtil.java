@@ -14,27 +14,26 @@ import com.drew.metadata.exif.ExifDirectory;
 public class ExifUtil {
 
 	
-	public static List<KeyValue> getExif(File file) {
+	public static List<KeyValue> getExif(File file) throws JpegProcessingException, MetadataException {
 		List<KeyValue> result = new ArrayList<KeyValue>();
 		
-		try {
+	
 			Metadata metadata = JpegMetadataReader.readMetadata(file);
 			
 			Directory directory = metadata.getDirectory(ExifDirectory.class);
-			result.add(getKeyValue(directory, ExifDirectory.TAG_MODEL));
-			result.add(getKeyValue(directory, ExifDirectory.TAG_DATETIME));
-			result.add(getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
-			result.add(getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
-			
-		} catch (JpegProcessingException e) {
-			e.printStackTrace();
-		} catch (MetadataException e) {
-			e.printStackTrace();
-		}
+			if(null != getKeyValue(directory, ExifDirectory.TAG_MODEL))
+				result.add(getKeyValue(directory, ExifDirectory.TAG_MODEL));
+			if(null != getKeyValue(directory, ExifDirectory.TAG_DATETIME))
+				result.add(getKeyValue(directory, ExifDirectory.TAG_DATETIME));
+			if(null != getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_WIDTH))
+				result.add(getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
+			if(null != getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_HEIGHT))
+				result.add(getKeyValue(directory, ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
+	
 		
 		return result;
 	}
-	public static List<KeyValue> getExif(String file) {
+	public static List<KeyValue> getExif(String file) throws JpegProcessingException, MetadataException {
 		return getExif(new File(file));
 	}
 	

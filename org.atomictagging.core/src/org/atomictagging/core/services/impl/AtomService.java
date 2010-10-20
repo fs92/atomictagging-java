@@ -147,7 +147,9 @@ public class AtomService extends AbstractService implements IAtomService {
 			final Statement stmt = DB.CONN.createStatement();
 			final ResultSet atomsResult = stmt.executeQuery( query );
 			final List<IAtom> resultSet = readFromResultSet( atomsResult );
-			atom = resultSet.get( 0 );
+			if ( !resultSet.isEmpty() ) {
+				atom = resultSet.get( 0 );
+			}
 		} catch ( final SQLException e ) {
 			e.printStackTrace();
 		}
@@ -215,9 +217,10 @@ public class AtomService extends AbstractService implements IAtomService {
 		final List<IAtom> atoms = new ArrayList<IAtom>();
 
 		try {
-			atomsResult.next();
-
-			while ( !atomsResult.isAfterLast() ) {
+			// atomsResult.next();
+			//
+			// while ( !atomsResult.isAfterLast() ) {
+			while ( atomsResult.next() ) {
 				final long atomId = atomsResult.getLong( ID );
 
 				final AtomBuilder builder = Atom.build().withId( atomId );

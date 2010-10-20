@@ -86,7 +86,7 @@ public class CompositeImportImages extends ScrolledComposite {
 
 	public void addTagToAll( final String[] tags ) {
 		for ( final CompositeMoleculeImage cmi : compositeMoleculeImages ) {
-			cmi.addTag( tags );
+			cmi.addTags( tags );
 		}
 	}
 

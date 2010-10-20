@@ -64,13 +64,17 @@ public class GroupCommonTagsAtoms extends GroupBase implements KeyListener {
 	@Override
 	public void keyPressed( final KeyEvent e ) {
 		if ( e.keyCode == SWT.ARROW_DOWN ) {
-			final String[] split = txTags.getText().split( "," );
-			for ( int i = 0; i < split.length; i++ ) {
-				split[i] = split[i].trim();
-			}
-			System.out.println( "CR" );
+			final String tags = txTags.getText();
+			if ( tags != null && !tags.equals( "" ) ) {
+				final String[] split = tags.split( "," );
+				for ( int i = 0; i < split.length; i++ ) {
+					split[i] = split[i].trim();
+				}
 
-			compositeImportImages.addTagToAll( split );
+				compositeImportImages.addTagToAll( split );
+
+				txTags.setText( "" );
+			}
 		}
 
 	}

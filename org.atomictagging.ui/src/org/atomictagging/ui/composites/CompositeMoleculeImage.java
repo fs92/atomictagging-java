@@ -1,6 +1,7 @@
 package org.atomictagging.ui.composites;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.ui.lists.ListViewerAtom;
@@ -110,11 +111,21 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	}
 
 
-	public void addTag( final String[] tags ) {
+	/**
+	 * Adds all tags that are not already contained in the molecule.
+	 * 
+	 * @param tags
+	 */
+	public void addTags( final String[] tags ) {
+		final List<String> moleculeTags = molecule.getTags();
+
 		for ( final String tag : tags ) {
-			molecule.getTags().add( tag );
+			if ( !tag.equals( "" ) && !moleculeTags.contains( tag ) ) {
+				moleculeTags.add( tag );
+			}
 		}
-		lsTags.setInput( molecule.getTags() );
+
+		lsTags.setInput( moleculeTags );
 	}
 
 
@@ -159,7 +170,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 			final String text = txTags.getText();
 			txTags.setText( "" );
 
-			addTag( new String[] { text } );
+			addTags( new String[] { text } );
 		}
 
 	}

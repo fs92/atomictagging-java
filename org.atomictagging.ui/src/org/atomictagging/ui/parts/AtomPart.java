@@ -9,6 +9,7 @@ import org.atomictagging.core.services.IAtomService;
 import org.atomictagging.core.services.IAtomService.Filter;
 import org.atomictagging.core.services.ITagService;
 import org.atomictagging.core.types.Atom;
+import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.composites.CompositeAtom;
 import org.atomictagging.ui.composites.CompositeAtomSearch;
 import org.eclipse.e4.ui.di.Focus;
@@ -75,7 +76,10 @@ public class AtomPart implements SelectionListener {
 		}
 		if ( e.widget == btSave ) {
 			final long id = atomService.save( compAtom.getInput() );
-			System.out.println( "saved = " + id );
+
+			final IAtom atom = atomService.find( id );
+
+			compAtom.setInput( atom );
 		}
 	}
 

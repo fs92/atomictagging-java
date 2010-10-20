@@ -100,8 +100,9 @@ public class CompositeAtom extends CompositeBase implements IAtomListener, KeyLi
 	@Override
 	public void bindInput( final DataBindingContext context ) {
 
-		context.bindValue( SWTObservables.observeText( txId ), PojoObservables.observeValue( atom, "id" ) );
-		context.bindValue( SWTObservables.observeText( txAtom ), PojoObservables.observeValue( atom, "data" ) );
+		context.bindValue( SWTObservables.observeText( txId, SWT.Modify ), PojoObservables.observeValue( atom, "id" ) );
+		context.bindValue( SWTObservables.observeText( txAtom, SWT.Modify ),
+				PojoObservables.observeValue( atom, "data" ) );
 		tvTags.setInput( atom.getTags() );
 	}
 

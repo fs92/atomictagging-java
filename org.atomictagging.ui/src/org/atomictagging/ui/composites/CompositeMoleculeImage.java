@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.atomictagging.core.services.ATService;
+import org.atomictagging.core.services.IAtomService;
+import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.lists.ListViewerAtom;
 import org.atomictagging.ui.model.ImageMolecule;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -29,14 +31,16 @@ import org.eclipse.swt.widgets.Text;
 
 public class CompositeMoleculeImage extends CompositeBase implements MouseListener, KeyListener {
 
-	private Image			image;
-	private Label			lbImage;
-	private Text			txTags;
-	private Text			txAtoms;
-	private ListViewer		lsTags;
-	private ListViewerAtom	lsAtoms;
+	private Image				image;
+	private Label				lbImage;
+	private Text				txTags;
+	private Text				txAtoms;
+	private ListViewer			lsTags;
+	private ListViewerAtom		lsAtoms;
 
-	private ImageMolecule	molecule;
+	private ImageMolecule		molecule;
+
+	private final IAtomService	atomService	= ATService.getAtomService();
 
 
 	public CompositeMoleculeImage( final Composite parent, final int style ) {
@@ -79,7 +83,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 
 		txAtoms = createText( parent );
 
-		lsAtoms = new ListViewerAtom( parent, SWT.BORDER );
+		lsAtoms = new ListViewerAtom( parent, SWT.BORDER | SWT.V_SCROLL );
 		lsAtoms.getControl().setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
 		final GridData gdAtoms = new GridData( SWT.FILL, SWT.TOP, true, false );
 		gdAtoms.heightHint = 100;
@@ -126,6 +130,21 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		}
 
 		lsTags.setInput( moleculeTags );
+	}
+
+
+	/**
+	 * @param atoms
+	 */
+	public void addAtoms( final String[] atoms ) {
+		for ( final String data : atoms ) {
+			final IAtom atom = atomService.findByData( data );
+
+			if ( !molecule.getAtoms().contains( atom ) ) {
+				molecule.getAtoms().add( atom );
+				lsAtoms.refresh();
+			}
+		}
 	}
 
 

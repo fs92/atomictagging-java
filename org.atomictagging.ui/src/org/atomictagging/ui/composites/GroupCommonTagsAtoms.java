@@ -38,6 +38,7 @@ public class GroupCommonTagsAtoms extends GroupBase implements KeyListener {
 		createLabel( parent, "Atoms" );
 
 		txAtoms = createText( parent );
+		txAtoms.addKeyListener( this );
 
 		final String[] tags = ATService.getTagService().getAllAsArray();
 		final String[] atoms = ATService.getAtomService().findUserAtomsAsArray();
@@ -64,19 +65,33 @@ public class GroupCommonTagsAtoms extends GroupBase implements KeyListener {
 	@Override
 	public void keyPressed( final KeyEvent e ) {
 		if ( e.keyCode == SWT.ARROW_DOWN ) {
-			final String tags = txTags.getText();
-			if ( tags != null && !tags.equals( "" ) ) {
-				final String[] split = tags.split( "," );
-				for ( int i = 0; i < split.length; i++ ) {
-					split[i] = split[i].trim();
+			if ( e.widget == txTags ) {
+				final String tags = txTags.getText();
+				if ( tags != null && !tags.equals( "" ) ) {
+					final String[] split = tags.split( "," );
+					for ( int i = 0; i < split.length; i++ ) {
+						split[i] = split[i].trim();
+					}
+
+					compositeImportImages.addTagsToAll( split );
+
+					txTags.setText( "" );
 				}
+			}
+			if ( e.widget == txAtoms ) {
+				final String atoms = txAtoms.getText();
+				if ( atoms != null && !atoms.equals( "" ) ) {
+					final String[] split = atoms.split( "," );
+					for ( int i = 0; i < split.length; i++ ) {
+						split[i] = split[i].trim();
+					}
 
-				compositeImportImages.addTagToAll( split );
+					compositeImportImages.addAtomsToAll( split );
 
-				txTags.setText( "" );
+					txAtoms.setText( "" );
+				}
 			}
 		}
-
 	}
 
 

@@ -92,6 +92,11 @@ public class CompositeAtom extends CompositeBase implements IAtomListener, KeyLi
 	}
 
 
+	public IAtom getInput() {
+		return atom;
+	}
+
+
 	@Override
 	public void bindInput( final DataBindingContext context ) {
 

@@ -81,14 +81,19 @@ public interface IAtomService {
 
 
 	/**
-	 * Returns an array of atom names that are not tagged with atoms from {@link CoreTags}. Some atoms with tags from
-	 * {@link CoreTags} might get included into the returned list if they are tagged additionally with tags that are not
-	 * included in {@link CoreTags}.
+	 * Returns the domain of atoms without atoms that describe file paths.
 	 * 
-	 * @return An array of atom names or an empty array if no atoms where found or a database error occurred. Never
-	 *         null.
+	 * @return never null
 	 */
-	String[] findUserAtomsAsArray();
+	public List<String> getDomain();
+
+
+	/**
+	 * Returns the domain of atoms without atoms that describe file paths.
+	 * 
+	 * @return not null
+	 */
+	public String[] getDomainAsArray();
 
 
 	/**

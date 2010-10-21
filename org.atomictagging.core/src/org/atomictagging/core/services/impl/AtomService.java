@@ -126,15 +126,35 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
-	public String[] findUserAtomsAsArray() {
-		final List<IAtom> atoms = findUserAtoms();
-		final String[] atomNames = new String[atoms.size()];
+	public List<String> getDomain() {
+		final List<String> domain = new ArrayList<String>();
 
-		for ( int i = 0; i < atoms.size(); i++ ) {
-			atomNames[i] = atoms.get( i ).getData();
+		final String sql = "SELECT distinct a.data FROM atoms a JOIN atom_has_tags at "
+				+ "ON a.atomid = at.atoms_atomid JOIN tags t ON at.tags_tagid = t.tagid "
+				+ "WHERE t.tag NOT IN ('x-fileref', 'x-remotefile', 'x-remotelocation', 'x-filetype-unknown', 'x-filetype-video', 'x-filetype-image') "
+				+ "ORDER BY data";
+
+		try {
+			final PreparedStatement readMolecules = DB.CONN.prepareStatement( sql );
+
+			final ResultSet resultSet = readMolecules.executeQuery();
+
+			while ( resultSet.next() ) {
+				domain.add( resultSet.getString( 1 ) );
+			}
+
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
 		}
 
-		return atomNames;
+		return domain;
+	}
+
+
+	@Override
+	public String[] getDomainAsArray() {
+		final List<String> domain = getDomain();
+		return domain.toArray( new String[domain.size()] );
 	}
 
 

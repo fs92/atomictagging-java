@@ -84,10 +84,10 @@ public class ImageBrowserPart implements SelectionListener {
 		gallery.setItemRenderer( ir );
 
 		final String[] tags = ATService.getTagService().getAllAsArray();
-		final String[] atoms = ATService.getAtomService().findUserAtomsAsArray();
+		final String[] atomDomain = ATService.getAtomService().getDomainAsArray();
 
 		new AutoCompleteField( txTags, new TextsContentAdapter(), tags );
-		new AutoCompleteField( txAtoms, new TextsContentAdapter(), atoms );
+		new AutoCompleteField( txAtoms, new TextsContentAdapter(), atomDomain );
 	}
 
 

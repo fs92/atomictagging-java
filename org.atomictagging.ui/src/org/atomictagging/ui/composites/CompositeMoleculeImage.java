@@ -94,7 +94,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		lsAtoms.getControl().setLayoutData( gdAtoms );
 
 		final String[] tags = ATService.getTagService().getAllAsArray();
-		final String[] atoms = ATService.getAtomService().findUserAtomsAsArray();
+		final String[] atoms = ATService.getAtomService().getDomainAsArray();
 
 		new AutoCompleteField( txTags, new TextsContentAdapter(), tags );
 		new AutoCompleteField( txAtoms, new TextsContentAdapter(), atoms );

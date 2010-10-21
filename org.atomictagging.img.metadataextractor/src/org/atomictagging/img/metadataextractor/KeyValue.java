@@ -2,6 +2,7 @@ package org.atomictagging.img.metadataextractor;
 
 public class KeyValue {
 	
+	
 	public KeyValue(String key, String value) {
 		this.key = key;
 		this.value = value;

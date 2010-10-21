@@ -149,6 +149,13 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 				final DialogAtom dialog = new DialogAtom( getShell(), SWT.NONE );
 				dialog.setInput( atom );
 				dialog.open();
+
+				atom = dialog.getInput();
+
+				if ( atom != null ) {
+					molecule.getAtoms().add( atom );
+					lsAtoms.refresh();
+				}
 			}
 
 			if ( atom != null && !molecule.getAtoms().contains( atom ) ) {

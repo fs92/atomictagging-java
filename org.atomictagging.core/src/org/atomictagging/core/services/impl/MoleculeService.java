@@ -18,11 +18,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IMoleculeService;
+import org.atomictagging.core.types.IAtom;
 import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.core.types.Molecule;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
@@ -87,6 +90,59 @@ public class MoleculeService extends AbstractService implements IMoleculeService
 		}
 
 		return null;
+	}
+
+
+	@Override
+	public List<IMolecule> findByAtomData( final String data ) {
+		final List<IMolecule> result = new ArrayList<IMolecule>();
+
+		final String sql = "SELECT ma.molecules_moleculeid moleculeid, a.atomid FROM molecules m "
+				+ "JOIN molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid "
+				+ "JOIN atoms a on ma.atoms_atomid=a.atomid "
+				+ "WHERE moleculeid IN( "
+				+ "SELECT ma.molecules_moleculeid moleculeid FROM molecules m join molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid join atoms a on ma.atoms_atomid=a.atomid where a.data='"
+				+ data + "' )";
+
+		try {
+			final PreparedStatement readMolecules = DB.CONN.prepareStatement( sql );
+
+			// ResultSet = moleculeid, atomid
+			final ResultSet moleculeResult = readMolecules.executeQuery();
+			long moleculeId = -1;
+			Molecule molecule = null;
+			IAtom atom = null;
+			final Map<Long, IAtom> atoms = new HashMap<Long, IAtom>();
+
+			while ( moleculeResult.next() ) {
+				final long moleculeIdNext = moleculeResult.getLong( "moleculeid" );
+
+				if ( moleculeIdNext != moleculeId ) {
+					moleculeId = moleculeIdNext;
+
+					molecule = new Molecule();
+					molecule.setId( moleculeId );
+					molecule.setTags( ATService.getTagService().getForMolecule( moleculeId ) );
+
+					if ( molecule != null ) {
+						result.add( molecule );
+					}
+				}
+
+				final long atomId = moleculeResult.getLong( "atomid" );
+
+				if ( !atoms.containsKey( atomId ) ) {
+					atom = ATService.getAtomService().find( atomId );
+				}
+
+				molecule.getAtoms().add( atom );
+			}
+
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 

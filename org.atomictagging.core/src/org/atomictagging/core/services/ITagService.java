@@ -39,6 +39,15 @@ public interface ITagService {
 
 
 	/**
+	 * Returns all tags for a certain molecule.
+	 * 
+	 * @param id
+	 * @return A list of tags, never null.
+	 */
+	public List<String> getForMolecule( final long id );
+
+
+	/**
 	 * Saves a tag and returns its ID, as defined by the DB. If the tag already exists in the DB, it will not be
 	 * inserted again but rather the ID of the stored tag will be returned.
 	 * 

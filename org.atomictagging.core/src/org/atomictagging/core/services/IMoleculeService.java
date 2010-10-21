@@ -51,4 +51,6 @@ public interface IMoleculeService {
 	 */
 	long save( IMolecule molecule );
 
+
+	public List<IMolecule> findByAtomData( final String data );
 }

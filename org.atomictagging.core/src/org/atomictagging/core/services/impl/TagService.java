@@ -32,12 +32,15 @@ public class TagService extends AbstractService implements ITagService {
 	private static PreparedStatement	allTags;
 	private static PreparedStatement	checkTag;
 	private static PreparedStatement	insertTag;
+	private static PreparedStatement	allTagsForMolecule;
 
 	static {
 		try {
 			allTags = DB.CONN.prepareStatement( "SELECT tag FROM tags" );
 			checkTag = DB.CONN.prepareStatement( "SELECT tagid FROM tags WHERE tag = ?" );
 			insertTag = DB.CONN.prepareStatement( "INSERT INTO tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
+			allTagsForMolecule = DB.CONN
+					.prepareStatement( "SELECT tag FROM molecule_has_tags mt JOIN tags t ON mt.tags_tagid=t.tagid WHERE mt.molecules_moleculeid=?" );
 		} catch ( final SQLException e ) {
 			e.printStackTrace();
 		}
@@ -67,6 +70,25 @@ public class TagService extends AbstractService implements ITagService {
 		final List<String> list = getAll();
 
 		final String[] tags = list.toArray( new String[list.size()] );
+
+		return tags;
+	}
+
+
+	@Override
+	public List<String> getForMolecule( final long id ) {
+		final List<String> tags = new ArrayList<String>();
+
+		try {
+			allTagsForMolecule.setLong( 1, id );
+			final ResultSet tagResult = allTagsForMolecule.executeQuery();
+
+			while ( tagResult.next() ) {
+				tags.add( tagResult.getString( "tag" ) );
+			}
+		} catch ( final SQLException e ) {
+			e.printStackTrace();
+		}
 
 		return tags;
 	}

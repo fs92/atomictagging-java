@@ -1,0 +1,39 @@
+# all atoms that are tagged with ?
+SELECT * FROM atoms a join atom_has_tags at on a.atomid=at.atoms_atomid join tags t on at.tags_tagid=t.tagid where t.tag='person';
+
+# all molecules with atoms
+SELECT * FROM molecules m join molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid join atoms a on ma.atoms_atomid=a.atomid
+
+
+# all molecules with atoms that are named ?
+SELECT * FROM molecules m join molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid join atoms a on ma.atoms_atomid=a.atomid where data='DiMAGE Z3'
+
+# all molecules, tags with atoms that are named ?
+SELECT mht.molecules_moleculeid AS moleculeid, t.* FROM molecule_has_tags mht JOIN tags t ON mht.tags_tagid=t.tagid WHERE mht.molecules_moleculeid IN(
+SELECT ma.molecules_moleculeid AS moleculeid FROM molecule_has_atoms ma JOIN atoms a ON ma.atoms_atomid=a.atomid
+WHERE a.data='DiMAGE Z3' )
+
+# all molecule ids, atom ids, tags with atoms that are named ?
+SELECT mht.molecules_moleculeid AS moleculeid, ma.atoms_atomid AS atomid, t.* FROM molecule_has_tags mht JOIN tags t ON mht.tags_tagid=t.tagid
+JOIN molecule_has_atoms ma ON mht.molecules_moleculeid=ma.molecules_moleculeid WHERE mht.molecules_moleculeid IN(
+SELECT ma.molecules_moleculeid AS moleculeid FROM molecule_has_atoms ma JOIN atoms a ON ma.atoms_atomid=a.atomid
+WHERE a.data='DiMAGE Z3' )
+
+# all molecules with atoms that are tagged with ?
+SELECT * FROM molecules m join molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid join atoms a on ma.atoms_atomid=a.atomid join atom_has_tags at on a.atomid=at.atoms_atomid join tags t on at.tags_tagid=t.tagid where t.tag='Exif Image Height';
+
+# all molecules, tags with atoms that are tagged with ?
+SELECT mht.molecules_moleculeid AS moleculeid, t.* FROM molecule_has_tags mht JOIN tags t ON mht.tags_tagid=t.tagid WHERE mht.molecules_moleculeid IN(
+SELECT ma.molecules_moleculeid AS moleculeid FROM molecule_has_atoms ma JOIN atoms a ON ma.atoms_atomid=a.atomid
+JOIN atom_has_tags at ON a.atomid=at.atoms_atomid JOIN tags t ON at.tags_tagid=t.tagid WHERE t.tag='Exif Image Height' )
+
+
+
+
+
+# all molecule ids, atom ids where an atom data is ?
+SELECT ma.molecules_moleculeid moleculeid, a.atomid FROM molecules m
+JOIN molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid
+JOIN atoms a on ma.atoms_atomid=a.atomid
+WHERE moleculeid IN(
+SELECT ma.molecules_moleculeid moleculeid FROM molecules m join molecule_has_atoms ma on m.moleculeid=ma.molecules_moleculeid join atoms a on ma.atoms_atomid=a.atomid where data='DiMAGE Z3') 

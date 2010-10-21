@@ -13,6 +13,7 @@
  */
 package org.atomictagging.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,9 +40,9 @@ public class StringUtils {
 		}
 
 		boolean first = true;
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 
-		for ( String string : strings ) {
+		for ( final String string : strings ) {
 			if ( !first ) {
 				builder.append( delimiter );
 			}
@@ -73,12 +74,26 @@ public class StringUtils {
 	 * @return The string repeated as many times as requested
 	 */
 	public static String repeat( final String string, final int times ) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 
 		for ( int i = 0; i < times; i++ ) {
 			builder.append( string );
 		}
 
 		return builder.toString();
+	}
+
+
+	public static List<String> breakCommaSeparatedString( final String text ) {
+		final List<String> list = new ArrayList<String>();
+
+		if ( text != null && !text.equals( "" ) ) {
+			final String[] split = text.split( "," );
+			for ( int i = 0; i < split.length; i++ ) {
+				list.add( split[i].trim() );
+			}
+		}
+
+		return list;
 	}
 }

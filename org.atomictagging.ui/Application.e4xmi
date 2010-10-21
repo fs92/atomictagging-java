@@ -8,6 +8,7 @@
             <children xsi:type="basic:Part" xmi:id="_opGGAMZ6Ed-2FaVmxRLI2g" elementId="org.atomictagging.ui.atompart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.AtomPart" label="Atom"/>
             <children xsi:type="basic:Part" xmi:id="_skOwsMc8Ed-eYq7gQlFEVg" elementId="org.atomictagging.ui.parts.ImagePart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.ImagePart" label="ImageMoleculePart"/>
             <children xsi:type="basic:Part" xmi:id="_TmRvwMh4Ed-Evsa0Vw38Vw" elementId="org.atomictagging.ui.parts.imageimportpart" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.ImageImportPart" label="Image Importer"/>
+            <children xsi:type="basic:Part" xmi:id="_HatKEN0ZEd-tipWKkIdf2g" elementId="org.atomictagging.ui.parts.imagebrowser" contributionURI="platform:/plugin/org.atomictagging.ui/org.atomictagging.ui.parts.ImageBrowserPart" label="Image Browser"/>
           </children>
         </children>
       </children>

@@ -96,45 +96,50 @@ public class ImageBrowserPart implements SelectionListener {
 	}
 
 
+	private void showQuery( final List<IMolecule> molecules, final String name ) {
+		final GalleryItem group = new GalleryItem( gallery, SWT.NONE );
+		group.setText( "Group " + name ); //$NON-NLS-1$
+		group.setExpanded( true );
+
+		final String targetDirName = Configuration.get().getString( "base.dir" );
+
+		for ( final IMolecule molecule : molecules ) {
+			final List<IAtom> thumbs = molecule.findAtomsWithTag( "thumb" );
+
+			if ( thumbs.size() > 0 ) {
+
+				final IAtom thumbAtom = thumbs.get( 0 );
+				try {
+					final ImageData imgData = new ImageData( new FileInputStream( new File( targetDirName + "\\"
+							+ thumbAtom.getData() ) ) );
+					final Image itemImage = new Image( parent.getDisplay(), imgData );
+
+					final GalleryItem item = new GalleryItem( group, SWT.NONE );
+					item.setImage( itemImage );
+				} catch ( final FileNotFoundException e1 ) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		}
+	}
+
+
 	// / SelectionListener /////////////////////////////////
 
 	@Override
 	public void widgetSelected( final SelectionEvent e ) {
 		if ( e.widget == btSearchTags ) {
 
-			final List<IMolecule> list = moleculeService.find( org.atomictagging.utils.StringUtils
+			final List<IMolecule> molecules = moleculeService.find( org.atomictagging.utils.StringUtils
 					.breakCommaSeparatedString( txTags.getText() ) );
-
-			final GalleryItem group = new GalleryItem( gallery, SWT.NONE );
-			group.setText( "Group " + txTags.getText() ); //$NON-NLS-1$
-			group.setExpanded( true );
-
-			final String targetDirName = Configuration.get().getString( "base.dir" );
-
-			for ( final IMolecule molecule : list ) {
-				final List<IAtom> thumbs = molecule.findAtomsWithTag( "thumb" );
-
-				if ( thumbs.size() > 0 ) {
-
-					final IAtom thumbAtom = thumbs.get( 0 );
-					try {
-						final ImageData imgData = new ImageData( new FileInputStream( new File( targetDirName + "\\"
-								+ thumbAtom.getData() ) ) );
-						final Image itemImage = new Image( parent.getDisplay(), imgData );
-
-						final GalleryItem item = new GalleryItem( group, SWT.NONE );
-						item.setImage( itemImage );
-					} catch ( final FileNotFoundException e1 ) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				}
-			}
-
+			showQuery( molecules, txTags.getText() );
 		}
 		if ( e.widget == btSearchAtoms ) {
 
+			final List<IMolecule> molecules = moleculeService.findByAtomData( txAtoms.getText() );
+			showQuery( molecules, txAtoms.getText() );
 		}
 	}
 

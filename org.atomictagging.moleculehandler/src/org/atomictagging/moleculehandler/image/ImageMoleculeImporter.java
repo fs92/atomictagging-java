@@ -50,8 +50,8 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 
 
 	@Override
-	public boolean canHandle( File file ) {
-		String fileName = file.getName();
+	public boolean canHandle( final File file ) {
+		final String fileName = file.getName();
 		if ( fileName.endsWith( ".jpg" ) || fileName.endsWith( ".gif" ) ) {
 			return true;
 		}
@@ -60,13 +60,13 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 
 
 	@Override
-	public void importFile( Collection<IMolecule> molecules, File file ) {
+	public void importFile( final Collection<IMolecule> molecules, final File file ) {
 		importFile( molecules, file, null );
 	}
 
 
 	@Override
-	public void importFile( Collection<IMolecule> molecules, File file, String repository ) {
+	public void importFile( final Collection<IMolecule> molecules, final File file, final String repository ) {
 		boolean isRemote = true;
 		String targetDirName = Configuration.getRepository( repository );
 
@@ -82,7 +82,7 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 
 		// targetDirName = repository
 		// fileName = 79/8b/498c975f328ec67ec3f76d7d423b
-		String fileNameIamge = GenericImporter.copyFile( file, targetDirName );
+		final String fileNameIamge = GenericImporter.copyFile( file, targetDirName );
 		if ( fileNameIamge == null ) {
 			System.out.println( "Error. No file imported." );
 			return;
@@ -90,34 +90,33 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 
 		String fileNameImageThumb = "";
 		try {
-			byte[] thumb = transform( file, 200, 200 );
+			final byte[] thumb = transform( file, 200, 200 );
 			fileNameImageThumb = GenericImporter.saveFile( thumb, targetDirName );
-		} catch ( Exception e ) {
-			// TODO Auto-generated catch block
+		} catch ( final Exception e ) {
 			e.printStackTrace();
 		}
 
-		IAtom atomImage = Atom.build().withData( "/" + fileNameIamge ).withTag( CoreTags.FILETYPE_IMAGE )
+		final IAtom atomImage = Atom.build().withData( "/" + fileNameIamge ).withTag( CoreTags.FILETYPE_IMAGE )
 				.buildWithDataAndTag();
-		IAtom atomImageThumb = Atom.build().withData( "/" + fileNameImageThumb ).withTag( CoreTags.FILETYPE_IMAGE )
-				.withTag( "thumb" ).buildWithDataAndTag();
+		final IAtom atomImageThumb = Atom.build().withData( "/" + fileNameImageThumb )
+				.withTag( CoreTags.FILETYPE_IMAGE ).withTag( "thumb" ).buildWithDataAndTag();
 
-		MoleculeBuilder mBuilder = Molecule.build().withAtom( atomImage ).withAtom( atomImageThumb );
+		final MoleculeBuilder mBuilder = Molecule.build().withAtom( atomImage ).withAtom( atomImageThumb );
 		mBuilder.withTag( "generic-file" );
 
-		IMolecule molecule = mBuilder.buildWithAtomsAndTags();
+		final IMolecule molecule = mBuilder.buildWithAtomsAndTags();
 		ATService.getMoleculeService().save( molecule );
 		molecules.add( molecule );
 	}
 
 
-	private static byte[] transform( File originalFile, int thumbWidth, int thumbHeight ) throws Exception {
-		BufferedImage image = javax.imageio.ImageIO.read( originalFile );
+	private static byte[] transform( final File originalFile, int thumbWidth, int thumbHeight ) throws Exception {
+		final BufferedImage image = javax.imageio.ImageIO.read( originalFile );
 
-		double thumbRatio = (double) thumbWidth / (double) thumbHeight;
-		int imageWidth = image.getWidth( null );
-		int imageHeight = image.getHeight( null );
-		double imageRatio = (double) imageWidth / (double) imageHeight;
+		final double thumbRatio = (double) thumbWidth / (double) thumbHeight;
+		final int imageWidth = image.getWidth( null );
+		final int imageHeight = image.getHeight( null );
+		final double imageRatio = (double) imageWidth / (double) imageHeight;
 		if ( thumbRatio < imageRatio ) {
 			thumbHeight = (int) ( thumbWidth / imageRatio );
 		} else {
@@ -133,15 +132,15 @@ public class ImageMoleculeImporter implements IMoleculeImporter {
 			thumbHeight = imageHeight;
 		}
 
-		BufferedImage thumbImage = new BufferedImage( thumbWidth, thumbHeight, BufferedImage.TYPE_INT_RGB );
-		Graphics2D graphics2D = thumbImage.createGraphics();
+		final BufferedImage thumbImage = new BufferedImage( thumbWidth, thumbHeight, BufferedImage.TYPE_INT_RGB );
+		final Graphics2D graphics2D = thumbImage.createGraphics();
 		graphics2D.setBackground( Color.WHITE );
 		graphics2D.setPaint( Color.WHITE );
 		graphics2D.fillRect( 0, 0, thumbWidth, thumbHeight );
 		graphics2D.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
 		graphics2D.drawImage( image, 0, 0, thumbWidth, thumbHeight, null );
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		javax.imageio.ImageIO.write( thumbImage, "JPG", baos );
 

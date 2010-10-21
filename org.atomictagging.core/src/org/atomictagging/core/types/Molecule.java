@@ -99,6 +99,23 @@ public class Molecule extends Entity implements IMolecule {
 
 
 	@Override
+	public List<IAtom> findAtomsWithTag( final String searchTag ) {
+		final List<IAtom> list = new ArrayList<IAtom>();
+
+		for ( final IAtom atom : atoms ) {
+			for ( final String tag : atom.getTags() ) {
+				if ( searchTag.equals( tag ) ) {
+					list.add( atom );
+					break;
+				}
+			}
+		}
+
+		return list;
+	}
+
+
+	@Override
 	public String toString() {
 		return "Molecule: id=" + id + "; tags=" + tags + "; atom#=" + atoms.size();
 	}

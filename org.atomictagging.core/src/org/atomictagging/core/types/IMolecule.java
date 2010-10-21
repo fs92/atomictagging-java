@@ -73,6 +73,15 @@ public interface IMolecule {
 
 
 	/**
+	 * Searches in a molecule for atoms with a given tag.
+	 * 
+	 * @param searchTag
+	 * @return All atoms that contains the searchTag
+	 */
+	public List<IAtom> findAtomsWithTag( final String searchTag );
+
+
+	/**
 	 * Modify a molecule.
 	 * 
 	 * @return A MoleculeBuilder object containing the data of the molecule.

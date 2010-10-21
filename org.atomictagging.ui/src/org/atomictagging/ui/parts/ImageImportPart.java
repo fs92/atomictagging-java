@@ -6,8 +6,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.atomictagging.core.configuration.Configuration;
+import org.atomictagging.core.moleculehandler.GenericImporter;
 import org.atomictagging.core.services.ATService;
+import org.atomictagging.core.services.IAtomService;
 import org.atomictagging.core.services.IMoleculeService;
+import org.atomictagging.core.types.Atom;
+import org.atomictagging.core.types.CoreTags;
+import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.composites.CompositeImportImages;
 import org.atomictagging.ui.composites.GroupCommonTagsAtoms;
 import org.atomictagging.ui.model.ImageMolecule;
@@ -34,6 +40,7 @@ public class ImageImportPart implements SelectionListener {
 	private final CompositeImportImages	compImportImages;
 
 	private final IMoleculeService		moleculeService	= ATService.getMoleculeService();
+	IAtomService						atomService		= ATService.getAtomService();
 
 
 	@Inject
@@ -92,6 +99,39 @@ public class ImageImportPart implements SelectionListener {
 
 			for ( final ImageMolecule imolecule : input ) {
 				// moleculeService.save( imolecule.getMolecule() );
+
+				final String targetDirName = Configuration.get().getString( "base.dir" );
+				// fileName = 79/8b/498c975f328ec67ec3f76d7d423b
+				final String fileNameIamge = GenericImporter.copyFile( imolecule.getFileImage(), targetDirName );
+				if ( fileNameIamge == null ) {
+					System.out.println( "Error. No file imported." );
+					return;
+				}
+				System.out.println( "image = " + fileNameIamge );
+
+				String fileNameImageThumb = "";
+				try {
+					fileNameImageThumb = GenericImporter.saveFile( imolecule.getByteThumb(), targetDirName );
+				} catch ( final Exception ex ) {
+					ex.printStackTrace();
+				}
+				System.out.println( "thumb = " + fileNameImageThumb );
+
+				final List<IAtom> imageAtoms = imolecule.findAtomsWithTag( CoreTags.FILETYPE_IMAGE );
+				final IAtom imageAtom = imageAtoms.get( 0 );
+
+				imageAtom.setData( fileNameIamge );
+
+				final IAtom thumbAtom = new Atom();
+				thumbAtom.setData( fileNameImageThumb );
+				thumbAtom.getTags().add( "thumb" );
+				thumbAtom.getTags().add( CoreTags.FILETYPE_IMAGE );
+				imolecule.getAtoms().add( thumbAtom );
+
+				final long moleculeId = moleculeService.save( imolecule.getMolecule() );
+
+				System.out.println( moleculeId + " " + imolecule.getMolecule() );
+				System.out.println();
 			}
 		}
 	}

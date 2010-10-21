@@ -234,6 +234,14 @@ public class ImageMolecule implements IMolecule {
 
 
 	/**
+	 * @return the fileImage
+	 */
+	public File getFileImage() {
+		return fileImage;
+	}
+
+
+	/**
 	 * @param dirty
 	 *            the dirty to set
 	 */
@@ -266,5 +274,11 @@ public class ImageMolecule implements IMolecule {
 
 			molecule.getAtoms().add( atom );
 		}
+	}
+
+
+	@Override
+	public List<IAtom> findAtomsWithTag( final String searchTag ) {
+		return molecule.findAtomsWithTag( searchTag );
 	}
 }

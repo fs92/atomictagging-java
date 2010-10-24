@@ -110,7 +110,7 @@ public class ImageBrowserPart implements SelectionListener {
 
 				final IAtom thumbAtom = thumbs.get( 0 );
 				try {
-					final ImageData imgData = new ImageData( new FileInputStream( new File( targetDirName + "\\"
+					final ImageData imgData = new ImageData( new FileInputStream( new File( targetDirName + "/"
 							+ thumbAtom.getData() ) ) );
 					final Image itemImage = new Image( parent.getDisplay(), imgData );
 

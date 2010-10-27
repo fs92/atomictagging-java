@@ -130,6 +130,11 @@ public class FileUtils {
 	}
 
 
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static String getHashSum( final File file ) {
 		String hash = null;
 		try {

@@ -142,10 +142,8 @@ public class FileUtils {
 			hash = DigestUtils.md5Hex( fis );
 			fis.close();
 		} catch ( final FileNotFoundException e ) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch ( final IOException e ) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return hash;

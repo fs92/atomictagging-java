@@ -13,17 +13,28 @@
  */
 package org.atomictagging.ui.tableviewer;
 
+import java.util.List;
+
+import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.listeners.AtomEvent;
 import org.atomictagging.ui.listeners.IAtomListener;
+import org.atomictagging.ui.listeners.MoleculeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 
 /**
  * @author strangeoptics
  * 
  */
-public class AtomsTableViewer extends TableViewer implements IAtomListener {
+public class AtomsTableViewer extends TableViewer implements IAtomListener, KeyListener {
+
+	private List<IAtom>	atomsInput;
+
 
 	/**
 	 * @param parent
@@ -34,6 +45,29 @@ public class AtomsTableViewer extends TableViewer implements IAtomListener {
 
 		setContentProvider( new ArrayContentProvider() );
 		setLabelProvider( new AtomsLabelProvider() );
+		getTable().addKeyListener( this );
+	}
+
+
+	public void setInput( final List<IAtom> atoms ) {
+		this.atomsInput = atoms;
+		super.setInput( atoms );
+	}
+
+
+	public void removeSelectedAtom() {
+		final IStructuredSelection selection = (IStructuredSelection) getSelection();
+		if ( !selection.isEmpty() ) {
+			final IAtom atom = (IAtom) selection.getFirstElement();
+			removeAtom( atom );
+		}
+	}
+
+
+	public boolean removeAtom( final IAtom atom ) {
+		final boolean remove = atomsInput.remove( atom );
+		remove( atom );
+		return remove;
 	}
 
 
@@ -43,6 +77,28 @@ public class AtomsTableViewer extends TableViewer implements IAtomListener {
 	public void atomsAvailable( final AtomEvent event ) {
 
 		setInput( event.getAtoms() );
+
+	}
+
+
+	@Override
+	public void moleculesAvailable( final MoleculeEvent event ) {
+
+	}
+
+
+	// KeyListener /////////////////////////
+
+	@Override
+	public void keyPressed( final KeyEvent e ) {
+		if ( e.keyCode == SWT.DEL ) {
+			removeSelectedAtom();
+		}
+	}
+
+
+	@Override
+	public void keyReleased( final KeyEvent e ) {
 
 	}
 

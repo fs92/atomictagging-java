@@ -16,6 +16,9 @@ package org.atomictagging.core.services.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
+import org.atomictagging.utils.StringUtils;
 
 /**
  * Some convenience methods that are common to all services.
@@ -23,6 +26,7 @@ import java.sql.SQLException;
  * @author Stephan Mann
  */
 public abstract class AbstractService {
+
 	protected long getAutoIncrementId( final PreparedStatement statement ) throws SQLException {
 		final ResultSet resultSet = statement.getGeneratedKeys();
 
@@ -42,6 +46,18 @@ public abstract class AbstractService {
 		}
 
 		return -1;
+	}
+
+
+	/**
+	 * Builds a subquery with following syntax: <br>
+	 * IN ( tag0, tag1, ..., tagn)
+	 * 
+	 * @param tags
+	 * @return IN ( tag0, tag1, ..., tagn)
+	 */
+	protected String in( final List<String> tags ) {
+		return " IN ('" + StringUtils.join( tags, "', '" ) + "') ";
 	}
 
 }

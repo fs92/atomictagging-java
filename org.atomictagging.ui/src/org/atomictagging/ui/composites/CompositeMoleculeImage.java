@@ -1,22 +1,24 @@
 package org.atomictagging.ui.composites;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 
+import org.atomictagging.core.configuration.Configuration;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.IAtom;
+import org.atomictagging.core.types.IMolecule;
 import org.atomictagging.ui.dialogs.DialogAtom;
-import org.atomictagging.ui.lists.ListViewerAtom;
+import org.atomictagging.ui.listeners.AtomEvent;
+import org.atomictagging.ui.listeners.IAtomListener;
+import org.atomictagging.ui.listeners.MoleculeEvent;
 import org.atomictagging.ui.model.ImageMolecule;
+import org.atomictagging.ui.tableviewer.AtomsTableViewer;
+import org.atomictagging.ui.tableviewer.TagsTableViewer;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -29,18 +31,27 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-public class CompositeMoleculeImage extends CompositeBase implements MouseListener, KeyListener {
+/**
+ * @author strangeoptics
+ * 
+ */
+public class CompositeMoleculeImage extends CompositeBase implements MouseListener, KeyListener, IAtomListener {
 
 	private Image				image;
 	private Label				lbImage;
 	private Text				txTags;
 	private Text				txAtoms;
-	private ListViewer			lsTags;
-	private ListViewerAtom		lsAtoms;
+	private TagsTableViewer		tvTags;
+	private Table				tbTags;
+	private AtomsTableViewer	tvAtoms;
+	private Table				tbAtoms;
 
-	private ImageMolecule		molecule;
+	// private ListViewerAtom lsAtoms;
+
+	private ImageMolecule		imageMolecule;
 
 	private final IAtomService	atomService	= ATService.getAtomService();
 
@@ -72,26 +83,25 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 		txTags = createText( parent );
 		txTags.addKeyListener( this );
 
-		lsTags = new ListViewer( parent, SWT.BORDER );
-		lsTags.getControl().setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+		tvTags = new TagsTableViewer( parent, SWT.BORDER );
+		tbTags = tvTags.getTable();
 		final GridData gdTags = new GridData( SWT.FILL, SWT.TOP, true, false );
 		gdTags.heightHint = 100;
 		gdTags.horizontalSpan = 2;
-		lsTags.getControl().setLayoutData( gdTags );
-		lsTags.setContentProvider( new ArrayContentProvider() );
-		lsTags.setSorter( new ViewerSorter() );
+		tbTags.setLayoutData( gdTags );
+		tbTags.addKeyListener( this );
 
 		createLabel( parent, "Atoms" );
 
 		txAtoms = createText( parent );
 		txAtoms.addKeyListener( this );
 
-		lsAtoms = new ListViewerAtom( parent, SWT.BORDER | SWT.V_SCROLL );
-		lsAtoms.getControl().setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+		tvAtoms = new AtomsTableViewer( parent, SWT.BORDER );
+		tbAtoms = tvAtoms.getTable();
 		final GridData gdAtoms = new GridData( SWT.FILL, SWT.TOP, true, false );
 		gdAtoms.heightHint = 100;
 		gdAtoms.horizontalSpan = 2;
-		lsAtoms.getControl().setLayoutData( gdAtoms );
+		tbAtoms.setLayoutData( gdAtoms );
 
 		final String[] tags = ATService.getTagService().getAllAsArray();
 		final String[] atoms = ATService.getAtomService().getDomainAsArray();
@@ -101,20 +111,39 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	}
 
 
-	public void setInput( final ImageMolecule imd ) {
-		this.molecule = imd;
+	public void setInput( final IMolecule iMolecule ) {
+		ImageData imgData = null;
+		Image img = null;
+
+		if ( !( iMolecule instanceof ImageMolecule ) ) {
+			imageMolecule = new ImageMolecule( iMolecule );
+
+			final List<IAtom> thumbAtoms = iMolecule.findAtomsWithTag( "thumb" );
+			if ( thumbAtoms.size() > 0 ) {
+				final IAtom thumbAtom = thumbAtoms.get( 0 );
+
+				final String targetDirName = Configuration.get().getString( "base.dir" );
+				imageMolecule.setFileThumb( new File( targetDirName + "\\" + thumbAtom.getData() ) );
+			}
+
+		} else {
+			this.imageMolecule = (ImageMolecule) iMolecule;
+		}
+
 		bind();
 
-		final ByteArrayInputStream bais = new ByteArrayInputStream( imd.getByteThumb() );
-		final ImageData imgData = new ImageData( bais );
-		final Image img = new Image( getDisplay(), imgData );
+		final ByteArrayInputStream bais = new ByteArrayInputStream( imageMolecule.getByteThumb() );
+		imgData = new ImageData( bais );
+		img = new Image( getDisplay(), imgData );
 
-		lbImage.setImage( img );
+		if ( img != null ) {
+			lbImage.setImage( img );
+		}
 	}
 
 
 	public ImageMolecule getInput() {
-		return molecule;
+		return imageMolecule;
 	}
 
 
@@ -124,15 +153,8 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	 * @param tags
 	 */
 	public void addTags( final String[] tags ) {
-		final List<String> moleculeTags = molecule.getTags();
 
-		for ( final String tag : tags ) {
-			if ( !tag.equals( "" ) && !moleculeTags.contains( tag ) ) {
-				moleculeTags.add( tag );
-			}
-		}
-
-		lsTags.setInput( moleculeTags );
+		tvTags.addTags( tags );
 	}
 
 
@@ -153,14 +175,14 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 				atom = dialog.getInput();
 
 				if ( atom != null ) {
-					molecule.getAtoms().add( atom );
-					lsAtoms.refresh();
+					imageMolecule.getAtoms().add( atom );
+					tvAtoms.refresh();
 				}
 			}
 
-			if ( atom != null && !molecule.getAtoms().contains( atom ) ) {
-				molecule.getAtoms().add( atom );
-				lsAtoms.refresh();
+			if ( atom != null && !imageMolecule.getAtoms().contains( atom ) ) {
+				imageMolecule.getAtoms().add( atom );
+				tvAtoms.refresh();
 			}
 		}
 	}
@@ -169,10 +191,9 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 	@Override
 	public void bindInput( final DataBindingContext context ) {
 
-		context.bindList( SWTObservables.observeItems( lsTags.getControl() ),
-				PojoObservables.observeList( molecule, "tags" ) );
+		tvTags.setInput( imageMolecule.getTags() );
 
-		lsAtoms.setInput( molecule.getAtoms() );
+		tvAtoms.setInput( imageMolecule.getAtoms() );
 	}
 
 
@@ -194,7 +215,6 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 
 	@Override
 	public void mouseUp( final MouseEvent e ) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -212,7 +232,7 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 						split[i] = split[i].trim();
 					}
 
-					addTags( split );
+					tvTags.addTags( split );
 
 					txTags.setText( "" );
 				}
@@ -236,7 +256,21 @@ public class CompositeMoleculeImage extends CompositeBase implements MouseListen
 
 	@Override
 	public void keyReleased( final KeyEvent e ) {
-		// TODO Auto-generated method stub
 
+	}
+
+
+	// IAtomListener //////////////////////////////
+
+	@Override
+	public void atomsAvailable( final AtomEvent event ) {
+
+	}
+
+
+	@Override
+	public void moleculesAvailable( final MoleculeEvent event ) {
+		final IMolecule moleculex = event.getFirst();
+		setInput( moleculex );
 	}
 }

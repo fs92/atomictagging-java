@@ -1,13 +1,9 @@
 package org.atomictagging.ui.parts;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
-import org.atomictagging.core.services.IAtomService.Filter;
-import org.atomictagging.core.services.ITagService;
 import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.composites.CompositeAtom;
@@ -72,12 +68,6 @@ public class AtomPart implements SelectionListener, ISelectionChangedListener {
 
 	@Focus
 	public void onFocus() {
-		final ITagService tagService = ATService.getTagService();
-		System.out.println( tagService.getAll() );
-
-		System.out.println( ATService.getAtomService().find( Arrays.asList( "x-fileref" ), Filter.EXCLUDE ) );
-		System.out.println( "---------------------------------------------------------------------------------" );
-		System.out.println( ATService.getAtomService().findUserAtoms() );
 	}
 
 

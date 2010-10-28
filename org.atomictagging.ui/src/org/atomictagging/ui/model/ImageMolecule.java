@@ -19,7 +19,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,6 +30,7 @@ import org.atomictagging.core.types.Molecule;
 import org.atomictagging.core.types.Molecule.MoleculeBuilder;
 import org.atomictagging.img.metadataextractor.ExifUtil;
 import org.atomictagging.img.metadataextractor.KeyValue;
+import org.atomictagging.utils.FileUtils;
 
 /**
  * 
@@ -179,17 +179,16 @@ public class ImageMolecule implements IMolecule {
 	}
 
 
-	public static byte[] loadImage( final File file ) throws IOException {
-		byte[] bytes = null;
-
-		final FileInputStream fileInputStream = new FileInputStream( file );
-		bytes = new byte[(int) file.length()];
-		fileInputStream.read( bytes );
-		fileInputStream.close();
-
-		return bytes;
-	}
-
+	// public static byte[] loadImage( final File file ) throws IOException {
+	// byte[] bytes = null;
+	//
+	// final FileInputStream fileInputStream = new FileInputStream( file );
+	// bytes = new byte[(int) file.length()];
+	// fileInputStream.read( bytes );
+	// fileInputStream.close();
+	//
+	// return bytes;
+	// }
 
 	/**
 	 * Reads the image file and transforms it into a thumb of a configured size. <br>
@@ -224,7 +223,7 @@ public class ImageMolecule implements IMolecule {
 	public byte[] getByteImage() {
 		if ( byteImage == null ) {
 			try {
-				byteImage = loadImage( fileImage );
+				byteImage = FileUtils.loadImage( fileImage );
 			} catch ( final IOException e ) {
 				e.printStackTrace();
 			}
@@ -280,5 +279,14 @@ public class ImageMolecule implements IMolecule {
 	@Override
 	public List<IAtom> findAtomsWithTag( final String searchTag ) {
 		return molecule.findAtomsWithTag( searchTag );
+	}
+
+
+	/**
+	 * @param fileThumb
+	 *            the fileThumb to set
+	 */
+	public void setFileThumb( final File fileThumb ) {
+		this.fileThumb = fileThumb;
 	}
 }

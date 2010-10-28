@@ -5,6 +5,7 @@ import org.atomictagging.core.services.ITagService;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.listeners.AtomEvent;
 import org.atomictagging.ui.listeners.IAtomListener;
+import org.atomictagging.ui.listeners.MoleculeEvent;
 import org.atomictagging.ui.tableviewer.TagsTableViewer;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -114,6 +115,12 @@ public class CompositeAtom extends CompositeBase implements IAtomListener, KeyLi
 
 		final IAtom iAtom = event.getFirst();
 		setInput( iAtom );
+	}
+
+
+	@Override
+	public void moleculesAvailable( final MoleculeEvent event ) {
+
 	}
 
 

@@ -29,7 +29,6 @@ import org.atomictagging.core.types.Atom;
 import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
-import org.atomictagging.utils.StringUtils;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -130,9 +129,8 @@ public class AtomService extends AbstractService implements IAtomService {
 		final List<String> domain = new ArrayList<String>();
 
 		final String sql = "SELECT distinct a.data FROM atoms a JOIN atom_has_tags at "
-				+ "ON a.atomid = at.atoms_atomid JOIN tags t ON at.tags_tagid = t.tagid "
-				+ "WHERE t.tag NOT IN ('x-fileref', 'x-remotefile', 'x-remotelocation', 'x-filetype-unknown', 'x-filetype-video', 'x-filetype-image') "
-				+ "ORDER BY data";
+				+ "ON a.atomid = at.atoms_atomid JOIN tags t ON at.tags_tagid = t.tagid " + "WHERE t.tag NOT "
+				+ in( CoreTags.asList() ) + " ORDER BY data";
 
 		try {
 			final PreparedStatement readMolecules = DB.CONN.prepareStatement( sql );
@@ -259,11 +257,6 @@ public class AtomService extends AbstractService implements IAtomService {
 		}
 
 		return atoms;
-	}
-
-
-	private static String in( final List<String> tags ) {
-		return " IN ('" + StringUtils.join( tags, "', '" ) + "') ";
 	}
 
 }

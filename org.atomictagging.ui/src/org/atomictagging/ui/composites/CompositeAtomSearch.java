@@ -9,6 +9,7 @@ import org.atomictagging.core.services.ITagService;
 import org.atomictagging.core.types.IAtom;
 import org.atomictagging.ui.listeners.AtomEvent;
 import org.atomictagging.ui.listeners.IAtomListener;
+import org.atomictagging.utils.StringUtils;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.swt.SWT;
@@ -17,7 +18,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -30,6 +30,8 @@ public class CompositeAtomSearch extends CompositeBase implements SelectionListe
 	private Button						btIdSearch;
 	private Text						txTags;
 	private Button						btTagsSearch;
+	private Text						txAtoms;
+	private Button						btAtomsSearch;
 
 	private final List<IAtomListener>	listeners;
 
@@ -50,36 +52,32 @@ public class CompositeAtomSearch extends CompositeBase implements SelectionListe
 		final GridLayout layout = new GridLayout( 3, false );
 		parent.setLayout( layout );
 
-		final Label lbId = new Label( parent, SWT.NONE );
-		lbId.setText( "ID" );
-
+		createLabel( parent, "ID" );
 		txId = createText( parent );
-		// txId.setText(test.getText());
 
 		btIdSearch = new Button( parent, SWT.PUSH );
 		btIdSearch.setText( "search" );
 		btIdSearch.addSelectionListener( this );
 
-		// final Label lbAtom = new Label( parent, SWT.NONE );
-		// lbAtom.setText( "Data" );
-
-		// cvData = new ComboViewer( parent, SWT.BORDER );
-		// final GridData gdData = new GridData( SWT.FILL, SWT.TOP, true, false );
-		// gdData.horizontalSpan = 2;
-		// cvData.getControl().setLayoutData( gdData );
-
 		createLabel( parent, "Tags" );
-
 		txTags = createText( parent );
 
 		btTagsSearch = new Button( parent, SWT.PUSH );
 		btTagsSearch.setText( "search" );
 		btTagsSearch.addSelectionListener( this );
 
-		final String[] tags = tagService.getAllAsArray(); // new String[] { "title", "author", "genre", "year", "award",
-															// "artist", "album", "cover", "thumb", "filename",
-															// "person", "place", "country", "date", "city", "animal" };
+		createLabel( parent, "Atoms" );
+		txAtoms = createText( parent );
+
+		btAtomsSearch = new Button( parent, SWT.PUSH );
+		btAtomsSearch.setText( "search" );
+		btAtomsSearch.addSelectionListener( this );
+
+		final String[] tags = tagService.getAllAsArray();
+		final String[] atoms = atomService.getDomainAsArray();
+
 		new AutoCompleteField( txTags, new TextsContentAdapter(), tags );
+		new AutoCompleteField( txAtoms, new TextsContentAdapter(), atoms );
 	}
 
 
@@ -100,17 +98,13 @@ public class CompositeAtomSearch extends CompositeBase implements SelectionListe
 		}
 		if ( e.widget == btTagsSearch ) {
 
-			final List<String> list = new ArrayList<String>();
-			final String tags = txTags.getText();
-			if ( tags != null && !tags.equals( "" ) ) {
-				final String[] split = tags.split( "," );
-				for ( int i = 0; i < split.length; i++ ) {
-					split[i] = split[i].trim();
-					list.add( split[i] );
-				}
-			}
+			final List<String> list = StringUtils.breakCommaSeparatedString( txTags.getText() );
 			final List<IAtom> resultList = atomService.find( list );
 			fireAtomAvailableEvent( new AtomEvent().setAtoms( resultList ) );
+		}
+		if ( e.widget == btAtomsSearch ) {
+			final IAtom atom = atomService.findByData( txAtoms.getText() );
+			fireAtomAvailableEvent( new AtomEvent().addAtom( atom ) );
 		}
 	}
 

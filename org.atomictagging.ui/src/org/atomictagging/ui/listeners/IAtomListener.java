@@ -21,4 +21,6 @@ public interface IAtomListener {
 
 	public void atomsAvailable( AtomEvent event );
 
+
+	public void moleculesAvailable( MoleculeEvent event );
 }

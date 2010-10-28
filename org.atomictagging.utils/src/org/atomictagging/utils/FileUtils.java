@@ -130,11 +130,6 @@ public class FileUtils {
 	}
 
 
-	/**
-	 * 
-	 * @param file
-	 * @return
-	 */
 	public static String getHashSum( final File file ) {
 		String hash = null;
 		try {
@@ -142,10 +137,24 @@ public class FileUtils {
 			hash = DigestUtils.md5Hex( fis );
 			fis.close();
 		} catch ( final FileNotFoundException e ) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch ( final IOException e ) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return hash;
+	}
+
+
+	public static byte[] loadImage( final File file ) throws IOException {
+		byte[] bytes = null;
+
+		final FileInputStream fileInputStream = new FileInputStream( file );
+		bytes = new byte[(int) file.length()];
+		fileInputStream.read( bytes );
+		fileInputStream.close();
+
+		return bytes;
 	}
 }

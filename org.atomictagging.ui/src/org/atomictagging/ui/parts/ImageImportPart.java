@@ -88,7 +88,7 @@ public class ImageImportPart implements SelectionListener {
 
 			final List<ImageMolecule> list = new ArrayList<ImageMolecule>();
 			for ( final String fileName : fileNames ) {
-				final String fullFileName = filePath + "\\" + fileName;
+				final String fullFileName = filePath + "/" + fileName;
 				final ImageMolecule imageMolecule = new ImageMolecule( new File( fullFileName ) );
 				list.add( imageMolecule );
 			}

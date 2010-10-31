@@ -72,6 +72,9 @@ public class Atom extends Entity implements IAtom {
 
 	@Override
 	public void setData( final String data ) {
+		if ( data == null || data.isEmpty() ) {
+			throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
+		}
 		this.data = data;
 	}
 
@@ -86,7 +89,23 @@ public class Atom extends Entity implements IAtom {
 
 	@Override
 	public void setTags( final List<String> tags ) {
+		if ( tags == null || tags.isEmpty() ) {
+			throw new IllegalArgumentException( "Atoms must have at least one tag." );
+		}
 		this.tags = tags;
+	}
+
+
+	public void addTag( final String tag ) {
+		if ( tag == null || tag.isEmpty() ) {
+			throw new IllegalArgumentException( "A tag must not be NULL or empty." );
+		}
+
+		if ( tags.contains( tag ) ) {
+			throw new IllegalArgumentException( "Duplicate tag <" + tag + "> for atom." );
+		}
+
+		tags.add( tag );
 	}
 
 

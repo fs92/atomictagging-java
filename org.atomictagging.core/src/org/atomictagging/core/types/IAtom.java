@@ -71,4 +71,18 @@ public interface IAtom {
 	 */
 	public AtomBuilder modify();
 
+
+	/**
+	 * @return The hashCode of the file, it the atom is pointing to a file
+	 */
+	String getHashCode();
+
+
+	/**
+	 * Sets the atoms hash code.
+	 * 
+	 * @param hashCode
+	 */
+	void setHashCode( String hashCode );
+
 }

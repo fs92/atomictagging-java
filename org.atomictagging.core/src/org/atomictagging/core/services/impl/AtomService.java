@@ -68,6 +68,23 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
+	public IAtom create( final List<String> tags, final String data, final String hashCode ) {
+		if ( tags == null || tags.isEmpty() ) {
+			throw new IllegalArgumentException( "Atoms must have at least one tag." );
+		}
+		if ( data == null || data.isEmpty() ) {
+			throw new IllegalArgumentException( "Data in an atom must not be NULL or empty." );
+		}
+
+		final Atom atom = new Atom();
+		atom.setTags( tags );
+		atom.setData( data );
+		atom.setHashCode( hashCode );
+		return atom;
+	}
+
+
+	@Override
 	public IAtom find( final long atomId ) {
 		try {
 			readAtom.setLong( 1, atomId );

@@ -25,6 +25,7 @@ public class Atom extends Entity implements IAtom {
 
 	private String			data;
 	private List<String>	tags;
+	private String			hashCode;
 
 
 	public Atom() {
@@ -86,6 +87,18 @@ public class Atom extends Entity implements IAtom {
 	@Override
 	public void setTags( final List<String> tags ) {
 		this.tags = tags;
+	}
+
+
+	@Override
+	public String getHashCode() {
+		return hashCode;
+	}
+
+
+	@Override
+	public void setHashCode( final String hashCode ) {
+		this.hashCode = hashCode;
 	}
 
 

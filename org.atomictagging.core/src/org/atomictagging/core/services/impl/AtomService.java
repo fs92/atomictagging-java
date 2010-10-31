@@ -26,7 +26,6 @@ import org.atomictagging.core.accessors.DB;
 import org.atomictagging.core.services.ATService;
 import org.atomictagging.core.services.IAtomService;
 import org.atomictagging.core.types.Atom;
-import org.atomictagging.core.types.Atom.AtomBuilder;
 import org.atomictagging.core.types.CoreTags;
 import org.atomictagging.core.types.IAtom;
 import org.eclipse.core.runtime.Assert;
@@ -38,9 +37,11 @@ public class AtomService extends AbstractService implements IAtomService {
 
 	private final static String			ID				= "atomid";
 	private final static String			DATA			= "data";
+	private final static String			HASHCODE		= "hashcode";
 	private final static String			TAG				= "tag";
 
-	private final static String			SELECT_ALL		= "SELECT " + ID + ", " + DATA + ", " + TAG + " ";
+	private final static String			SELECT_ALL		= "SELECT " + ID + ", " + DATA + ", " + HASHCODE + ", " + TAG
+																+ " ";
 	private final static String			FROM_JOIN_WHERE	= " FROM atoms JOIN atom_has_tags JOIN tags "
 																+ "WHERE atomid = atoms_atomid AND tags_tagid = tagid ";
 
@@ -55,7 +56,7 @@ public class AtomService extends AbstractService implements IAtomService {
 			checkAtom = DB.CONN.prepareStatement( "SELECT atomid FROM atoms WHERE data = ?" );
 			readAtom = DB.CONN.prepareStatement( SELECT_ALL + FROM_JOIN_WHERE
 					+ " AND tags_tagid = tagid AND atomid = ?" );
-			insertAtom = DB.CONN.prepareStatement( "INSERT INTO atoms (data) VALUES (?)",
+			insertAtom = DB.CONN.prepareStatement( "INSERT INTO atoms (data, hashcode) VALUES (?, ?)",
 					Statement.RETURN_GENERATED_KEYS );
 			checkAtomTags = DB.CONN
 					.prepareStatement( "SELECT atoms_atomid FROM atom_has_tags WHERE atoms_atomid = ? AND tags_tagid = ?" );
@@ -210,6 +211,7 @@ public class AtomService extends AbstractService implements IAtomService {
 
 			if ( atomId == -1 ) {
 				insertAtom.setString( 1, atom.getData() );
+				insertAtom.setString( 2, atom.getHashCode() );
 				insertAtom.execute();
 				atomId = getAutoIncrementId( insertAtom );
 			}
@@ -246,21 +248,29 @@ public class AtomService extends AbstractService implements IAtomService {
 		final List<IAtom> atoms = new ArrayList<IAtom>();
 
 		try {
-			// atomsResult.next();
-			//
-			// while ( !atomsResult.isAfterLast() ) {
-			while ( atomsResult.next() ) {
-				final long atomId = atomsResult.getLong( ID );
+			if ( atomsResult.getFetchSize() == 0 ) {
+				return atoms;
+			}
 
-				final AtomBuilder builder = Atom.build().withId( atomId );
-				builder.withData( atomsResult.getString( DATA ) );
-				builder.withTag( atomsResult.getString( TAG ) );
+			// The result set contains atoms multiple times as often as they have tags.
+			// That's why the next() call is around the tag retrieval. If it was in the
+			// while loop, we could loose atoms or at least tags.
+			atomsResult.next();
+
+			while ( !atomsResult.isAfterLast() ) {
+				final long atomId = atomsResult.getLong( ID );
+				final String data = atomsResult.getString( DATA );
+				final String tag = atomsResult.getString( TAG );
+				final String hashCode = atomsResult.getString( HASHCODE );
+
+				final Atom atom = (Atom) create( Arrays.asList( tag ), data, hashCode );
+				atom.setId( atomId );
 
 				while ( atomsResult.next() && atomsResult.getLong( ID ) == atomId ) {
-					builder.withTag( atomsResult.getString( TAG ) );
+					atom.addTag( atomsResult.getString( TAG ) );
 				}
 
-				atoms.add( builder.buildWithDataAndTag() );
+				atoms.add( atom );
 			}
 		} finally {
 			atomsResult.close();

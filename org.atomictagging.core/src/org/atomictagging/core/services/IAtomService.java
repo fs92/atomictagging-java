@@ -109,7 +109,7 @@ public interface IAtomService {
 
 	/**
 	 * @param data
-	 * @return
+	 * @return A atom from the data base that contains the given data
 	 */
 	IAtom findByData( String data );
 

@@ -69,6 +69,12 @@ public class AtomService extends AbstractService implements IAtomService {
 
 
 	@Override
+	public IAtom create( final String tag, final String data, final String hashCode ) {
+		return create( Arrays.asList( tag ), data, hashCode );
+	}
+
+
+	@Override
 	public IAtom create( final List<String> tags, final String data, final String hashCode ) {
 		final Atom atom = new Atom();
 		atom.setTags( tags );

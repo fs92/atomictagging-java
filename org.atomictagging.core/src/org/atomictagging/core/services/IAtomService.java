@@ -44,6 +44,17 @@ public interface IAtomService {
 	/**
 	 * Creates a new atom.
 	 * 
+	 * @param tag
+	 * @param data
+	 * @param hashCode
+	 * @return The atom with the given parameters and a negative ID.
+	 */
+	IAtom create( String tag, String data, String hashCode );
+
+
+	/**
+	 * Creates a new atom.
+	 * 
 	 * @param tags
 	 * @param data
 	 * @param hashCode

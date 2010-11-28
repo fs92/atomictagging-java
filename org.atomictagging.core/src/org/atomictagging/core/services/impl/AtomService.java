@@ -254,13 +254,9 @@ public class AtomService extends AbstractService implements IAtomService {
 		final List<IAtom> atoms = new ArrayList<IAtom>();
 
 		try {
-			if ( atomsResult.getFetchSize() == 0 ) {
-				return atoms;
-			}
-
-			// The result set contains atoms multiple times as often as they have tags.
+			// The result set contains atoms multiple times, as often as they have tags.
 			// That's why the next() call is around the tag retrieval. If it was in the
-			// while loop, we could loose atoms or at least tags.
+			// while loop, we would loose atoms or at least tags.
 			atomsResult.next();
 
 			while ( !atomsResult.isAfterLast() ) {
@@ -269,7 +265,10 @@ public class AtomService extends AbstractService implements IAtomService {
 				final String tag = atomsResult.getString( TAG );
 				final String hashCode = atomsResult.getString( HASHCODE );
 
-				final Atom atom = (Atom) create( Arrays.asList( tag ), data, hashCode );
+				final ArrayList<String> tags = new ArrayList<String>();
+				tags.add( tag );
+
+				final Atom atom = (Atom) create( tags, data, hashCode );
 				atom.setId( atomId );
 
 				while ( atomsResult.next() && atomsResult.getLong( ID ) == atomId ) {

@@ -124,13 +124,13 @@ public class MoleculeService extends AbstractService implements IMoleculeService
 					molecule.setId( moleculeId );
 					molecule.setTags( ATService.getTagService().getForMolecule( moleculeId ) );
 
-					if ( molecule != null ) {
-						result.add( molecule );
-					}
+					result.add( molecule );
 				}
 
 				final long atomId = moleculeResult.getLong( "atomid" );
 
+				// FIXME What is this supposed to accomplish? There is no write to this map so
+				// this if will always be false.
 				if ( !atoms.containsKey( atomId ) ) {
 					atom = ATService.getAtomService().find( atomId );
 				}
